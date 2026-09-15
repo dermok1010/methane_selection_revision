@@ -13,6 +13,8 @@
 #
 # Usage:
 #   slurm/submit_batch.sh                 # submit every job dir in run/
+#                                          # that isn't already CONVERGED
+#                                          # (see skip logic below)
 #   slurm/submit_batch.sh a_uni_methane a_uni_ch4ratio bi_methane_ch4ratio
 #                                          # submit only these jobs
 #   ASREML_CONCURRENCY=5 slurm/submit_batch.sh
@@ -21,6 +23,18 @@
 #                                          # override the default notification address
 #   ASREML_MAIL_USER= slurm/submit_batch.sh
 #                                          # disable email notification entirely
+#   ASREML_FORCE_RERUN=1 slurm/submit_batch.sh ...
+#                                          # also (re)submit already-CONVERGED jobs
+#
+# Already-CONVERGED jobs are skipped by default (2026-09-15: run/
+# accumulates staged job directories from every --set= ever generated --
+# validation, full, components, components_trial all land in the same
+# run/ -- so "submit everything in run/" with no arguments previously
+# resubmitted an already-completed 55-model sweep alongside 10 new
+# component-trial jobs, on a license shared with other work. Checking
+# each candidate's .asr via lib_classify_convergence.R before adding it
+# to the job list makes the no-argument form safe regardless of what
+# else happens to be sitting in run/.
 #
 # Email notification: --mail-type=END,FAIL without --mail-type=ARRAY_TASKS
 # sends ONE email for the whole array (on completion or first failure),
@@ -62,20 +76,39 @@ fi
 # jobname per line -- array task $i reads line $i).
 job_list_file="$STATE_DIR/job_list_$(date +%Y%m%d_%H%M%S).txt"
 : > "$job_list_file"
+FORCE_RERUN="${ASREML_FORCE_RERUN:-0}"
+n_skipped_converged=0
 for jobname in "${jobnames[@]}"; do
   if [ ! -f "$RUN_DIR/${jobname}/${jobname}.as" ]; then
     echo "  SKIP: $RUN_DIR/${jobname}/${jobname}.as not found" >&2
     continue
+  fi
+  if [ "$FORCE_RERUN" != "1" ]; then
+    status="$(Rscript "$SCRIPT_DIR/../scripts/lib_classify_convergence.R" \
+      "$RUN_DIR/${jobname}/${jobname}.asr" 2>/dev/null | tr -d '[:space:]')"
+    if [ "$status" = "CONVERGED" ]; then
+      echo "  SKIP: $jobname already CONVERGED (set ASREML_FORCE_RERUN=1 to resubmit anyway)" >&2
+      n_skipped_converged=$((n_skipped_converged + 1))
+      continue
+    fi
   fi
   echo "$jobname" >> "$job_list_file"
 done
 
 n_jobs=$(wc -l < "$job_list_file")
 if [ "$n_jobs" -eq 0 ]; then
-  echo "ERROR: no valid job directories found -- nothing to submit." >&2
+  if [ "$n_skipped_converged" -gt 0 ]; then
+    echo "Nothing to submit -- all $n_skipped_converged candidate job(s) are already CONVERGED." >&2
+    echo "(Set ASREML_FORCE_RERUN=1 to resubmit anyway.)" >&2
+  else
+    echo "ERROR: no valid job directories found -- nothing to submit." >&2
+  fi
   exit 1
 fi
 
+if [ "$n_skipped_converged" -gt 0 ]; then
+  echo "Skipped $n_skipped_converged already-CONVERGED job(s) -- see SKIP lines above."
+fi
 echo "Submitting $n_jobs job(s) as one array, max $CONCURRENCY running at once (ASREML_CONCURRENCY)..."
 echo "Job list: $job_list_file"
 
