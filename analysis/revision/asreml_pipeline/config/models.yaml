@@ -223,6 +223,18 @@ component_traits:
     variable: weight
     label: "Liveweight -- component of CH4/LW"
 
+# Revised scope per Julius van der Werf's framework (2026-09-15): fit the 7
+# underlying component traits and their FULL pairwise (co)variance structure
+# (not just each vs CH4) -- every derived-trait correlation in the
+# manuscript's Table 3 (e.g. RMTMBW-RMTADG, CH4/MM-RMTADG, MI-CH4/MM) needs
+# cross-component covariances that a "star" of CH4-vs-each pairs cannot
+# supply. This is the minimum bivariate set (21 = choose(7,2)) needed for a
+# complete 7x7 genetic/phenotypic covariance matrix if a single 7-trait
+# multivariate model doesn't converge cleanly -- see
+# docs/asreml_legacy_map.md's legacy-pair search: only 4 of these 21 pairs
+# (methane-mbw, methane-muscle, methane-weight, weight-adg) have a real
+# legacy .as file to reuse starting values from; the other 17 rely on
+# ASReml auto-initialisation.
 component_set:
   univariate: [methane, co2, mbw, adg, muscle, rumen, weight]
   bivariate:
@@ -232,3 +244,33 @@ component_set:
     - [methane, muscle]
     - [methane, rumen]
     - [methane, weight]
+    - [co2, mbw]
+    - [co2, adg]
+    - [co2, muscle]
+    - [co2, rumen]
+    - [co2, weight]
+    - [mbw, adg]
+    - [mbw, muscle]
+    - [mbw, rumen]
+    - [mbw, weight]
+    - [adg, muscle]
+    - [adg, rumen]
+    - [adg, weight]
+    - [muscle, rumen]
+    - [muscle, weight]
+    - [rumen, weight]
+
+# Small trial before the full 21-pair set (all 7 univariate models are
+# cheap and always run first regardless). One legacy-backed pair (fast,
+# low risk), one high-N pair with no legacy counterpart (tests
+# auto-initialisation on well-recorded traits), and one pair between the
+# two sparse/near-single-record CT traits (muscle, rumen -- 780 records,
+# only 3.2% of animals with >1 record -- tests whether the shared PE term
+# is identifiable at all when neither trait in the pair has meaningful
+# repeatability).
+component_trial_set:
+  univariate: [methane, co2, mbw, adg, muscle, rumen, weight]
+  bivariate:
+    - [methane, mbw]
+    - [methane, co2]
+    - [muscle, rumen]

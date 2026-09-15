@@ -71,9 +71,62 @@ response" to "heritability/genetic correlation." Verified against two
 analytic edge cases (denominator with zero genetic variance reduces
 exactly to the CH4-alone h2 and rg=1; the CH4+CO2 sum case for `ch4_ratio`
 correctly reduces to the nonlinear Mobius-function derivative) -- **not
-yet run on HPC**. Next step: generate + stage + submit `--set=components`
-on HPC same as the full sweep was, then run `03_parse_results.R` followed
-by `04_derive_ratio_from_components.R`.
+yet run on HPC**.
+
+**Update, later still: redesigned per Julius van der Werf's framework (via
+the user, 2026-09-15).** The "CH4 vs each ratio's own denominator" star
+design above is insufficient: the manuscript's Table 3 reports
+correlations *among all nine derived traits pairwise* (e.g. RMTMBW-RMTADG,
+CH4/MM-RMTADG, MI-CH4/MM), which need cross-component covariances (e.g.
+Cov(MBW,ADG)) that a star design cannot supply. Redesigned around a single
+7x7 genetic (G) and phenotypic (P) covariance matrix over the underlying
+component traits -- CH4, MBW, liveweight, ADG, CO2, muscle mass, rumen
+volume -- from which every derived trait's h2 and every pairwise
+correlation (Tables 2-5) are derived by matrix algebra, not fitted
+directly:
+
+- `--set=components_trial`: 7 univariate + 3 representative bivariate
+  pairs (`methane-mbw`: legacy-backed; `methane-co2`: high-N, no legacy;
+  `muscle-rumen`: only 780 records at 3.2% repeat rate, tests whether the
+  shared PE term is identifiable at all between two near-single-record
+  traits). Run this first.
+- `--set=components`: 7 univariate + all 21 pairwise bivariate models
+  (`choose(7,2)`) needed for a complete G/P if a single 7-trait
+  multivariate model doesn't converge cleanly. Only 4 of the 21 pairs have
+  a real legacy `.as` file to reuse starting values from
+  (`methane-mbw`, `methane-muscle`, `methane-weight`, `adg-weight`); the
+  other 17 rely on ASReml auto-initialisation.
+- A genuine 7-trait multivariate model (syntactically supported by ASReml
+  4.2 -- "Y-variates is a list of up to 20 traits", Functional
+  Specification Section 8.1 -- but requiring explicit `us(Trait)`
+  structures for n>2, unlike the implicit 2x2 default used in every
+  bivariate model here) is the preferred final source for G/P if it
+  converges, using the bivariate results as informed starting values
+  (the manual itself flags finding good multivariate starting values as a
+  known difficulty). Not yet built -- deferred until bivariate results
+  exist to derive starting values from.
+- `04_derive_ratio_from_components.R` rewritten to assemble the full G/P
+  from `results/univariate_summary.csv` (diagonal) +
+  `results/bivariate_summary.csv` (off-diagonal), check positive-
+  definiteness explicitly, and derive every trait via the general rule:
+  linear (residual) traits use an exact coefficient vector `c` (`V_A=c'Gc`,
+  no approximation); ratio traits use a first-order Taylor gradient at the
+  trait means (`V_A\approx g'Gg`); any two derived traits' correlation is
+  `c1'Gc2` -- the same quadratic form throughout. `CH4/(CH4+CO2)` now uses
+  the direct two-variable gradient wrt (CH4, CO2) rather than an
+  intermediate CH4+CO2 sum variable (mathematically equivalent, verified
+  against the previous version, just matches the general framework more
+  directly). Residual coefficients (b) are recalculated from this
+  pipeline's own cleaned dataset AND independently cross-checked against
+  the original manuscript-scale dataset
+  (`~/PAC_data_pipeline/data/external/paper3/P3_co2_data.csv`, 15,869
+  records) -- they agree to 4 decimal places, so there is no legacy-vs-
+  recalculated discrepancy to resolve. Smoke-tested end-to-end against
+  fabricated (co)variance data (positive-definite matrices, sensible
+  h2s, correct symmetric correlation matrix) -- **not yet run against real
+  HPC output**.
+- SE/uncertainty propagation for the derived quantities is explicitly
+  deferred until point estimates are working, per the user's instruction.
 
 ## Directory layout
 
@@ -88,21 +141,23 @@ scripts/     00_prepare_asreml_phenotype.R  -- derive the curated,
                  bins, etc.) from this repo's canonical PAC pipeline
                  output. Platform-aware (--platform=vm|hpc).
              01_generate_models.R  -- config -> .as/.pin files in models/.
-                 --set=validation | --set=full | --set=components
+                 --set=validation | --set=full | --set=components_trial |
+                 --set=components
              02_stage_run_dir.R  -- populate run/ with phenotype +
                  pedigree + generated models under the bare filenames
                  the .as files reference. --platform=vm|hpc
              03_parse_results.R  -- run/*.asr(+.pvc) -> results/*.csv,
                  with independent cross-checks (see below).
-             04_derive_ratio_from_components.R  -- reads
-                 results/bivariate_summary.csv for the --set=components
-                 pairs (CH4 x each ratio trait's raw denominator) and
-                 derives each ratio trait's h2 and its genetic correlation
-                 with CH4 via first-order Taylor linearisation of the
-                 ratio, instead of (or as a cross-check against) fitting
-                 the ratio directly. docs/revision_plan.md Section 5 step
-                 7; see the script's own header for the method and its
-                 upstream provenance.
+             04_derive_ratio_from_components.R  -- assembles the full 7x7
+                 genetic/phenotypic covariance matrix over the component
+                 traits from results/univariate_summary.csv +
+                 bivariate_summary.csv, checks positive-definiteness, and
+                 derives every ratio/residual trait's h2 plus the full
+                 pairwise correlation matrix among all derived traits and
+                 components -- instead of fitting each constructed
+                 phenotype directly. docs/revision_plan.md Section 5 step
+                 7; see the script's own header for the method (Julius van
+                 der Werf's framework) and its upstream provenance.
              lib_classify_convergence.R  -- shared convergence-status
                  classifier (used by both the Slurm retry loop and the
                  result parser), using ASReml's own documented message
@@ -162,12 +217,21 @@ Rscript scripts/02_stage_run_dir.R --platform=hpc
 slurm/submit_batch.sh                     # submits ONE array job, throttled -- see "License concurrency" below
 Rscript scripts/03_parse_results.R
 
-# Component-trait ratio derivation (docs/revision_plan.md Section 5 step 7)
+# Component-trait analysis (docs/revision_plan.md Section 5 step 7) --
+# small trial first
+Rscript scripts/01_generate_models.R --set=components_trial
+Rscript scripts/02_stage_run_dir.R --platform=hpc
+slurm/submit_batch.sh
+Rscript scripts/03_parse_results.R   # inspect convergence + results/*_summary.csv
+
+# Once the trial's 3 bivariate pairs converge cleanly: full 21-pair set
 Rscript scripts/01_generate_models.R --set=components
 Rscript scripts/02_stage_run_dir.R --platform=hpc
 slurm/submit_batch.sh
 Rscript scripts/03_parse_results.R
-Rscript scripts/04_derive_ratio_from_components.R  # -> results/ratio_from_components.csv
+Rscript scripts/04_derive_ratio_from_components.R
+# -> results/component_G.csv, component_P.csv (with PD check),
+#    derived_h2.csv, derived_rg_matrix.csv, derived_rp_matrix.csv
 ```
 
 ## License concurrency

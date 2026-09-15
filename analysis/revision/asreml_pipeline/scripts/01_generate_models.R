@@ -4,8 +4,12 @@
 # Usage:
 #   Rscript 01_generate_models.R --set=validation
 #   Rscript 01_generate_models.R --set=full
-#   Rscript 01_generate_models.R --set=components  # CH4 x raw-component
-#                                                   # pairs, see config's
+#   Rscript 01_generate_models.R --set=components_trial  # small trial: 7
+#                                                   # univariate + 3
+#                                                   # representative pairs
+#   Rscript 01_generate_models.R --set=components  # full 7-univariate +
+#                                                   # 21-bivariate component
+#                                                   # set, see config's
 #                                                   # component_set/
 #                                                   # component_traits
 #
@@ -47,7 +51,7 @@ suppressPackageStartupMessages({
 args <- commandArgs(trailingOnly = TRUE)
 set_arg <- sub("^--set=", "", grep("^--set=", args, value = TRUE))
 if (length(set_arg) == 0) set_arg <- "validation"
-stopifnot(set_arg %in% c("validation", "full", "components"))
+stopifnot(set_arg %in% c("validation", "full", "components", "components_trial"))
 
 pipeline_root <- normalizePath(
   file.path(dirname(sub("--file=", "", grep("--file=", commandArgs(), value = TRUE))), ".."),
@@ -272,13 +276,17 @@ gen_bivariate <- function(trait1, trait2) {
 if (set_arg == "validation") {
   uni_codes <- cfg$validation_set$univariate
   bi_pairs <- cfg$validation_set$bivariate
-} else if (set_arg == "components") {
-  # Bivariate CH4 x raw-denominator-component pairs, for deriving each
-  # ratio trait's h2/rg from component (co)variances instead of fitting
-  # the ratio directly -- docs/revision_plan.md Section 5 step 7. See
+} else if (set_arg %in% c("components", "components_trial")) {
+  # Full pairwise (co)variance structure among the 7 underlying component
+  # traits (CH4 + 6 denominators), for deriving every ratio/residual
+  # trait's h2/rg from component (co)variances instead of fitting each
+  # constructed phenotype directly -- docs/revision_plan.md Section 5 step
+  # 7, per Julius van der Werf's framework. See
   # scripts/04_derive_ratio_from_components.R for the derivation itself.
-  uni_codes <- cfg$component_set$univariate
-  bi_pairs <- cfg$component_set$bivariate
+  # components_trial is a small representative subset run first.
+  set_key <- if (set_arg == "components") "component_set" else "component_trial_set"
+  uni_codes <- cfg[[set_key]]$univariate
+  bi_pairs <- cfg[[set_key]]$bivariate
 } else {
   uni_codes <- sapply(cfg$traits, `[[`, "code")
   if (isTRUE(cfg$full_sweep$generate_all_pairs)) {
