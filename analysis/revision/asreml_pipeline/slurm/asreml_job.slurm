@@ -24,7 +24,16 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PIPELINE_ROOT="$(dirname "$SCRIPT_DIR")"
 RUN_DIR="$PIPELINE_ROOT/run"
 
-module load asreml/4.2
+# asreml/4.2 module load made non-fatal: on this account ASReml is
+# reportedly already on PATH (license tied to the user, not a module),
+# so don't abort the job if the module genuinely isn't present.
+module load asreml/4.2 2>/dev/null || true
+
+if ! command -v asreml >/dev/null 2>&1; then
+  echo "ERROR: 'asreml' not found on PATH after attempting 'module load asreml/4.2'." >&2
+  echo "Check how ASReml is normally invoked on this account/cluster and update this line." >&2
+  exit 1
+fi
 
 cd "$RUN_DIR"
 mkdir -p "$PIPELINE_ROOT/slurm/slurm_logs"
