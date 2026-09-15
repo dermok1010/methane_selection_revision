@@ -843,6 +843,23 @@ versions at commit `8cb842d` in the prior update, and none of the legacy
 scripts were changed during this rerun (only sandboxed patched copies in
 this repo's `analysis/diagnostics/`).
 
+#### Update (2026-09-15, promoted to canonical VM/GitHub version)
+
+Per explicit user instruction, the verified working version (paths fixed,
+the dead broken tail block removed from script 01, the `library(dplyr)`
+ordering fix in 08, `run_01_to_05.R` driver added, README added) has been
+promoted to the actual working copy at `~/PAC_data_pipeline` on the VM and
+pushed to `dermok1010/PAC_data_pipeline` at commit `3832743`. Re-ran the
+full 01-11 chain from that exact repo location as a clean-room check
+before committing -- every output file was byte-identical (md5sum) to the
+already cell-by-cell-verified sandbox run in
+`analysis/diagnostics/pac_pipeline_rerun/`, including the final QC numbers
+(511 removed/3.09%, 15,869 records/8,185 animals). The version that
+actually produced the submitted manuscript's data remains untouched on
+the HPC, per the user: "we'll always have old version on the HPC anyway."
+`analysis/legacy/PAC_data_pipeline/` in this repo is likewise left as-is,
+a snapshot of the pre-fix HPC working-tree state, for provenance.
+
 ### `dermok1010/Methane_Selection_Index_Analysis`
 
 - URL: https://github.com/dermok1010/Methane_Selection_Index_Analysis
