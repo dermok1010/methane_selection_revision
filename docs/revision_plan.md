@@ -34,6 +34,34 @@ manuscript editing, no data received, no analysis started.
   (`dermok1010/PAC_data_pipeline`) brought up to date with the HPC
   working-tree state (pushed `8cb842d`), per explicit authorization, after
   the above sanity check.
+- **2026-09-15 (later still)**: full PAC pipeline (scripts 01-11) run
+  end-to-end after the 9 missing external raw files were supplied;
+  reproduces the manuscript's QC numbers exactly and matches the legacy
+  captured outputs cell-for-cell bar two documented, non-impacting
+  findings (see `docs/manuscript_context.md`). Promoted to canonical on
+  the VM and GitHub (`dermok1010/PAC_data_pipeline@3832743`), HPC
+  original left untouched, per explicit instruction. Legacy ASReml
+  material (`gs://dermot-phd-backup/asreml_legacy_no_sln_2026-09-15.tar.gz`)
+  reconstructed read-only into `docs/asreml_legacy_map.md`: identifies
+  the 25 Mar-29 Apr 2026 run cluster as the source of the submitted
+  Tables 2-5 (8/9 heritabilities and 6/6 spot-checked correlations
+  reproduce exactly), resolves the residual-trait construction question
+  (simple OLS residual, no fixed-effects adjustment), and flags one
+  unresolved discrepancy (CH4/rumen heritability) plus several open
+  items. A new validated pedigree (`analysis/revision/pedigree/`,
+  36,449 animals, deliberately smaller than the manuscript's 330,812
+  since reconciling the three legacy pedigree versions was explicitly
+  out of scope for now) and a config-driven ASReml automation pipeline
+  (`analysis/revision/asreml_pipeline/`) were then built to replace the
+  legacy hand-edited `.as` files -- generator, Slurm batch runner with
+  convergence detection/`!CONTINUE` retries, and a results parser that
+  independently cross-checks VPREDICT output rather than trusting it
+  alone. The small representative validation set (CH4, CH4 ratio, their
+  pair) was checked by replaying real legacy ASReml output through the
+  new parser and reproduces the manuscript exactly; **not yet run on
+  HPC with real ASReml** -- that is the next step before generating the
+  full submitted-style sweep. Full detail and flagged items in
+  `analysis/revision/asreml_pipeline/README.md`.
 
 ---
 
