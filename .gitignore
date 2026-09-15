@@ -67,6 +67,24 @@ data/
 *.sas7bdat
 
 # ===============================
+# ASReml raw run outputs (analysis/revision/asreml_pipeline/)
+# .as/.pin job specs and parsed results/ summary tables ARE tracked --
+# only the large/regenerable per-run artifacts are excluded here.
+# ===============================
+*.asr
+*.rsv
+*.msv
+*.tsv
+*.pvc
+*.veo
+*.yht
+*.vvp
+*.ask
+*.asl
+*.SRT
+ainverse.bin
+
+# ===============================
 # Logs / caches
 # ===============================
 *.log
