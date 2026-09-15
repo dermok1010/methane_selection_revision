@@ -17,6 +17,14 @@
 #                                          # submit only these jobs
 #   ASREML_CONCURRENCY=5 slurm/submit_batch.sh
 #                                          # override the default throttle (3)
+#   ASREML_MAIL_USER=someone@teagasc.ie slurm/submit_batch.sh
+#                                          # override the default notification address
+#   ASREML_MAIL_USER= slurm/submit_batch.sh
+#                                          # disable email notification entirely
+#
+# Email notification: --mail-type=END,FAIL without --mail-type=ARRAY_TASKS
+# sends ONE email for the whole array (on completion or first failure),
+# not one per task -- exactly what you want for a 7-14 task array.
 #
 # Each array task runs slurm/asreml_job.slurm -> slurm/run_one_model.sh,
 # which handles convergence detection and !CONTINUE retries on its own
@@ -29,6 +37,8 @@ PIPELINE_ROOT="$(dirname "$SCRIPT_DIR")"
 RUN_DIR="$PIPELINE_ROOT/run"
 STATE_DIR="$RUN_DIR/state"
 CONCURRENCY="${ASREML_CONCURRENCY:-3}"
+# Assumed domain is teagasc.ie -- correct via ASREML_MAIL_USER if wrong.
+MAIL_USER="${ASREML_MAIL_USER-dermot.kelly@teagasc.ie}"
 
 if [ ! -d "$RUN_DIR" ]; then
   echo "ERROR: $RUN_DIR does not exist -- run scripts/02_stage_run_dir.R --platform=hpc first." >&2
@@ -76,11 +86,18 @@ echo "Job list: $job_list_file"
 # filename is index-based. Absolute paths for the same reason as the
 # single-job case: relative #SBATCH paths resolve against wherever
 # sbatch was invoked from, not this script's location.
+mail_args=()
+if [ -n "$MAIL_USER" ]; then
+  mail_args=(--mail-user="$MAIL_USER" --mail-type=END,FAIL)
+  echo "Email notification: one summary email to $MAIL_USER on array completion/failure."
+fi
+
 jobid=$(sbatch --parsable --job-name="asreml_array" \
   --array="1-${n_jobs}%${CONCURRENCY}" \
   --output="$SCRIPT_DIR/slurm_logs/array-%A_%a.out" \
   --error="$SCRIPT_DIR/slurm_logs/array-%A_%a.err" \
   --export="ALL,PIPELINE_ROOT=$PIPELINE_ROOT,JOB_LIST_FILE=$job_list_file" \
+  "${mail_args[@]}" \
   "$SCRIPT_DIR/asreml_job.slurm")
 
 echo "Submitted array job ${jobid} (tasks 1-${n_jobs}, throttled to ${CONCURRENCY} concurrent)."
