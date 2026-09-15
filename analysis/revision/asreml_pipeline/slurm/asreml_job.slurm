@@ -38,7 +38,10 @@ if [ -z "${PIPELINE_ROOT:-}" ]; then
   exit 1
 fi
 SCRIPT_DIR="$PIPELINE_ROOT/slurm"
-RUN_DIR="$PIPELINE_ROOT/run"
+# Each job gets its own working directory (run/<jobname>/) -- see
+# scripts/02_stage_run_dir.R's header comment for why running multiple
+# ASReml jobs concurrently from one shared directory is unsafe.
+JOB_DIR="$PIPELINE_ROOT/run/$JOBNAME"
 
 # ASReml is available directly on PATH on this account (license is
 # per-user, not a module) -- no module load needed or attempted.
@@ -47,7 +50,11 @@ if ! command -v asreml >/dev/null 2>&1; then
   exit 1
 fi
 
-cd "$RUN_DIR"
+if [ ! -d "$JOB_DIR" ]; then
+  echo "ERROR: $JOB_DIR does not exist -- run scripts/02_stage_run_dir.R --platform=hpc first." >&2
+  exit 1
+fi
+cd "$JOB_DIR"
 mkdir -p "$PIPELINE_ROOT/slurm/slurm_logs"
 
 # Reports license details -- kept for continuity with the legacy

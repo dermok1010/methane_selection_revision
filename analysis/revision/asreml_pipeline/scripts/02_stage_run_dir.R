@@ -1,20 +1,32 @@
-# Populate run/ (gitignored execution directory) with everything ASReml
-# needs to actually run: the generated .as/.pin files from models/, the
-# phenotype file, and the pedigree file -- under the bare filenames the
-# .as files reference (ASReml resolves paths relative to its working
-# directory, so nothing here is platform-specific except which absolute
-# source paths config/paths.yaml points at).
+# Populate run/<jobname>/ (gitignored execution directories, one per
+# model) with everything ASReml needs to actually run: that model's
+# .as/.pin file plus its own copies of the phenotype and pedigree files.
 #
 # Usage: Rscript 02_stage_run_dir.R --platform=vm|hpc
 #
+# ---------------------------------------------------------------------
+# Why one directory PER JOB, not one shared run/ for everything: a real
+# HPC trial run (2026-09-15) submitted 3 jobs sharing a single run/
+# directory. The one that happened to run alone completed and converged
+# normally; the two that ran concurrently both crashed with a Fortran
+# runtime error ("forrtl: severe (28): CLOSE error, unit 7") a few
+# seconds in, never producing a .asr file. ASReml writes some files
+# under fixed, non-job-prefixed names in its working directory rather
+# than names derived from the .as basename -- ainverse.bin and
+# asrdata.bin are two documented examples
+# (ASReml-4.2-Functional-Specification.pdf Section 11.3.2) -- so two
+# ASReml processes sharing a working directory race on those files. The
+# legacy Slurm scripts (analysis/legacy/asreml_scripts/*.slurm) only
+# ever ran one ASReml job at a time from a given directory (a plain
+# sequential for-loop in h_cor.slurm/ped_cor.slurm), which is consistent
+# with this. Giving every job its own directory avoids the race
+# entirely and keeps jobs independently parallelisable.
+#
 # The pedigree file from analysis/revision/pedigree/01_ped_maker.R is
-# already topologically sorted (parents before offspring, verified by
-# that script's own structural checks) -- it is copied directly to
-# <pedigree_file>.SRT so ASReml recognises it as pre-sorted and skips
-# its own !SORT pass (ASReml-4.2-Functional-Specification.pdf Section
-# 8, "!SORT... if pedigreefile is specified as basename.SRT and this
-# file already exists, ASReml will assume the sorting has already been
-# performed").
+# already topologically sorted -- copied directly to <pedigree_file>.SRT
+# in each job directory so ASReml recognises it as pre-sorted and skips
+# re-sorting (Section 8 of the manual).
+# ---------------------------------------------------------------------
 
 suppressPackageStartupMessages(library(yaml))
 
@@ -38,7 +50,6 @@ state_dir <- file.path(pipeline_root, rel$state_dir)
 dir.create(run_dir, showWarnings = FALSE, recursive = TRUE)
 dir.create(state_dir, showWarnings = FALSE, recursive = TRUE)
 
-# ---- phenotype file ----
 phenotype_src <- file.path(pipeline_root, "data", models_cfg$phenotype_file)
 if (!file.exists(phenotype_src)) {
   stop(
@@ -46,10 +57,7 @@ if (!file.exists(phenotype_src)) {
     "00_prepare_asreml_phenotype.R --platform=", platform, " first."
   )
 }
-file.copy(phenotype_src, file.path(run_dir, models_cfg$phenotype_file), overwrite = TRUE)
-cat("Staged phenotype file:", models_cfg$phenotype_file, "\n")
 
-# ---- pedigree file ----
 pedigree_src <- paths_cfg$pedigree_file
 if (!file.exists(pedigree_src)) {
   stop(
@@ -58,18 +66,30 @@ if (!file.exists(pedigree_src)) {
     "at the right file for this platform."
   )
 }
-file.copy(pedigree_src, file.path(run_dir, models_cfg$pedigree_file), overwrite = TRUE)
-cat("Staged pedigree file:", models_cfg$pedigree_file,
-    "(pre-sorted; ASReml will not re-sort it)\n")
 
-# ---- generated model files ----
-as_files <- list.files(models_dir, pattern = "\\.(as|pin)$", full.names = TRUE)
+as_files <- list.files(models_dir, pattern = "\\.as$", full.names = TRUE)
 if (length(as_files) == 0) {
-  stop("No .as/.pin files in ", models_dir, " -- run 01_generate_models.R first.")
+  stop("No .as files in ", models_dir, " -- run 01_generate_models.R first.")
 }
-file.copy(as_files, run_dir, overwrite = TRUE)
-cat("Staged", length(as_files), "model files (.as/.pin) into", run_dir, "\n")
 
-cat("\nrun/ is ready. On HPC, submit with slurm/submit_batch.sh; on the VM\n")
-cat("(no ASReml installed here by design) this step only prepares run/ for\n")
-cat("inspection/git-diffing before the directory is synced to HPC.\n")
+for (as_path in as_files) {
+  jobname <- sub("\\.as$", "", basename(as_path))
+  job_dir <- file.path(run_dir, jobname)
+  dir.create(job_dir, showWarnings = FALSE, recursive = TRUE)
+
+  file.copy(as_path, file.path(job_dir, basename(as_path)), overwrite = TRUE)
+  pin_path <- sub("\\.as$", ".pin", as_path)
+  if (file.exists(pin_path)) {
+    file.copy(pin_path, file.path(job_dir, basename(pin_path)), overwrite = TRUE)
+  }
+  file.copy(phenotype_src, file.path(job_dir, models_cfg$phenotype_file), overwrite = TRUE)
+  file.copy(pedigree_src, file.path(job_dir, models_cfg$pedigree_file), overwrite = TRUE)
+
+  cat("Staged", jobname, "->", job_dir, "\n")
+}
+
+cat("\n", length(as_files), " job director", if (length(as_files) == 1) "y" else "ies",
+    " ready under ", run_dir, "\n", sep = "")
+cat("On HPC, submit with slurm/submit_batch.sh; on the VM (no ASReml\n")
+cat("installed here by design) this step only prepares run/ for\n")
+cat("inspection before syncing to HPC.\n")

@@ -28,11 +28,28 @@ and the independent within-parser cross-check exactly:
 | CH4-CH4ratio rg | 0.73 (0.05) | 0.7297 (0.0454) |
 | CH4-CH4ratio rp | 0.46 | 0.4606 |
 
-Next step is an actual HPC trial-batch run of this same validation set
-(see "Workflow" below) to confirm the *generated* `.as` files -- not
-just the parser -- behave as expected once real ASReml is involved
-(workspace sizing, `!CONTINUE` behaviour, the `.pin` post-processing
-step, actual convergence). Only after that should `--set=full` be
+**Update, same day: first real HPC trial run.** Submitting all 3
+validation-set jobs at once (sharing a single `run/` directory, the
+original design) produced two Fortran runtime crashes
+(`forrtl: severe (28): CLOSE error, unit 7`) within seconds, and one
+clean success -- the job that happened to run without any concurrent
+sibling converged normally (`a_uni_ch4ratio`, 3 attempts, `LogL
+Converged`). This confirms ASReml is not safe to run multiple
+concurrent jobs from a shared working directory (it writes some files
+under fixed, non-job-prefixed names -- `ainverse.bin`/`asrdata.bin` are
+documented examples in the manual -- so concurrent jobs race on them),
+consistent with every legacy Slurm script only ever running ASReml jobs
+sequentially. **Fixed**: `02_stage_run_dir.R` now gives every job its
+own isolated directory (`run/<jobname>/`), so jobs are safe to run
+fully in parallel again. See that script's header comment for the full
+explanation.
+
+The one model that did run for real (`a_uni_ch4ratio`, on the new
+36,449-animal pedigree, not the manuscript's 330,812) gave h2 ~ 0.10 vs.
+the manuscript's 0.08 -- a reasonable difference given the much smaller
+pedigree, not a red flag. Next step is rerunning the validation set with
+the per-job-directory fix in place; once all 3 converge cleanly and
+`03_parse_results.R`'s cross-check columns agree, `--set=full` can be
 generated and run.
 
 ## Directory layout

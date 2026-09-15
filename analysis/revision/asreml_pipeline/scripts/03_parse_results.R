@@ -1,5 +1,8 @@
 #!/usr/bin/env Rscript
-# Parse run/*.asr (+ .pvc where present) into tidy summary tables:
+# Parse run/<jobname>/<jobname>.asr (+ .pvc where present) into tidy
+# summary tables -- each job has its own working directory (see
+# scripts/02_stage_run_dir.R's header for why: concurrent ASReml jobs
+# sharing one directory race on files like ainverse.bin):
 #   results/univariate_summary.csv
 #   results/bivariate_summary.csv
 #
@@ -131,11 +134,15 @@ n_close <- function(a, b, tol = 1e-3) {
 
 # ---- univariate ----
 
-as_files_uni <- list.files(run_dir, pattern = "^a_uni_.*\\.as$", full.names = FALSE)
+job_dirs <- list.dirs(run_dir, full.names = FALSE, recursive = FALSE)
+uni_jobs <- job_dirs[grepl("^a_uni_", job_dirs)]
+bi_jobs <- job_dirs[grepl("^bi_", job_dirs)]
+
 uni_rows <- list()
-for (asf in as_files_uni) {
-  code <- sub("^a_uni_", "", sub("\\.as$", "", asf))
-  asr_path <- file.path(run_dir, sub("\\.as$", ".asr", asf))
+for (jobname in uni_jobs) {
+  code <- sub("^a_uni_", "", jobname)
+  job_dir <- file.path(run_dir, jobname)
+  asr_path <- file.path(job_dir, paste0(jobname, ".asr"))
   conv <- classify_convergence(asr_path)
   row <- list(trait_code = code, convergence = conv,
               sigma_ped = NA_real_, sigma_ide = NA_real_, sigma_residual = NA_real_,
@@ -153,7 +160,7 @@ for (asf in as_files_uni) {
       row$t_check <- (row$sigma_ped + row$sigma_ide) / phen
     }
   }
-  pvc <- parse_pvc(file.path(run_dir, sub("\\.as$", ".pvc", asf)))
+  pvc <- parse_pvc(file.path(job_dir, paste0(jobname, ".pvc")))
   if (!is.null(pvc$direct)) { row$h2 <- pvc$direct$estimate; row$h2_se <- pvc$direct$se }
   if (!is.null(pvc[["repeat"]])) { row$t_repeat <- pvc[["repeat"]]$estimate; row$t_se <- pvc[["repeat"]]$se }
   row$check_agree_h2 <- n_close(row$h2, row$h2_check)
@@ -171,16 +178,16 @@ if (length(uni_rows) > 0) {
         paste(uni_df$trait_code[!isTRUE(uni_df$check_agree_h2) & !is.na(uni_df$check_agree_h2)], collapse = ", "), "\n")
   }
 } else {
-  cat("No univariate .as files found in", run_dir, "\n")
+  cat("No a_uni_* job directories found in", run_dir, "\n")
 }
 
 # ---- bivariate ----
 
-as_files_bi <- list.files(run_dir, pattern = "^bi_.*\\.as$", full.names = FALSE)
 bi_rows <- list()
-for (asf in as_files_bi) {
-  code_pair <- sub("^bi_", "", sub("\\.as$", "", asf))
-  asr_path <- file.path(run_dir, sub("\\.as$", ".asr", asf))
+for (jobname in bi_jobs) {
+  code_pair <- sub("^bi_", "", jobname)
+  job_dir <- file.path(run_dir, jobname)
+  asr_path <- file.path(job_dir, paste0(jobname, ".asr"))
   conv <- classify_convergence(asr_path)
   row <- list(pair = code_pair, convergence = conv,
               sigma_ide = NA_real_,
@@ -215,7 +222,7 @@ for (asf in as_files_bi) {
     }
   }
 
-  pvc <- parse_pvc(file.path(run_dir, sub("\\.as$", ".pvc", asf)))
+  pvc <- parse_pvc(file.path(job_dir, paste0(jobname, ".pvc")))
   if (!is.null(pvc$h2_1)) { row$h2_1 <- pvc$h2_1$estimate; row$h2_1_se <- pvc$h2_1$se }
   if (!is.null(pvc$h2_2)) { row$h2_2 <- pvc$h2_2$estimate; row$h2_2_se <- pvc$h2_2$se }
   if (!is.null(pvc$rg))   { row$rg   <- pvc$rg$estimate;   row$rg_se   <- pvc$rg$se }
@@ -237,5 +244,5 @@ if (length(bi_rows) > 0) {
         paste(bi_df$pair[!isTRUE(bi_df$check_agree_rg) & !is.na(bi_df$check_agree_rg)], collapse = ", "), "\n")
   }
 } else {
-  cat("No bivariate .as files found in", run_dir, "\n")
+  cat("No bi_* job directories found in", run_dir, "\n")
 }

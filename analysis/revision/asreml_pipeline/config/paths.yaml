@@ -52,8 +52,8 @@ hpc:
 
 # Sub-paths, relative to <platform>.pipeline_root, shared by both platforms.
 relative:
-  run_dir: run              # execution directory: .as files + phenotype/pedigree copies + raw ASReml output land here (gitignored except .as/.pin)
-  models_dir: models        # generated, git-tracked .as/.pin files (source of truth; copied into run/ before execution)
+  run_dir: run              # execution directory: one subdirectory per job (run/<jobname>/), each with its own phenotype/pedigree copies + raw ASReml output -- never shared between concurrently-running jobs, see scripts/02_stage_run_dir.R's header comment for why
+  models_dir: models        # generated, git-tracked .as/.pin files (source of truth; copied into run/<jobname>/ before execution)
   results_dir: results      # git-tracked, parsed summary tables
   slurm_dir: slurm          # git-tracked submission scripts
-  state_dir: run/state      # gitignored -- per-model convergence/attempt tracking (JSON), see scripts/03_check_and_continue.sh
+  state_dir: run/state      # gitignored -- per-model convergence/attempt status files (<jobname>.status), see slurm/run_one_model.sh

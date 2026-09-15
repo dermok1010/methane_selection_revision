@@ -1,6 +1,7 @@
 #!/bin/bash
-# Submit one Slurm job per .as file currently staged in run/ (populated
-# by scripts/02_stage_run_dir.R). HPC-only.
+# Submit one Slurm job per model directory staged in run/<jobname>/
+# (populated by scripts/02_stage_run_dir.R -- each job gets its own
+# isolated working directory, see that script's header for why). HPC-only.
 #
 # Usage:
 #   slurm/submit_batch.sh                 # submit every *.as in run/
@@ -30,15 +31,15 @@ if [ "$#" -gt 0 ]; then
   jobnames=("$@")
 else
   jobnames=()
-  for f in "$RUN_DIR"/*.as; do
-    jobnames+=("$(basename "$f" .as)")
+  for d in "$RUN_DIR"/*/; do
+    jobnames+=("$(basename "$d")")
   done
 fi
 
 echo "Submitting ${#jobnames[@]} job(s)..."
 for jobname in "${jobnames[@]}"; do
-  if [ ! -f "$RUN_DIR/${jobname}.as" ]; then
-    echo "  SKIP: ${jobname}.as not found in $RUN_DIR" >&2
+  if [ ! -f "$RUN_DIR/${jobname}/${jobname}.as" ]; then
+    echo "  SKIP: $RUN_DIR/${jobname}/${jobname}.as not found" >&2
     continue
   fi
   # --output/--error given as absolute paths on the command line: Slurm
