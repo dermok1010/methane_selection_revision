@@ -64,6 +64,7 @@ data/
 *.xls
 *.rds
 *.parquet
+*.sas7bdat
 
 # ===============================
 # Logs / caches
