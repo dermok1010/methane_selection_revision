@@ -26,18 +26,24 @@ if [ -z "${JOBNAME:-}" ]; then
   exit 1
 fi
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PIPELINE_ROOT="$(dirname "$SCRIPT_DIR")"
+# PIPELINE_ROOT must be exported by submit_batch.sh (via --export), not
+# self-derived from this script's own location: Slurm copies the
+# submitted script into a spool directory before running it
+# (/cm/local/apps/slurm/var/spool/jobNNNNN/...), so
+# dirname "${BASH_SOURCE[0]}" resolves to that spool path, not the real
+# repo -- this previously caused every job to fail instantly trying to
+# cd into a nonexistent spool-relative "run" directory.
+if [ -z "${PIPELINE_ROOT:-}" ]; then
+  echo "ERROR: PIPELINE_ROOT not set -- submit via submit_batch.sh, not sbatch directly." >&2
+  exit 1
+fi
+SCRIPT_DIR="$PIPELINE_ROOT/slurm"
 RUN_DIR="$PIPELINE_ROOT/run"
 
-# asreml/4.2 module load made non-fatal: on this account ASReml is
-# reportedly already on PATH (license tied to the user, not a module),
-# so don't abort the job if the module genuinely isn't present.
-module load asreml/4.2 2>/dev/null || true
-
+# ASReml is available directly on PATH on this account (license is
+# per-user, not a module) -- no module load needed or attempted.
 if ! command -v asreml >/dev/null 2>&1; then
-  echo "ERROR: 'asreml' not found on PATH after attempting 'module load asreml/4.2'." >&2
-  echo "Check how ASReml is normally invoked on this account/cluster and update this line." >&2
+  echo "ERROR: 'asreml' not found on PATH." >&2
   exit 1
 fi
 

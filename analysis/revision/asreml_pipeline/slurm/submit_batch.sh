@@ -48,9 +48,12 @@ for jobname in "${jobnames[@]}"; do
   # can't open the output file) unless submit_batch.sh happens to be run
   # from exactly slurm/. Command-line options override #SBATCH lines, so
   # this makes submission location-independent.
+  # PIPELINE_ROOT is passed explicitly because Slurm copies the .slurm
+  # script into a spool directory before running it -- the job cannot
+  # reliably figure out its own real location from inside itself.
   jobid=$(sbatch --parsable --job-name="$jobname" \
     --output="$SCRIPT_DIR/slurm_logs/%x-%j.out" \
     --error="$SCRIPT_DIR/slurm_logs/%x-%j.err" \
-    --export="ALL,JOBNAME=$jobname" "$SCRIPT_DIR/asreml_job.slurm")
+    --export="ALL,JOBNAME=$jobname,PIPELINE_ROOT=$PIPELINE_ROOT" "$SCRIPT_DIR/asreml_job.slurm")
   echo "  submitted ${jobname} as Slurm job ${jobid}"
 done
