@@ -93,6 +93,20 @@ manuscript editing, no data received, no analysis started.
   values as a known difficulty. Trial (7 uni + 3 representative pairs)
   ready to run on HPC; not yet run. Full detail in
   `analysis/revision/asreml_pipeline/README.md`.
+- **2026-09-15 (later still)**: User narrowed the scope again: this stage
+  is heritabilities only, not a selection index or complete covariance
+  structure -- so only the bivariate pairs each composite trait actually
+  needs are fit (7, not 21): the 6 "CH4 vs X" pairs plus `mbw-co2` (needed
+  solely for RMTMBW+CO2's 3-component block, since that's the one
+  composite trait built from three components rather than two).
+  `04_derive_ratio_from_components.R` rewritten accordingly: per composite
+  trait, builds just the small 2x2 (or 3x3) G/P block it needs and reports
+  h2 alongside every component parameter used, rather than assembling a
+  full 7x7 or any cross-derived-trait correlation matrix. Pairwise
+  correlations among the derived traits and any multivariate/selection-
+  index work are explicitly deferred to a later, separate task. Trial (7
+  uni + 3 pairs: methane-mbw, mbw-co2, methane-rumen) ready to run; not
+  yet run on HPC.
 
 ---
 
