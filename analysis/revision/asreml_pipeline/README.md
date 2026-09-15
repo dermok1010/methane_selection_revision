@@ -127,9 +127,25 @@ git add results/ && git commit && git push
 # Once validated: full sweep
 Rscript scripts/01_generate_models.R --set=full
 Rscript scripts/02_stage_run_dir.R --platform=hpc
-slurm/submit_batch.sh
+slurm/submit_batch.sh                     # submits ONE array job, throttled -- see "License concurrency" below
 Rscript scripts/03_parse_results.R
 ```
+
+## License concurrency
+
+ASReml on this account is licensed for a limited number of concurrent
+sessions (observed 2026-09-15: "14 sessions available, with 8 currently
+in use" -- a pool shared with whatever else is running on the account,
+not reserved for this pipeline). `slurm/submit_batch.sh` therefore
+submits every job as **one Slurm job array** with a concurrency
+throttle (`--array=1-N%CONCURRENCY`) rather than N independent jobs --
+Slurm queues everything but only ever runs `CONCURRENCY` tasks at once.
+Default is 3 (`ASREML_CONCURRENCY=5 slurm/submit_batch.sh` to override).
+Each array task resolves its own `JOBNAME` at runtime from a
+timestamped job-list file (`run/state/job_list_<timestamp>.txt`) via
+its `SLURM_ARRAY_TASK_ID`, since Slurm doesn't know per-task job names
+up front for an array -- check `slurm/slurm_logs/array-<jobid>_<task>.out`'s
+first line for which model a given task actually ran.
 
 ## Convergence and `!CONTINUE`
 

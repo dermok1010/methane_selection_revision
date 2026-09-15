@@ -1,7 +1,8 @@
 #!/bin/bash
-# Slurm job template for one ASReml model, submitted once per job via
-# submit_batch.sh (`sbatch --job-name=$JOBNAME --export=JOBNAME=$JOBNAME
-# asreml_job.slurm`). --mem/--time copied from the legacy submission
+# Slurm job template for one ASReml model. Normally run as one task of a
+# job array submitted by submit_batch.sh (--array=1-N%throttle), which
+# resolves JOBNAME from a job-list file per task -- see the JOBNAME
+# resolution block below. --mem/--time copied from the legacy submission
 # scripts (analysis/legacy/asreml_scripts/*.slurm) as a starting point --
 # revisit if the full sweep's bivariate models need more than the legacy
 # single-pair runs did. --cpus-per-task deliberately kept low (ASReml is
@@ -26,7 +27,25 @@
 
 set -euo pipefail
 
-if [ -z "${JOBNAME:-}" ]; then
+# Two ways this script gets its JOBNAME, both set up by submit_batch.sh:
+#   - array submission (the normal path, --array=1-N%throttle): JOBNAME
+#     isn't known until the task starts, so JOB_LIST_FILE + the task's
+#     own SLURM_ARRAY_TASK_ID are exported instead, and JOBNAME is
+#     resolved here by reading that line of the job list.
+#   - single ad-hoc submission (JOBNAME exported directly, no array) --
+#     kept working for resubmitting one specific job by hand.
+if [ -n "${SLURM_ARRAY_TASK_ID:-}" ]; then
+  if [ -z "${JOB_LIST_FILE:-}" ]; then
+    echo "ERROR: JOB_LIST_FILE not set for an array task -- submit via submit_batch.sh." >&2
+    exit 1
+  fi
+  JOBNAME="$(sed -n "${SLURM_ARRAY_TASK_ID}p" "$JOB_LIST_FILE")"
+  if [ -z "$JOBNAME" ]; then
+    echo "ERROR: no jobname found at line ${SLURM_ARRAY_TASK_ID} of ${JOB_LIST_FILE}." >&2
+    exit 1
+  fi
+  echo "Array task ${SLURM_ARRAY_TASK_ID}: JOBNAME=${JOBNAME}"
+elif [ -z "${JOBNAME:-}" ]; then
   echo "ERROR: JOBNAME not set -- submit via submit_batch.sh, not sbatch directly." >&2
   exit 1
 fi
