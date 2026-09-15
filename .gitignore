@@ -90,6 +90,18 @@ ainverse.bin
 analysis/revision/asreml_pipeline/run/
 
 # ===============================
+# Unpublished manuscript / reviewer comments
+# The repo went public on 2026-09-15; the draft manuscript text and the
+# reviewers' comments verbatim are kept on the VM for local reference but
+# deliberately excluded from git so they aren't publicly visible ahead of
+# the revision being submitted. Removed from prior history too (see
+# docs/manuscript_context.md / docs/revision_plan.md for the traceable
+# summary of their content instead).
+# ===============================
+manuscript/submitted/
+reviews/
+
+# ===============================
 # Logs / caches
 # ===============================
 *.log

@@ -29,8 +29,10 @@ how it's used and referenced.
 methane_selection_revision/
 ├── manuscript/
 │   ├── submitted/     # The originally submitted manuscript. Immutable baseline -- never edited.
+│   │                  # (gitignored -- this repo is public; kept on the VM only, see docs/manuscript_context.md
+│   │                  #  for a traceable written summary instead)
 │   └── revised/       # Revised manuscript versions produced during this revision.
-├── reviews/            # Reviewer comments / editor letters, as received.
+├── reviews/            # Reviewer comments / editor letters, as received. (gitignored, same reason)
 ├── analysis/
 │   ├── legacy/         # Analysis code/material carried over from the original submission.
 │   ├── diagnostics/    # Checks that trace manuscript results back to source, audit legacy code.
