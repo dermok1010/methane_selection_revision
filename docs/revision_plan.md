@@ -11,6 +11,16 @@ verbatim.
 Status as of this document's creation: reviewer comments read; no
 manuscript editing, no data received, no analysis started.
 
+## Decision log
+
+- **2026-09-15**: User confirmed agreement with Sections 1-5 as written,
+  including the pushback in Section 4. On the scope/sequencing question
+  specifically: **committed scope for now is steps 1-9 of Section 5**
+  (PAC pipeline through the reduced selection-index demonstration). The
+  H-matrix/genomic robustness comparison (step 10) stays explicitly
+  deferred -- whether to attempt it, and whether it goes in the paper at
+  all, will be decided only once steps 1-9 are solid, not before.
+
 ---
 
 ## 1. Reviewers' main substantive concerns (interpretation)
