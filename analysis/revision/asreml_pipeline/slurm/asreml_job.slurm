@@ -1,10 +1,15 @@
 #!/bin/bash
 # Slurm job template for one ASReml model, submitted once per job via
 # submit_batch.sh (`sbatch --job-name=$JOBNAME --export=JOBNAME=$JOBNAME
-# asreml_job.slurm`). Resource requests copied from the legacy
-# submission scripts (analysis/legacy/asreml_scripts/*.slurm) as a
-# starting point -- revisit if the full sweep's bivariate models need
-# more time/memory than the legacy single-pair runs did.
+# asreml_job.slurm`). --mem/--time copied from the legacy submission
+# scripts (analysis/legacy/asreml_scripts/*.slurm) as a starting point --
+# revisit if the full sweep's bivariate models need more than the legacy
+# single-pair runs did. --cpus-per-task deliberately kept low (ASReml is
+# reported not to scale well with more threads); must match
+# config/models.yaml's mp_threads, which is what actually caps ASReml's
+# own thread use via !MP on the generated .as files -- the legacy .as
+# files never set !MP, so every legacy job silently used up to its
+# default of 16 threads regardless of what Slurm had allocated.
 #SBATCH --job-name=asreml_model
 # --output/--error left as relative-path fallbacks here, but
 # submit_batch.sh always overrides these with absolute paths on the
@@ -15,7 +20,7 @@
 #SBATCH --output=slurm_logs/%x-%j.out
 #SBATCH --error=slurm_logs/%x-%j.err
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=8
+#SBATCH --cpus-per-task=2
 #SBATCH --mem=20G
 #SBATCH --time=24:00:00
 

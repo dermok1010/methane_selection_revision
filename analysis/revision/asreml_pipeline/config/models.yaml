@@ -68,6 +68,13 @@ phenotype_columns:
 
 workspace_mb: 5000
 maxit: 300
+# ASReml defaults to using up to 16 OMP threads (!MP, manual Section 5.8)
+# regardless of what Slurm actually allocated -- the legacy .as files
+# never set !MP explicitly, so every legacy job silently over-subscribed
+# whatever CPU allocation its Slurm script requested. ASReml is reported
+# not to scale well with more threads anyway, so this is set low and
+# must match slurm/asreml_job.slurm's --cpus-per-task.
+mp_threads: 2
 
 # Verbatim from every legacy a_uni_*.as / bi_*.as model line (Trait.-prefixed
 # for bivariate models). Do not add/remove terms without updating
