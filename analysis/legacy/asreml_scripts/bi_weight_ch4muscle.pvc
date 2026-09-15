@@ -1,0 +1,42 @@
+ ASReml 4.2ni [27 Mar 2023] bivariate_ch4_vs_weight
+          bi_weight_ch4muscle.pvc created 21 Apr 2026 16:06:06.630
+
+          - - - Results from analysis of weight methane_per_muscle - - -
+
+   1 ide(ANI_ID)                                          0.00000         0.00000    
+ Residual                     31738 effects
+   2 Residual;Residual                       V  1  1      14.8796        0.261321    
+   3 Residual;Residual                       C  2  1     0.131466        0.106021    
+   4 Residual;Residual                       V  2  2     0.530230E-01    0.960562E-02
+   5 Trait.ANI_ID                                         61.2480         1.28295    
+   6 Trait.ANI_ID                                       -0.279040        0.151652    
+   7 Trait.ANI_ID                                        0.289922E-01    0.102085E-01
+ ASREML found  7 variance components in the .asr file       
+     but their variance matrix is of order  6
+ The .asr file was out of kilter with the .vvp file.
+ The variance matrix was expanded with zero rows for Zero pariance parameters.
+  0.0000E+00  0.2373E-05  0.4063E-05 -0.8822E-04  0.2346E-06 -0.1389E-03
+  0.1045E-03
+  0.0000E+00 -0.1311E-03 -0.9081E-02  0.2929E-04 -0.5023E-02  0.2302E-01
+  0.0000E+00 -0.7920E-01  0.1159E-02  0.9618E-05  0.1646E+01
+  0.0000E+00 -0.1706E-05  0.3780E-04  0.9234E-04
+  0.0000E+00  0.3065E-03  0.1119E-01
+  0.0000E+00  0.6828E-01
+ P Vp1 1 2 5
+   8 Vp1                       76.128        1.2473    
+ P Vp2 1 4 7
+   9 Vp2                      0.82015E-01   0.45195E-02
+ P Cp 3 6
+  10 Cp                      -0.14757       0.12668    
+ H h2_1 5 Vp1
+     h2_1         = Trait.AN   5/Vp1        8=          0.8045    0.0048
+ H h2_2 7 Vp2
+     h2_2         = Trait.AN   7/Vp2        9=          0.3535    0.1192
+ R rg 5 6 7
+     rg           = Trait.AN/SQR[Trait.AN*Trait.AN]=   -0.2094    0.1165
+ R re 2 3 4
+     re           = Residual/SQR[Residual*Residual]=    0.1480    0.1193
+ R cp Vp1 Cp Vp2
+     cp           = Cp      /SQR[Vp1     *Vp2     ]=   -0.0591    0.0505
+ Notice: The parameter estimates are followed by
+          their approximate standard errors.

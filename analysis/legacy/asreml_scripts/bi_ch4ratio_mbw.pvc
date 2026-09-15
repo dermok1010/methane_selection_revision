@@ -1,0 +1,31 @@
+ ASReml 4.2ni [27 Mar 2023] bivariate_ch4_vs_weight
+          bi_ch4ratio_mbw.pvc created 30 Mar 2026 10:30:06.999
+
+          - - - Results from analysis of ch4_ratio Metabolic_BW - - -
+
+   1 ide(ANI_ID)                                         0.243608E-06    0.290010E-06
+ Residual                     31738 effects
+   2 Residual;Residual                       V  1  1     0.173198E-04    0.231177E-06
+   3 Residual;Residual                       C  2  1    -0.344629E-04    0.459505E-04
+   4 Residual;Residual                       V  2  2     0.994697        0.174876E-01
+   5 Trait.ANI_ID                                        0.160233E-05    0.305206E-06
+   6 Trait.ANI_ID                                       -0.540663E-03    0.101059E-03
+   7 Trait.ANI_ID                                         4.28698        0.889969E-01
+ P Vp1 1 2 5
+   8 Vp1                      0.19166E-04   0.22924E-06
+ P Vp2 1 4 7
+   9 Vp2                       5.2817       0.86636E-01
+ P Cp 3 6
+  10 Cp                      -0.57513E-03   0.99081E-04
+ H h2_1 5 Vp1
+     h2_1         = Trait.AN   5/Vp1        8=          0.0836    0.0158
+ H h2_2 7 Vp2
+     h2_2         = Trait.AN   7/Vp2        9=          0.8117    0.0046
+ R rg 5 6 7
+     rg           = Trait.AN/SQR[Trait.AN*Trait.AN]=   -0.2063    0.0417
+ R re 2 3 4
+     re           = Residual/SQR[Residual*Residual]=   -0.0083    0.0111
+ R cp Vp1 Cp Vp2
+     cp           = Cp      /SQR[Vp1     *Vp2     ]=   -0.0572    0.0098
+ Notice: The parameter estimates are followed by
+          their approximate standard errors.

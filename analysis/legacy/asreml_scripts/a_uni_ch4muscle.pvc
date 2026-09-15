@@ -1,0 +1,23 @@
+ ASReml 4.2ni [27 Mar 2023] heritability test
+          a_uni_ch4muscle.pvc created 28 Mar 2026 11:37:35.694
+
+          - - - Results from analysis of methane_per_muscle - - -
+
+   1 ped(ANI_ID)                                         0.279089E-01    0.103751E-01
+   2 ide(ANI_ID)                                          0.00000         0.00000    
+   3 Residual                                V  780      0.535524E-01    0.979020E-02
+ ASREML found  3 variance components in the .asr file       
+     but their variance matrix is of order  2
+ The .asr file was out of kilter with the .vvp file.
+ The variance matrix was expanded with zero rows for Zero pariance parameters.
+ -0.9168E-04  0.0000E+00  0.9574E-04
+ P Phen 1 2 3
+   4 Phen                     0.81461E-01   0.44703E-02
+ H direct 1 4
+     direct       = ped(ANI_   1/Phen       4=          0.3426    0.1222
+ P ani_all 1 2
+   5 ani_all                  0.27909E-01   0.10374E-01
+ H repeat 5 4
+     repeat       = ani_all    5/Phen       4=          0.3426    0.1222
+ Notice: The parameter estimates are followed by
+          their approximate standard errors.

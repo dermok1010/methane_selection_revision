@@ -1,0 +1,18 @@
+ ASReml 4.2ni [27 Mar 2023] heritability test
+          a_uni_rumen.pvc created 25 Mar 2026 15:37:40.089
+
+          - - - Results from analysis of rumen - - -
+
+   1 ped(ANI_ID)                                         0.232958        0.157404    
+   2 ide(ANI_ID)                                         0.179507E-01    0.256439    
+   3 Residual                                V  780      0.786489        0.205350    
+ P Phen 1 2 3
+   4 Phen                      1.0374       0.56476E-01
+ H direct 1 4
+     direct       = ped(ANI_   1/Phen       4=          0.2246    0.1497
+ P ani_all 1 2
+   5 ani_all                  0.25091       0.20478    
+ H repeat 5 4
+     repeat       = ani_all    5/Phen       4=          0.2419    0.1962
+ Notice: The parameter estimates are followed by
+          their approximate standard errors.

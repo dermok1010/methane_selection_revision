@@ -1,0 +1,26 @@
+# This .msv file is a mechanism for resetting initial parameter values
+# by changing the values here and rerunning the job with !CONTINUE 3.
+# You may not change values in the first 3 fields
+#                    or RP fields where RP_GN is negative.
+#
+# Fields are:
+# GN, Term, Type, PSpace, Initial_value, RP_GN, RP_scale.
+#
+  36, "ide(ANI_ID)", V, P,   0.85594006E-03,   36,    1
+  39, "Variance 1", V, F,    1.0000000    ,   39,    1
+  40, "STRUCTURE_2_1", V, P,    6.3754032    ,   40,    1
+  41, "STRUCTURE_2_2", C, P,   0.10914390E-02,   41,    1
+  42, "STRUCTURE_2_3", V, P,   0.13267746E-03,   42,    1
+  43, "STRUCTURE_3_1", V, P,    1.9771387    ,   43,    1
+  44, "STRUCTURE_3_2", C, P,   0.14761435E-01,   44,    1
+  45, "STRUCTURE_3_3", V, P,   0.14054470E-02,   45,    1
+#
+# Valid values for Pspace are F, P, U and maybe Z.
+#
+# RP_GN and RP_scale define simple parameter relationships;
+# RP_GN links related parameters by the first GN number;
+# RP_scale must be 1.0 for the first parameter in the set and
+# otherwise specifies the size relative to the first parameter.
+# Multivalue RP_scale parameters may not be altered here.
+#
+# Notice that this file is overwritten if not being read.

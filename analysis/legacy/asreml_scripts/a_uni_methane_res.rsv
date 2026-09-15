@@ -1,0 +1,58 @@
+ 110801 41 38840076 111809
+# This .rsv file holds parameter values between runs of ASReml and
+# is not normally modified by the User.  The current values of the
+# the variance parameters are listed as a block on the following lines.
+# They are then listed again with identifying information
+# in a form that the user may edit.
+   0.000000       0.000000       0.000000       0.000000       0.000000       0.000000       0.000000       0.000000    
+   0.000000       0.000000       0.000000       0.000000       0.000000       0.000000       0.000000       0.000000    
+   0.000000       0.000000       2.931437      0.6356079       0.000000       1.000000       4.716129       1.000000    
+   12.46671       1.000000       11.70634       1.000000       11.56407       1.000000       11.41763       1.000000    
+   3.558927       1.000000       8.715791       1.000000       11.29343       1.000000       18.47671       1.000000    
+   6.994298    
+RSTRUCTURE              10    1    3
+ VARIANCE                1    1    0
+  22, V, F,    1.0000000       0   0
+ STRUCTURE             565    1    0
+  23, V, P,    4.7161295       0   0
+ VARIANCE                2    1    0
+  24, V, F,    1.0000000       0   0
+ STRUCTURE            1058    1    0
+  25, V, P,    12.466706       0   0
+ VARIANCE                3    1    0
+  26, V, F,    1.0000000       0   0
+ STRUCTURE             464    1    0
+  27, V, P,    11.706338       0   0
+ VARIANCE                4    1    0
+  28, V, F,    1.0000000       0   0
+ STRUCTURE             424    1    0
+  29, V, P,    11.564068       0   0
+ VARIANCE                5    1    0
+  30, V, F,    1.0000000       0   0
+ STRUCTURE            2103    1    0
+  31, V, P,    11.417631       0   0
+ VARIANCE                6    1    0
+  32, V, F,    1.0000000       0   0
+ STRUCTURE             363    1    0
+  33, V, P,    3.5589265       0   0
+ VARIANCE                7    1    0
+  34, V, F,    1.0000000       0   0
+ STRUCTURE            2482    1    0
+  35, V, P,    8.7157911       0   0
+ VARIANCE                8    1    0
+  36, V, F,    1.0000000       0   0
+ STRUCTURE            5108    1    0
+  37, V, P,    11.293428       0   0
+ VARIANCE                9    1    0
+  38, V, F,    1.0000000       0   0
+ STRUCTURE            2765    1    0
+  39, V, P,    18.476706       0   0
+ VARIANCE               10    1    0
+  40, V, F,    1.0000000       0   0
+ STRUCTURE             537    1    0
+  41, V, P,    6.9942973       0   0
+ped(ANI_ID)      1    0
+ STRUCTURE           36449    1   -2
+  19, V, P,    2.9314370       0   0
+ide(ANI_ID)      1    1
+  20, V, P,   0.63560787       0   0

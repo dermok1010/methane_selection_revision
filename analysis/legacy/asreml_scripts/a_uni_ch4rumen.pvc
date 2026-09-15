@@ -1,0 +1,23 @@
+ ASReml 4.2ni [27 Mar 2023] heritability test
+          a_uni_ch4rumen.pvc created 28 Mar 2026 11:36:11.371
+
+          - - - Results from analysis of methane_per_rumen - - -
+
+   1 ped(ANI_ID)                                         0.143324        0.501133E-01
+   2 ide(ANI_ID)                                          0.00000         0.00000    
+   3 Residual                                V  780      0.239843        0.466621E-01
+ ASREML found  3 variance components in the .asr file       
+     but their variance matrix is of order  2
+ The .asr file was out of kilter with the .vvp file.
+ The variance matrix was expanded with zero rows for Zero pariance parameters.
+ -0.2124E-02  0.0000E+00  0.2181E-02
+ P Phen 1 2 3
+   4 Phen                     0.38317       0.21097E-01
+ H direct 1 4
+     direct       = ped(ANI_   1/Phen       4=          0.3741    0.1247
+ P ani_all 1 2
+   5 ani_all                  0.14332       0.50110E-01
+ H repeat 5 4
+     repeat       = ani_all    5/Phen       4=          0.3741    0.1247
+ Notice: The parameter estimates are followed by
+          their approximate standard errors.

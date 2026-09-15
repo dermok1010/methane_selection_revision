@@ -1,0 +1,18 @@
+ ASReml 4.2ni [27 Mar 2023] heritability test
+          a_uni_ch4rmtmbw.pvc created 28 Mar 2026 11:39:36.302
+
+          - - - Results from analysis of ch4_adj_MBW - - -
+
+   1 ped(ANI_ID)                                          1.97191        0.350250    
+   2 ide(ANI_ID)                                          1.96509        0.357940    
+   3 Residual                                V 15869      9.94274        0.161802    
+ P Phen 1 2 3
+   4 Phen                      13.880       0.18326    
+ H direct 1 4
+     direct       = ped(ANI_   1/Phen       4=          0.1421    0.0249
+ P ani_all 1 2
+   5 ani_all                   3.9370       0.19838    
+ H repeat 5 4
+     repeat       = ani_all    5/Phen       4=          0.2837    0.0122
+ Notice: The parameter estimates are followed by
+          their approximate standard errors.

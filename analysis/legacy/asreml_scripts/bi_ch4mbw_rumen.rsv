@@ -1,0 +1,28 @@
+ 1327607 45 41730332 1328787
+# This .rsv file holds parameter values between runs of ASReml and
+# is not normally modified by the User.  The current values of the
+# the variance parameters are listed as a block on the following lines.
+# They are then listed again with identifying information
+# in a form that the user may edit.
+   0.000000       0.000000       0.000000       0.000000       0.000000       0.000000       0.000000       0.000000    
+   0.000000       0.000000       0.000000       0.000000       0.000000       0.000000       0.000000       0.000000    
+   0.000000       0.000000       0.000000       0.000000       0.000000       0.000000       0.000000       0.000000    
+   0.000000       0.000000       0.000000       0.000000       0.000000       0.000000       0.000000       0.000000    
+   0.000000       0.000000       0.000000      0.3311930E-02   0.000000     -0.1000000E-36   1.000000      0.1971544E-01
+  0.1235690E-01  0.7779014      0.4196372E-02  0.1018363E-01  0.2543073    
+RSTRUCTURE               1    2    3
+ VARIANCE                1    1    0
+  39, V, F,    1.0000000       0   0
+ STRUCTURE           15869    0    0
+ STRUCTURE               2    3    9
+  40, V, P,   0.19715438E-01   0   0
+  41, C, P,   0.12356900E-01   0   0
+  42, V, P,   0.77790141       0   0
+ide(ANI_ID)      1    1
+  36, V, P,   0.33119296E-02   0   0
+Trait.ped(ANI_ID)      2    0
+ STRUCTURE               2    3    9
+  43, V, P,   0.41963719E-02   0   0
+  44, C, P,   0.10183628E-01   0   0
+  45, V, P,   0.25430732       0   0
+ STRUCTURE          330812    0   -2

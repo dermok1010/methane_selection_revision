@@ -1,0 +1,17 @@
+ ASReml 4.2ni [27 Mar 2023] heritability test
+          h_uni_methane.pvc created 30 Jul 2026 11:32:35.142
+
+          - - - Results from analysis of ch4_g_day2_1v3 - - -
+
+   1 giv(ANI_ID,1)                                        4.67355        0.233444    
+   2 Residual                                V 15869      10.9873        0.178888    
+ P Phen 1 2 3
+   3 Phen                      16.661       0.21142    
+ H direct 1 4
+ Failed to parse VPREDICT statement: H direct 1 4 
+ P ani_all 1 2
+   4 ani_all                   15.661       0.21142    
+ H repeat 5 4
+ Failed to parse VPREDICT statement: H repeat 5 4 
+ Notice: The parameter estimates are followed by
+          their approximate standard errors.

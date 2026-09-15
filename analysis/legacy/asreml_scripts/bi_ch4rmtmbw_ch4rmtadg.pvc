@@ -1,0 +1,31 @@
+ ASReml 4.2ni [27 Mar 2023] bivariate_ch4_vs_weight
+          bi_ch4rmtmbw_ch4rmtadg.pvc created 25 Mar 2026 14:33:38.981
+
+          - - - Results from analysis of ch4_adj_MBW ch4_adj_adg - - -
+
+   1 ide(ANI_ID)                                          1.97035        0.356947    
+ Residual                     31738 effects
+   2 Residual;Residual                       V  1  1      9.94312        0.161808    
+   3 Residual;Residual                       C  2  1      10.0678        0.166603    
+   4 Residual;Residual                       V  2  2      10.3031        0.177121    
+   5 Trait.ANI_ID                                         1.96738        0.349446    
+   6 Trait.ANI_ID                                         1.80963        0.357634    
+   7 Trait.ANI_ID                                         2.77570        0.385514    
+ P Vp1 1 2 5
+   8 Vp1                       13.881       0.18326    
+ P Vp2 1 4 7
+   9 Vp2                       15.049       0.24473    
+ P Cp 3 6
+  10 Cp                        11.877       0.38692    
+ H h2_1 5 Vp1
+     h2_1         = Trait.AN   5/Vp1        8=          0.1417    0.0248
+ H h2_2 7 Vp2
+     h2_2         = Trait.AN   7/Vp2        9=          0.1844    0.0245
+ R rg 5 6 7
+     rg           = Trait.AN/SQR[Trait.AN*Trait.AN]=    0.7744    0.0345
+ R re 2 3 4
+     re           = Residual/SQR[Residual*Residual]=    0.9947    0.0002
+ R cp Vp1 Cp Vp2
+     cp           = Cp      /SQR[Vp1     *Vp2     ]=    0.8218    0.0246
+ Notice: The parameter estimates are followed by
+          their approximate standard errors.

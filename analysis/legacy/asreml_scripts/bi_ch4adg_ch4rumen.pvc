@@ -1,0 +1,30 @@
+ ASReml 4.2ni [27 Mar 2023] bivariate_ch4_vs_weight
+          bi_ch4adg_ch4rumen.pvc created 25 Mar 2026 12:12:19.680
+
+          - - - Results from analysis of methane_per_adg methane_per_rumen - - -
+
+ Residual                      9186 effects
+   1 Residual;Residual                       V  1  1      7772.96         221.011    
+   2 Residual;Residual                       C  2  1      17.0386         4.24903    
+   3 Residual;Residual                       V  2  2     0.269540        0.497306E-01
+   4 Trait.ANI_ID                                         3234.65         214.784    
+   5 Trait.ANI_ID                                         8.89858         3.85220    
+   6 Trait.ANI_ID                                        0.151337        0.525476E-01
+ P Vp1 1 4
+   7 Vp1                       11008.        256.78    
+ P Vp2 3 6
+   8 Vp2                      0.42088       0.24264E-01
+ P Cp 2 5
+   9 Cp                        25.937        3.3825    
+ H h2_1 4 Vp1
+     h2_1         = Trait.AN   4/Vp1        7=          0.2939    0.0166
+ H h2_2 6 Vp2
+     h2_2         = Trait.AN   6/Vp2        8=          0.3596    0.1194
+ R rg 4 5 6
+     rg           = Trait.AN/SQR[Trait.AN*Trait.AN]=    0.4022    0.1664
+ R re 1 2 3
+     re           = Residual/SQR[Residual*Residual]=    0.3722    0.0883
+ R cp Vp1 Cp Vp2
+     cp           = Cp      /SQR[Vp1     *Vp2     ]=    0.3811    0.0441
+ Notice: The parameter estimates are followed by
+          their approximate standard errors.

@@ -1,0 +1,40 @@
+# This .tsv file is a mechanism for resetting initial parameter values
+# by changing the values here and rerunning the job with !CONTINUE 2.
+# You may not change values in the first 3 fields
+#                    or RP fields where RP_GN is negative.
+#
+# Fields are:
+# GN, Term, Type, PSpace, Initial_value, RP_GN, RP_scale.
+#
+  20, "ide(ANI_ID)", V, P,   0.82568061    ,   20,    1
+  22, "Variance 1", V, F,    1.0000000    ,   22,    1
+  24, "Variance 2", V, F,    1.0000000    ,   24,    1
+  26, "Variance 3", V, F,    1.0000000    ,   26,    1
+  28, "Variance 4", V, F,    1.0000000    ,   28,    1
+  30, "Variance 5", V, F,    1.0000000    ,   30,    1
+  32, "Variance 6", V, F,    1.0000000    ,   32,    1
+  34, "Variance 7", V, F,    1.0000000    ,   34,    1
+  36, "Variance 8", V, F,    1.0000000    ,   36,    1
+  38, "Variance 9", V, F,    1.0000000    ,   38,    1
+  40, "Variance 10", V, F,    1.0000000    ,   40,    1
+  23, "sat(source_cl,01).idv(units);idv(units)_1", G, P,    4.7168563    ,   23,    1
+  25, "sat(source_cl,02).idv(units);idv(units)_1", G, P,    12.459966    ,   25,    1
+  27, "sat(source_cl,03).idv(units);idv(units)_1", G, P,    11.771182    ,   27,    1
+  29, "sat(source_cl,04).idv(units);idv(units)_1", G, P,    11.977045    ,   29,    1
+  31, "sat(source_cl,05).idv(units);idv(units)_1", G, P,    11.507171    ,   31,    1
+  33, "sat(source_cl,06).idv(units);idv(units)_1", G, P,    3.3676549    ,   33,    1
+  35, "sat(source_cl,07).idv(units);idv(units)_1", G, P,    8.6234714    ,   35,    1
+  37, "sat(source_cl,08).idv(units);idv(units)_1", G, P,    11.325853    ,   37,    1
+  39, "sat(source_cl,09).idv(units);idv(units)_1", G, P,    19.175472    ,   39,    1
+  41, "sat(source_cl,10).idv(units);idv(units)_1", G, P,    7.0289103    ,   41,    1
+  19, "ped(ANI_ID);ped(ANI_ID)_1", V, P,    4.0007397    ,   19,    1
+#
+# Valid values for Pspace are F, P, U and maybe Z.
+#
+# RP_GN and RP_scale define simple parameter relationships;
+# RP_GN links related parameters by the first GN number;
+# RP_scale must be 1.0 for the first parameter in the set and
+# otherwise specifies the size relative to the first parameter.
+# Multivalue RP_scale parameters may not be altered here.
+#
+# Notice that this file is overwritten if not being read.

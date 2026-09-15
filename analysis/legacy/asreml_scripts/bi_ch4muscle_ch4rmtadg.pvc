@@ -1,0 +1,30 @@
+ ASReml 4.2ni [27 Mar 2023] bivariate_ch4_vs_weight
+          bi_ch4muscle_ch4rmtadg.pvc created 25 Mar 2026 14:27:22.930
+
+          - - - Results from analysis of ch4_adj_adg methane_per_muscle - - -
+
+ Residual                      9186 effects
+   1 Residual;Residual                       V  1  1      6.39095        0.215619    
+   2 Residual;Residual                       C  2  1     0.467991        0.296949E-01
+   3 Residual;Residual                       V  2  2     0.536266E-01    0.469174E-02
+   4 Trait.ANI_ID                                         2.00720        0.231244    
+   5 Trait.ANI_ID                                        0.187390        0.296503E-01
+   6 Trait.ANI_ID                                        0.175126E-01    0.449041E-02
+ P Vp1 1 4
+   7 Vp1                       8.3982       0.19890    
+ P Vp2 3 6
+   8 Vp2                      0.71139E-01   0.29404E-02
+ P Cp 2 5
+   9 Cp                       0.65538       0.21855E-01
+ H h2_1 4 Vp1
+     h2_1         = Trait.AN   4/Vp1        7=          0.2390    0.0252
+ H h2_2 6 Vp2
+     h2_2         = Trait.AN   6/Vp2        8=          0.2462    0.0613
+ R rg 4 5 6
+     rg           = Trait.AN/SQR[Trait.AN*Trait.AN]=    0.9995    0.0844
+ R re 1 2 3
+     re           = Residual/SQR[Residual*Residual]=    0.7994    0.0282
+ R cp Vp1 Cp Vp2
+     cp           = Cp      /SQR[Vp1     *Vp2     ]=    0.8479    0.0098
+ Notice: The parameter estimates are followed by
+          their approximate standard errors.

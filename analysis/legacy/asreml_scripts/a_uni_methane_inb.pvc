@@ -1,0 +1,18 @@
+ ASReml 4.2ni [27 Mar 2023] heritability test
+          a_uni_methane_inb.pvc created 05 Aug 2026 12:19:00.948
+
+          - - - Results from analysis of ch4_g_day2_1v3 - - -
+
+   1 ped(ANI_ID)                                          3.91973        0.354086    
+   2 ide(ANI_ID)                                          1.18586        0.292805    
+   3 Residual                                V 15869      10.7354        0.175673    
+ P Phen 1 2 3
+   4 Phen                      15.841       0.22999    
+ H direct 1 4
+     direct       = ped(ANI_   1/Phen       4=          0.2474    0.0205
+ P ani_all 1 2
+   5 ani_all                   5.1056       0.24889    
+ H repeat 5 4
+     repeat       = ani_all    5/Phen       4=          0.3223    0.0127
+ Notice: The parameter estimates are followed by
+          their approximate standard errors.

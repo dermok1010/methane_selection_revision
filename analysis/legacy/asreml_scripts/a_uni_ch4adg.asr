@@ -1,0 +1,120 @@
+ ASReml 4.2ni [27 Mar 2023] heritability test
+ Linux (x64)    4.9 Gbyte  a_uni_ch4adg  28 Mar 2026 11:34:39.161
+ * Licensed to: TEAGASC, Agriculture and Food Develop... - VS5AN3:[VOF13516]    31-may-2026         
+ *****************************************************************
+ * Contact support@asreml.co.uk for licensing and support        *
+ *********************************************************** ARG *
+ Folder: /data/Genetics/analysis/R1681_OviSeq/Dermot/Phd/Paper_3/genetic_analysis/asreml_scripts
+ ANI_ID !P
+ SEX * !A
+ ch4_GroupNumber * !A
+ pedigree_full_sas_style.csv !SORT 
+ Notice: Sorted pedigree written to: pedigree_full_sas_style.csv.SRT
+          First 143118 rows include all parents and base individuals.
+ Reading pedigree file pedigree_full_sas_style.csv.SRT: skipping            0 
+  lines
+  330812 identities in the pedigree,
+         generations on Sire side range 1 to 28
+         generations on  Dam side range 1 to 18
+     Sire Sire_of_Sire  Dam_of_Sire      Dam  Sire_of_Dam   Dam_of_Dam
+    14581         6821            2   128537           42        69778
+ Using an adapted version of  Meuwissen & Luo GSE 1992 305-313:
+ PEDIGREE [pedigree_full_sas_style.csv.SRT ] has   330812 identities,  576655 Non zero elements
+   0  NRM           330812       7   -70724.62         0
+ QUALIFIERS: !SKIP 1 !MVINCLUDE 
+ Reading P3_data.csv  FREE FORMAT skipping     1 lines
+
+ Univariate analysis of methane_per_adg                                 
+ Summary of 4437 records retained of 15869 read
+
+  Model term          Size #miss #zero   MinNon0    Mean      MaxNon0  StndDevn
+   1 ANI_ID      !P 330812     0     0   2252     255076     330811
+   2 ch4_g_day2_1v3            0     0  4.036      13.78      34.19      4.721    
+   3 co2_g_day2_1v3            0     0  43.08      841.6      2501.      290.9    
+   4 ch4_ratio                 0     0 0.2511E-02 0.1721E-01 0.1935     0.7764E-02
+   5 methane_per_dmi        3861     0  1.908      9.508      27.59      4.551    
+   6 methane_per_mbw           0     0 0.1725     0.8431      2.384     0.2790    
+   7 Metabolic_BW              0     0  7.622      16.62      33.85      2.919    
+   8 SEX                 2     0     0      1     1.3735          2
+   9 TX                        0  2126 0.3125E-01 0.3429      1.000     0.3855    
+  10 BR                        0  3026 0.3125E-01 0.1414      1.000     0.2681    
+  11 SU                        0  3373 0.3125E-01 0.1801      1.000     0.3601    
+  12 CL                        0  4011 0.3125E-01 0.6890E-01  1.000     0.2308    
+  13 CV                        0  4228 0.3125E-01 0.4154E-01  1.000     0.1973    
+  14 LY                        0  4203 0.6250E-01 0.4031E-01  1.000     0.1863    
+  15 UN                        0  2625 0.3125E-01 0.1547      1.000     0.2212    
+  16 het                       0  2528 0.1250     0.4050      1.000     0.4756    
+  17 rec                       0  3299 0.1094     0.7457E-01 0.7344     0.1345    
+  18 age_in_years              0  2969  1.000     0.3403      2.000     0.4934    
+  19 ch4_GroupNumber  1435     0     0      8   738.9966       1435
+  20 weight                    0     0  15.00      42.70      109.5      10.04    
+  21 DMI                    3861     0 0.3997      1.519      2.883     0.5887    
+  22 adg                       0     0 0.1010E-01 0.1829     0.7075     0.9905E-01
+  23 methane_per_adgVariate    0     0  10.76      128.8      2058.      179.3    
+  24 methane_per_rumen      3813     0 0.6498      2.742      7.093     0.9495    
+  25 methane_per_muscle     3813     0 0.3349      1.415      3.076     0.4862    
+  26 rumen                  3813     0  2.500      6.280      10.50      1.317    
+  27 age_in_months             0     0  2.000      6.117      19.00      3.001    
+  28 age_in_weeks              0     0  9.000      26.29      80.00      12.84    
+  29 REARING_RANK             48     0  1.000      1.843      4.000     0.5097    
+  30 BIRTH_RANK                0    25  1.000      2.033      5.000     0.6927    
+  31 ewe_birth_rank         4437     0  0.000      0.000      0.000      0.000    
+  32 ewe_rearing_rank       4437     0  0.000      0.000      0.000      0.000    
+  33 dam_parity_group_num     27     0  1.000      2.654      7.000      1.451    
+  34 ct_muscle_kg           3813     0  4.813      12.12      17.95      2.281    
+  35 ch4_adj_MBW               0     0 -15.86     0.1086      19.83      4.833    
+  36 ch4_adj_DMI            3861     0 -18.69     -5.389      9.054      4.902    
+  37 ch4_adj_adg               0     0 -9.896    -0.1631E-16  20.28      4.712    
+  38 mu                          1
+  39 ped(ANI_ID) !P 330812     0     0   2252     255076     330811
+  40 ide(ANI_ID)    330812
+
+ Notice: Too many fixed effects for !DENSE block.
+         ch4_GroupNumber is moved to SPARSE block
+          Use !DENSE 1455 to force ch4_GroupNumber into Wald F table
+ Notice: 8949 missing value(s) detected in the design variables: REARING_RANK ewe_birth_rank ewe_rearing_rank dam_parity_group_num 
+         They were treated as zeros.
+         This may be reasonable if all covariates involved are centred.
+ Forming   663077 equations:    18 dense.
+ Initial updates will be shrunk by factor    0.316
+ Notice: ReStartValues taken from a_uni_ch4adg.rsv
+ * This job uses 16 of the 56 processor threads. (!MP 16)  *
+ Notice: LogL values are reported relative to a base of -20000.000    
+ Notice: 957 singularities detected in design matrix.
+   1 LogL= -716.910     S2=  7709.5       3941 df 
+   2 LogL= -716.910     S2=  7709.5       3941 df 
+
+          - - - Results from analysis of methane_per_adg - - -
+ Akaike Information Criterion    41439.82 (assuming 3 parameters).
+ Bayesian Information Criterion  41458.66
+
+ Model_Term                             Gamma         Sigma   Sigma/SE   % C
+ ped(ANI_ID)           NRM_V 330812  0.245394       1891.85       3.27   0 P
+ ide(ANI_ID)           IDV_V 330812  0.170919       1317.69       2.34   0 P
+ Residual                SCA_V 4437   1.00000       7709.46      34.89   0 P
+
+                                   Wald F statistics
+     Source of Variation           NumDF              F-inc  
+   8 SEX                               1               0.00                 
+   9 TX                                1               2.32                 
+
+  10 BR                                1               0.37                 
+  11 SU                                1               0.26                 
+  12 CL                                1               0.46                 
+  13 CV                                1               0.16                 
+  14 LY                                1               0.00                 
+
+  15 UN                                1               0.02                 
+  16 het                               1               3.08                 
+  17 rec                               1               0.26                 
+  29 REARING_RANK                      1               1.54                 
+  30 BIRTH_RANK                        1               0.20                 
+
+  28 age_in_weeks                      1              15.27                 
+  33 dam_parity_group_num              1               0.06                 
+  19 ch4_GroupNumber                     482 effects fitted (+     953 singular)
+  39 ped(ANI_ID)                      330812 effects fitted (  294322 are zero)
+  40 ide(ANI_ID)                      330812 effects fitted (  328039 are zero)
+ * This job used at least .6 of the 4.9 Gbyte of primary workspace. * 
+     207 possible outliers in Section 1: see .res file
+ Finished: 28 Mar 2026 11:34:55.740   LogL Converged

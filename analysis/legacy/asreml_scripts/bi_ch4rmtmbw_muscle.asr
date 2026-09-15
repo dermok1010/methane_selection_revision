@@ -1,0 +1,181 @@
+ ASReml 4.2ni [27 Mar 2023] bivariate_ch4_vs_weight
+ Linux (x64)    4.9 Gbyte  bi_ch4rmtmbw_muscle  28 Mar 2026 16:01:31.620
+ * Licensed to: TEAGASC, Agriculture and Food Develop... - VS5AN3:[VOF13516]    31-may-2026         
+ *****************************************************************
+ * Contact support@asreml.co.uk for licensing and support        *
+ *********************************************************** ARG *
+ Folder: /data/Genetics/analysis/R1681_OviSeq/Dermot/Phd/Paper_3/genetic_analysis/asreml_scripts
+ ANI_ID !P
+ SEX * !A
+ ch4_GroupNumber * !A
+ Notice: Delete pedigree_full_sas_style.csv.SRT if you need the !TRIM/SORT action to be repeated.
+ Reading pedigree file pedigree_full_sas_style.csv.SRT: skipping            0 
+  lines
+  330812 identities in the pedigree,
+         generations on Sire side range 1 to 28
+         generations on  Dam side range 1 to 18
+     Sire Sire_of_Sire  Dam_of_Sire      Dam  Sire_of_Dam   Dam_of_Dam
+    14581         6821            2   128537           42        69778
+ Using an adapted version of  Meuwissen & Luo GSE 1992 305-313:
+ PEDIGREE [pedigree_full_sas_style.csv.SRT ] has   330812 identities,  576655 Non zero elements
+   0  NRM           330812       7   -70724.62         0
+ QUALIFIERS: !SKIP 1 !MVINCLUDE 
+ Reading P3_data.csv  FREE FORMAT skipping     1 lines
+
+ Bivariate analysis of ch4_adj_MBW and ct_muscle_kg                                    
+ Summary of 15869 records retained of 15869 read
+
+  Model term          Size #miss #zero   MinNon0    Mean      MaxNon0  StndDevn
+   1 ANI_ID      !P 330812     0     0    117     191224     330811
+   2 ch4_g_day2_1v3            0     0  4.011      17.90      40.31      7.560    
+   3 co2_g_day2_1v3            0     0  40.92      1190.      2869.      534.3    
+   4 ch4_ratio                 0     0 0.2511E-02 0.1588E-01 0.1935     0.6002E-02
+   5 methane_per_dmi       14022     0  1.908      13.54      66.44      7.479    
+   6 methane_per_mbw           0     0 0.1407     0.8127      2.384     0.2890    
+   7 Metabolic_BW              0     0  7.622      22.10      37.94      4.923    
+   8 SEX                 2     0     0      1     1.1234          2
+   9 TX                        0  9501 0.3125E-01 0.2942      1.000     0.4094    
+  10 BR                        0 11014 0.3125E-01 0.1540      1.000     0.2826    
+  11 SU                        0 11176 0.3125E-01 0.2143      1.000     0.3802    
+  12 CL                        0 14610 0.3125E-01 0.5815E-01  1.000     0.2173    
+  13 CV                        0 15376 0.3125E-01 0.2095E-01  1.000     0.1390    
+  14 LY                        0 15410 0.6250E-01 0.1976E-01  1.000     0.1278    
+  15 UN                        0  9809 0.3125E-01 0.2006      1.000     0.3245    
+  16 het                       0 11114 0.1250     0.2761      1.000     0.4320    
+  17 rec                       0 12854 0.3125E-01 0.5627E-01 0.8213     0.1213    
+  18 age_in_years              0  3196  1.000      2.185      7.000      1.926    
+  19 ch4_GroupNumber  1435     0     0      1   726.1350       1435
+  20 weight                    0     0  15.00      62.72      127.5      18.18    
+  21 DMI                   14022     0 0.3997      1.559      4.728     0.6815    
+  22 adg                   11432     0 0.1010E-01 0.1829     0.7075     0.9905E-01
+  23 methane_per_adg       11432     0  10.76      128.8      2058.      179.3    
+  24 methane_per_rumen     15089     0 0.6498      2.680      7.093     0.9163    
+  25 methane_per_muscle    15089     0 0.3349      1.430      3.076     0.4837    
+  26 rumen                 15089     0  2.500      6.163      12.50      1.487    
+  27 age_in_months             0     0  2.000      29.40      165.0      24.10    
+  28 age_in_weeks              0     0  9.000      126.0      709.0      103.3    
+  29 REARING_RANK           8573     0  1.000      1.809      4.000     0.5244    
+  30 BIRTH_RANK             8383   152  1.000      2.003      5.000     0.7496    
+  31 ewe_birth_rank         8041     0  1.000      1.874      5.000     0.6946    
+  32 ewe_rearing_rank       8212     0  1.000      1.761      5.000     0.5580    
+  33 dam_parity_group_num   8539     0  1.000      2.614      7.000      1.420    
+  34 ct_muscle_kg  Variate 15089     0  4.813      11.71      23.65      3.242    
+  35 ch4_adj_MBW    Variate    0     0 -20.28     0.5415E-15  21.36      6.535    
+  36 ch4_adj_DMI           14022     0 -18.69     0.3780E-15  21.93      7.474    
+  37 ch4_adj_adg           11432     0 -9.896    -0.1631E-16  20.28      4.712    
+  38 Trait                       2
+  39 Tr.SEX                      4 38 Trait     :   2   8 SEX            :    2
+  40 Tr.TX                       2 38 Trait     :   2   9 TX             :    1
+  41 Tr.BR                       2 38 Trait     :   2  10 BR             :    1
+  42 Tr.SU                       2 38 Trait     :   2  11 SU             :    1
+  43 Tr.CL                       2 38 Trait     :   2  12 CL             :    1
+  44 Tr.CV                       2 38 Trait     :   2  13 CV             :    1
+  45 Tr.LY                       2 38 Trait     :   2  14 LY             :    1
+  46 Tr.UN                       2 38 Trait     :   2  15 UN             :    1
+  47 Tr.het                      2 38 Trait     :   2  16 het            :    1
+  48 Tr.rec                      2 38 Trait     :   2  17 rec            :    1
+  49 Tr.REARING_RANK             2 38 Trait     :   2  29 REARING_RANK   :    1
+  50 Tr.BIRTH_RANK               2 38 Trait     :   2  30 BIRTH_RANK     :    1
+  51 Tr.ewe_birth_rank           2 38 Trait     :   2  31 ewe_birth_rank :    1
+  52 Tr.ewe_rearing_rank         2 38 Trait     :   2  32 ewe_rearing_ran:    1
+  53 Tr.age_in_weeks             2 38 Trait     :   2  28 age_in_weeks   :    1
+  54 Tr.ch4_GroupNumber       2870 38 Trait     :   2  19 ch4_GroupNumber: 1435
+  55 Tr.dam_parity_group_num     2 38 Trait     :   2  33 dam_parity_grou:    1
+  56 ped(ANI_ID) !P 330812     0     0    117     191224     330811
+  57 Trait.ped(ANI_ID)      661624 38 Trait   :     2  56 ped(ANI_ID)    :330812
+  58 ide(ANI_ID)    330812
+
+ Notice: Too many fixed effects for !DENSE block.
+         Tr.ch4_GroupNumber is moved to SPARSE block
+          Use !DENSE 2908 to force Tr.ch4_GroupNumber into Wald F table
+ Notice: 43375 missing value(s) detected in the design variables: REARING_RANK BIRTH_RANK ewe_birth_rank ewe_rearing_rank dam_parity_group_num 
+         not counting instances where the response (Y) was also missing.
+         They were treated as zeros.
+         This may be reasonable if all covariates involved are centred.
+ Notice: This job may require more workspace.
+
+  Notice: Dense equations reordered.
+  Notice: Tr.ch4_GroupNumber moved below Tr.dam_parity_group_num because larger.
+  15869 ID         
+      2 US          [ 40: 42]     1.8000    0.0000    0.6000
+   31738 analysis records assumed pre-sorted    2 within 15869
+      2 US          [ 43: 45]     1.1800    0.0000    0.2900
+ 330812 NRM        
+ Structure for Trait.ped(ANI_ID) has  661624 levels defined
+ Forming   995342 equations:    36 dense.
+ Initial updates will be shrunk by factor    0.300
+
+ Warning: Failed to find file bi_ch4rmtmbw_muscle.rsv
+
+ Notice: Failed to read .rsv file           90
+ * This job uses 16 of the 56 processor threads. (!MP 16)  *
+ Notice: LogL values are reported relative to a base of -40000.000    
+ Notice: 1368 singularities detected in design matrix.
+   1 LogL= -3241.65     S2=  1.0000      15111 df  :   2 components restrained
+   2 LogL=  1629.10     S2=  1.0000      15111 df  :   2 components restrained
+   3 LogL=  6990.15     S2=  1.0000      15111 df  :   3 components restrained
+   4 LogL=  10407.0     S2=  1.0000      15111 df  :   1 components restrained
+ Notice: US matrix updates modified  1 time(s) to keep them positive definite.
+   5 LogL=  11408.6     S2=  1.0000      15111 df  :   3 components restrained
+   6 LogL=  11962.5     S2=  1.0000      15111 df 
+ Notice: LogL values are reported relative to a base of -20000.000    
+   7 LogL= -7876.03     S2=  1.0000      15111 df 
+   8 LogL= -7869.80     S2=  1.0000      15111 df 
+   9 LogL= -7869.75     S2=  1.0000      15111 df 
+  10 LogL= -7869.74     S2=  1.0000      15111 df 
+
+          - - - Results from analysis of ch4_adj_MBW ct_muscle_kg - - -
+ Notice:  US structures were modified   1 times to make them positive definite.
+          If ASReml has fixed the structure [flagged by B], it may not have
+             converged to a maximum likelihood solution.
+          Used !EMFLAG 5 Single standard EM update when AI update unacceptable   
+          You could try !GU (negative definite US) or use XFA instead.
+
+ Akaike Information Criterion    55753.49 (assuming 7 parameters).
+ Bayesian Information Criterion  55806.85
+
+ Model_Term                             Sigma         Sigma   Sigma/SE   % C
+ ide(ANI_ID)           IDV_V 330812  0.642667      0.642667       4.44   0 P
+ Residual                     31738 effects
+ Residual                US_V  1  1   10.0938       10.0938      62.81   0 P
+ Residual                US_C  2  1 -0.234079     -0.234079      -1.12   0 P
+ Residual                US_V  2  2  0.524452      0.524452       4.60   0 P
+ Trait.ANI_ID            US_V  1  1   3.13835       3.13835      13.33   0 P
+ Trait.ANI_ID            US_C  2  1 -0.301147     -0.301147      -1.58   0 P
+ Trait.ANI_ID            US_V  2  2  0.108607      0.108607       0.85   0 P
+ Covariance/Variance/Correlation Matrix US Residual
+   10.09     -0.1017    
+ -0.2341      0.5245    
+ Covariance/Variance/Correlation Matrix US Trait.ped(ANI_ID)
+   3.138     -0.5159    
+ -0.3009      0.1084    
+
+                                   Wald F statistics
+     Source of Variation           NumDF              F-inc  
+  39 Tr.SEX                            2             206.06                 
+  40 Tr.TX                             2             402.26                 
+
+  41 Tr.BR                             2             222.87                 
+  42 Tr.SU                             2              93.70                 
+  43 Tr.CL                             2             153.77                 
+  44 Tr.CV                             2               0.37                 
+  45 Tr.LY                             2               0.30                 
+
+  46 Tr.UN                             2             373.54                 
+  47 Tr.het                            2              33.82                 
+  48 Tr.rec                            2               8.56                 
+  49 Tr.REARING_RANK                   2               8.68                 
+  50 Tr.BIRTH_RANK                     2               2.33                 
+
+  51 Tr.ewe_birth_rank                 1              18.44                 
+  52 Tr.ewe_rearing_rank               1              15.91                 
+  53 Tr.age_in_weeks                   2             199.19                 
+  55 Tr.dam_parity_group_num           2               1.79                 
+  54 Tr.ch4_GroupNumber                 1508 effects fitted (+    1362 singular)
+  58 ide(ANI_ID)                      330812 effects fitted (  322627 are zero)
+  57 Trait.ped(ANI_ID)                661624 effects fitted (  535164 are zero)
+ * This job used at least .8 of the 4.9 Gbyte of primary workspace. * 
+ SLOPES FOR LOG(ABS(RES)) on LOG(PV) for Section   1
+   0.00   0.43
+      53 possible outliers in Section 1: see .res file
+ Finished: 28 Mar 2026 16:02:00.629   LogL Converged

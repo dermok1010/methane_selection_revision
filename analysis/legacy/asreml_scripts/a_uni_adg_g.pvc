@@ -1,0 +1,18 @@
+ ASReml 4.2ni [27 Mar 2023] heritability test
+          a_uni_adg_g.pvc created 29 Apr 2026 09:22:58.262
+
+          - - - Results from analysis of adg_g - - -
+
+   1 ped(ANI_ID)                                          1365.19         210.677    
+   2 ide(ANI_ID)                                          892.810         190.771    
+   3 Residual                                V 4437       132.664         5.07513    
+ P Phen 1 2 3
+   4 Phen                      2390.7        69.210    
+ H direct 1 4
+     direct       = ped(ANI_   1/Phen       4=          0.5711    0.0822
+ P ani_all 1 2
+   5 ani_all                   2258.0        69.400    
+ H repeat 5 4
+     repeat       = ani_all    5/Phen       4=          0.9445    0.0027
+ Notice: The parameter estimates are followed by
+          their approximate standard errors.

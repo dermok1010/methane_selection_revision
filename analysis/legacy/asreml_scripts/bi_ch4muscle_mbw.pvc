@@ -1,0 +1,31 @@
+ ASReml 4.2ni [27 Mar 2023] bivariate_ch4_vs_weight
+          bi_ch4muscle_mbw.pvc created 28 Mar 2026 15:04:42.239
+
+          - - - Results from analysis of methane_per_muscle Metabolic_BW - - -
+
+   1 ide(ANI_ID)                                         0.206451E-01    0.155226E-01
+ Residual                     31738 effects
+   2 Residual;Residual                       V  1  1     0.391796E-01    0.115916E-01
+   3 Residual;Residual                       C  2  1     0.187727E-01    0.268181E-01
+   4 Residual;Residual                       V  2  2     0.994265        0.174739E-01
+   5 Trait.ANI_ID                                        0.230519E-01    0.107218E-01
+   6 Trait.ANI_ID                                       -0.803186E-01    0.401593E-01
+   7 Trait.ANI_ID                                         4.25818        0.911621E-01
+ P Vp1 1 2 5
+   8 Vp1                      0.82877E-01   0.45753E-02
+ P Vp2 1 4 7
+   9 Vp2                       5.2731       0.86703E-01
+ P Cp 3 6
+  10 Cp                      -0.61546E-01   0.36356E-01
+ H h2_1 5 Vp1
+     h2_1         = Trait.AN   5/Vp1        8=          0.2781    0.1267
+ H h2_2 7 Vp2
+     h2_2         = Trait.AN   7/Vp2        9=          0.8075    0.0056
+ R rg 5 6 7
+     rg           = Trait.AN/SQR[Trait.AN*Trait.AN]=   -0.2564    0.1446
+ R re 2 3 4
+     re           = Residual/SQR[Residual*Residual]=    0.0951    0.1342
+ R cp Vp1 Cp Vp2
+     cp           = Cp      /SQR[Vp1     *Vp2     ]=   -0.0931    0.0546
+ Notice: The parameter estimates are followed by
+          their approximate standard errors.

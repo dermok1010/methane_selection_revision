@@ -1,0 +1,8 @@
+P Vp1 1 4
+P Vp2 3 6
+P Cp 2 5
+H h2_1 4 Vp1
+H h2_2 6 Vp2
+R rg 4 5 6
+R re 1 2 3
+R cp Vp1 Cp Vp2

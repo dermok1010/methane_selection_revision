@@ -1,0 +1,31 @@
+ ASReml 4.2ni [27 Mar 2023] bivariate_ch4_vs_weight
+          bi_ch4rmtadg_rumen.pvc created 28 Mar 2026 16:00:04.319
+
+          - - - Results from analysis of ch4_adj_adg rumen - - -
+
+   1 ide(ANI_ID)                                         0.163459        0.185749    
+ Residual                      9186 effects
+   2 Residual;Residual                       V  1  1      6.35859        0.215692    
+   3 Residual;Residual                       C  2  1     0.389019        0.192584    
+   4 Residual;Residual                       V  2  2     0.643564        0.145933    
+   5 Trait.ANI_ID                                         1.81189        0.289439    
+   6 Trait.ANI_ID                                        0.232219        0.209206    
+   7 Trait.ANI_ID                                        0.221300        0.143701    
+ P Vp1 1 2 5
+   8 Vp1                       8.3339       0.19889    
+ P Vp2 1 4 7
+   9 Vp2                       1.0283       0.55686E-01
+ P Cp 3 6
+  10 Cp                       0.62124       0.22377    
+ H h2_1 5 Vp1
+     h2_1         = Trait.AN   5/Vp1        8=          0.2174    0.0329
+ H h2_2 7 Vp2
+     h2_2         = Trait.AN   7/Vp2        9=          0.2152    0.1376
+ R rg 5 6 7
+     rg           = Trait.AN/SQR[Trait.AN*Trait.AN]=    0.3667    0.2772
+ R re 2 3 4
+     re           = Residual/SQR[Residual*Residual]=    0.1923    0.0891
+ R cp Vp1 Cp Vp2
+     cp           = Cp      /SQR[Vp1     *Vp2     ]=    0.2122    0.0756
+ Notice: The parameter estimates are followed by
+          their approximate standard errors.
