@@ -71,3 +71,4 @@ data/
 *.log
 logs/
 .cache/
+Rplots.pdf
