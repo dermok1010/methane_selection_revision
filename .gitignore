@@ -1,0 +1,61 @@
+# ===============================
+# OS / editor junk
+# ===============================
+.DS_Store
+Thumbs.db
+*~
+*.swp
+.vscode/
+.idea/
+
+# ===============================
+# LaTeX / Word build artifacts
+# ===============================
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.synctex.gz
+*.toc
+~$*.doc*
+*.tmp
+
+# ===============================
+# R
+# ===============================
+.Rhistory
+.RData
+.Rproj.user/
+*.Rproj
+
+# ===============================
+# Python
+# ===============================
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# ===============================
+# Generated binaries / large data
+# Raw data and heavy generated artifacts do not belong in this repo;
+# analysis code and small, reviewable result summaries do.
+# ===============================
+*.zip
+*.tar.gz
+*.tar.zst
+data/raw/
+*.rds.bak
+
+# ===============================
+# Logs / caches
+# ===============================
+*.log
+logs/
+.cache/
