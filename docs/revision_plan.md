@@ -76,6 +76,23 @@ manuscript editing, no data received, no analysis started.
   repo (commit `fb1f0a2`), not a new derivation. Verified against analytic
   edge cases; not yet run on HPC. See
   `analysis/revision/asreml_pipeline/README.md` for full detail.
+- **2026-09-15 (later still)**: Redesigned the component-trait analysis
+  per Julius van der Werf's framework (via the user): the initial
+  "CH4 vs each ratio's own denominator" design (6 pairs) can't reproduce
+  Table 3's cross-pairs among all nine derived traits (e.g. RMTMBW-RMTADG,
+  CH4/MM-RMTADG), which need cross-component covariances a star design
+  lacks. Now fits the 7 underlying component traits (CH4, MBW, liveweight,
+  ADG, CO2, muscle, rumen) and their full 21-pair (co)variance structure,
+  deriving every ratio/residual trait's h2 and every pairwise correlation
+  from one assembled 7x7 G/P by matrix algebra (linear traits: exact
+  c'Gc; ratio traits: first-order Taylor gradient; any two derived
+  traits: c1'Gc2). A genuine 7-trait multivariate model is confirmed
+  syntactically supported by ASReml 4.2 and preferred if it converges,
+  but deferred until the 21-pair bivariate results exist to derive its
+  starting values from -- the manual itself flags multivariate starting
+  values as a known difficulty. Trial (7 uni + 3 representative pairs)
+  ready to run on HPC; not yet run. Full detail in
+  `analysis/revision/asreml_pipeline/README.md`.
 
 ---
 
