@@ -20,6 +20,20 @@ manuscript editing, no data received, no analysis started.
   H-matrix/genomic robustness comparison (step 10) stays explicitly
   deferred -- whether to attempt it, and whether it goes in the paper at
   all, will be decided only once steps 1-9 are solid, not before.
+- **2026-09-15 (later same day)**: PAC_data_pipeline ingested and
+  partially sanity-checked. `08_outlier_removal.R` and
+  `09_trait_derivation.R` reran byte-identical to their previously
+  captured outputs; 08's QC numbers exactly match the manuscript's
+  Methods (511 removed, 3.09%; 15,869 records / 8,185 animals). Scripts
+  01-07, 10, 11, and `data_generation.R` need external raw inputs not yet
+  provided (full list in `docs/manuscript_context.md`). Confirmed this
+  pipeline's `PAC_data_covariates_QC_NA_with_traits.csv` is the exact file
+  already used as `birth_year_source` in the mix99 genomic-evaluation
+  work; `..._plus_dam_parity.csv` is very likely (not yet confirmed) the
+  ancestor of that work's `phenotype_source`. GitHub
+  (`dermok1010/PAC_data_pipeline`) brought up to date with the HPC
+  working-tree state (pushed `8cb842d`), per explicit authorization, after
+  the above sanity check.
 
 ---
 

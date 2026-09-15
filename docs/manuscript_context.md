@@ -613,6 +613,26 @@ principles of flagging uncertainty rather than resolving it prematurely.)
 
 ### `dermok1010/PAC_data_pipeline`
 
+**Update (2026-09-15, after initial ingestion)**: GitHub has been brought
+up to date with the HPC working-tree state described below (pushed as
+`8cb842d`, consolidating the previously-unpushed `7fbecaf` commit and all
+further uncommitted working-tree changes into one commit). The three-way
+divergence described below is now historical context for how the current
+state was assembled, not a live discrepancy. Also: `08_outlier_removal.R`
+and `09_trait_derivation.R` were sanity-checked by rerunning them (patched
+working copies in `analysis/diagnostics/pac_pipeline_rerun/`, legacy copies
+untouched) against the already-captured intermediate data -- **both
+reproduced their previously-captured output files byte-for-byte**, and
+`08`'s printed QC diagnostics (511 records removed, 3.09%; 15,869 records
+from 8,185 animals remaining) match the submitted manuscript's Methods
+exactly. Found and worked around (in the working copy only) one real
+latent issue: `08_outlier_removal.R` calls `n_distinct()` (a dplyr
+function) before `library(dplyr)` is loaded -- only works if dplyr was
+already attached from a prior interactive session, consistent with the
+`.ipynb_checkpoints` file found alongside the scripts. Scripts 01-07, 10,
+11, and `data_generation.R` remain un-sanity-checked -- they need external
+raw inputs not available here (full list below).
+
 - URL: https://github.com/dermok1010/PAC_data_pipeline (public)
 - Status: this is the raw-PAC-to-analysis-dataset pipeline referenced in
   the user's revision strategy (`docs/revision_plan.md`) -- taking raw PAC
@@ -665,12 +685,55 @@ principles of flagging uncertainty rather than resolving it prematurely.)
   `09_trait_derivation.R`, `10_carcass_data_integration.R`,
   `11_dam_parity_integration.R`, plus `data_generation.R` and
   `phenotype_table.R` (position in the sequence not yet established).
-  None of these have been opened/read yet -- this is a placement-and-
-  provenance record only, not a technical review. The numbered stages
-  plausibly map onto the manuscript's Methods subsections (contemporary-
-  group construction, breed proportion, CT merge, outlier removal, trait
-  derivation, dam parity) but this mapping has not yet been verified
-  script-by-script.
+  Scripts 08 and 09 have now been run and checked (see update above); the
+  other 11 have not been opened/read in technical depth yet. The numbered
+  stages plausibly map onto the manuscript's Methods subsections
+  (contemporary-group construction, breed proportion, CT merge, outlier
+  removal, trait derivation, dam parity) but this mapping has not yet been
+  verified script-by-script beyond 08/09.
+- **External raw inputs required but not available in this project** --
+  found by grepping all 13 scripts for file paths outside
+  `PAC_data_pipeline/data/`. All are absolute HPC paths under
+  `/home/dermot.kelly/...`, from *other* HPC project directories (Paper_1,
+  Paper_3), not this pipeline's own data folder:
+  - `Dermot_primary/Paper_1/data/sheeppedweight.csv` (needed by scripts 01
+    and 11)
+  - `Phd/Paper_1/Re-run 2024/data/growing_animals_2024_raw.csv` and
+    `.../ewes_2024_raw.csv` (script 01 -- note this path uses `Phd/`
+    directly under home, not `Dermot_analysis/Phd/` like every other
+    reference; unconfirmed whether that's a real, separate path or a typo
+    in the script -- not yet resolved)
+  - `Dermot_analysis/Phd/Paper_1/Re-run 2024/data/dmi.sas7bdat` (script
+    02; a SAS file -- `haven` is already in this project's R environment)
+  - `Dermot_analysis/Phd/Paper_1/Phase_2_data/Sheep_weights.csv` (scripts
+    03, 04)
+  - `Dermot_analysis/Phd/Paper_1/Phase_2_data/master_2024.sas7bdat`
+    (script 06; also SAS)
+  - `Dermot_analysis/Phd/Paper_1/Re-run 2024/data/CT_data.csv` (script 07)
+  - `Dermot_analysis/Phd/Paper_1/Phase_2_data/sheepcarcass.csv` (script 10)
+  - `Dermot_analysis/Phd/Paper_3/genetic_analysis/asreml_scripts/P3_co2_data.csv`
+    (`data_generation.R`)
+  Until these are provided, scripts 01-07, 10, 11, and `data_generation.R`
+  cannot be run end-to-end from genuinely raw inputs -- only 08 and 09
+  could be sanity-checked, using the already-captured intermediate CSVs
+  as their input.
+- **Confirmed reuse in the mix99/genomic-evaluation project**: this
+  pipeline's output `data/PAC_data_covariates_QC_NA_with_traits.csv` is
+  byte-for-byte identical to
+  `sheep-methane-genomics-microbiome/mix99_vm_context/input_data/phenotypes/PAC_data_covariates_QC_NA_with_traits.csv`,
+  which is the `birth_year_source` for the mix99 forward-genomic-
+  evaluation work (see that repo's `analysis_work/forward_genomics_sssnpblup_v3/setup_summary.json`).
+  Separately, `data/PAC_data_covariates_QC_NA_with_traits_plus_dam_parity.csv`
+  (15,870 lines, same as `phenotype_model.csv`) shares its row count and
+  a large overlapping column set (methane traits, breed proportions,
+  het/rec, dam_parity_group_num, etc.) with
+  `sheep-methane-genomics-microbiome/persistent_cache/phase1/phenotypes/phenotype_model.csv`,
+  the actual `phenotype_source` for that same mix99 work -- **this is a
+  strong but not yet fully confirmed inference**: `phenotype_model.csv`
+  is very plausibly derived from the `_plus_dam_parity` file by column
+  selection/renaming in a separate script (e.g.
+  `sheep-methane-genomics-microbiome/scripts/rebuild/01_prepare_phenotypes.py`,
+  not yet checked), rather than confirmed identical or directly copied.
 - The pipeline's own `.gitignore` (copied for reference to
   `analysis/legacy/PAC_data_pipeline/.gitignore.upstream_reference`)
   confirms `data/*` was never tracked in its git history -- consistent
