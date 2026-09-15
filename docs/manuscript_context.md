@@ -739,6 +739,110 @@ raw inputs not available here (full list below).
   confirms `data/*` was never tracked in its git history -- consistent
   with the manuscript's data-availability statement.
 
+#### Update (2026-09-15, full end-to-end rerun of scripts 01-11)
+
+The 9 missing external raw-data files were supplied via
+`gs://dermot-phd-backup/PAC_external_inputs_2026-09-15.tar.gz` (SHA-256
+verified against the accompanying manifest on download), and the user
+separately confirmed script 01's `~/Phd/Paper_1/Re-run 2024/...` path was
+simply wrong -- the real files live under
+`~/Dermot_analysis/Phd/Paper_1/Re-run 2024/...`, as every other script's
+path already assumed.
+
+Before running anything, `*.sas7bdat` was added to `.gitignore` (two of
+the newly-supplied external files are raw SAS exports and were not
+covered by the existing csv/xlsx/rds/parquet blanket excludes).
+
+**What was discovered auditing scripts 01-05 before running them**:
+these five scripts do not read/write a shared file between each other --
+they pass R objects (`FD`, `final_data`, `full_data2`) in memory, so they
+can only be run as one continuous session, never individually via
+`Rscript <script>.R` (consistent with the `.ipynb_checkpoints` file found
+alongside the scripts -- this looks like a notebook-style workflow that
+was only partially, and inconsistently, checkpointed to disk). A single
+driver (`analysis/diagnostics/pac_pipeline_rerun/run_01_to_05.R`) sources
+01-05 in one session for this reason. Scripts 06 onward each re-read
+their input from a file written by the previous script, so they run
+standalone.
+
+Also discovered auditing script 01: legacy lines 228-275 (a trailing
+block writing `growing_animals_2024_raw.csv` / `ewes_2024_raw.csv`)
+reference objects (`ewes_lambing_dates`, `common_animals`,
+`ewes_only_subset`) that are never defined anywhere in the script -- this
+block cannot have executed as part of a clean top-to-bottom run of the
+file as it currently exists. Grepping the whole pipeline confirms those
+two output files are never read by any other script, i.e. they are a
+dead end, not a required input to anything downstream. The patched
+working copy omits this block entirely (documented in the script's own
+header) rather than inventing substitute objects to make it run.
+Similarly, script 10's output (`PAC_data_before_edits_plus_carcass.csv`)
+was confirmed by the same grep to be a dead end -- no other script reads
+it either.
+
+**Full chain result (01 through 11, patched working copies in
+`analysis/diagnostics/pac_pipeline_rerun/`, legacy originals untouched)**:
+ran end-to-end without errors (aside from benign dplyr
+"many-to-many relationship" join warnings, which just describe the
+expected one-animal-to-many-weighings/CT-scans join shape). Printed QC
+diagnostics exactly match the manuscript and the earlier 08/09-only
+sanity check: 16,535 raw records -> 511 removed (3.09%) -> 15,869 final
+records / 8,185 animals.
+
+Compared cell-by-cell (R `identical()` on shared columns) against the
+previously-captured legacy outputs at each stage:
+
+- `PAC_data_all_raw.csv` (01) through `PAC_data_before_edits.csv` (07):
+  **identical on all 226 shared columns, all 16,535 rows**, except the
+  legacy capture has one extra column, `ewe_age_years`, that no script
+  currently in the pipeline (in this repo's copy or the GitHub copy)
+  computes. This column is not part of the manuscript's stated model
+  covariates (see Section 6/7 above), so its disappearance from the
+  current script set doesn't affect any reported result -- but it does
+  confirm the scripts as they exist today are not byte-for-byte the same
+  version that produced the original captured data, somewhere upstream
+  of `ewe_age_years` having been removed (or never migrated) from the
+  current working tree.
+- `PAC_data_covariates_QC_NA_with_traits.csv` (09): same pattern, still
+  missing only `ewe_age_years`; all outlier-removal/trait-derivation
+  numbers match exactly.
+- `PAC_data_covariates_QC_NA_with_traits_plus_dam_parity.csv` (11): of
+  236 shared columns, only one differs in value --
+  `ewe_lambing_date`. In the legacy capture, `ewe_lambing_date` is
+  identically equal to `pac_date` for every ewe record (e.g. row 1:
+  lambing date "2022-06-24" == that row's own PAC test date). In the
+  freshly-rerun version, `ewe_lambing_date` instead correctly shows the
+  most recent prior lambing date (e.g. "2021-12-29" for that same
+  animal/test). This is not a new bug introduced by patching -- script
+  01 already carries an inline comment describing exactly this failure
+  mode ("After a rolling join, the join column can reflect the PAC
+  lookup date, so do not assign ewe_lambing_date from lamb_birthdate
+  directly") and a corresponding fix (`actual_lambing_date`). The
+  legacy captured file's `ewe_lambing_date` values are consistent with
+  the *pre-fix* behaviour the comment warns about, meaning the version
+  of script 01 that actually produced the manuscript's captured data
+  predates this fix, while the current working-tree script already has
+  it applied. **Consequence for the manuscript is believed to be nil**:
+  the model's dam-parity covariate (`DP` in the animal-model equation,
+  Section 6/7) is built in `11_dam_parity_integration.R` purely from the
+  Sheep Ireland pedigree table (`SI`/`dam_parity_table`, matched on
+  `ANI_ID_DAM` + the PAC animal's own `animal_birthdate`) and never reads
+  the PAC file's own `ewe_lambing_date`/`days_since_lambing` columns at
+  all -- and indeed `dam_parity_at_birth`/`dam_parity_group_num` matched
+  exactly between the fresh and legacy files. `ewe_lambing_date` and its
+  derived `days_since_lambing` appear to be diagnostic/exploratory
+  columns carried through the pipeline rather than reported model inputs,
+  but this has not been exhaustively re-checked against every table in
+  the manuscript -- flagged here as an open item rather than closed.
+- Script 10 (`PAC_data_before_edits_plus_carcass.csv`) ran cleanly;
+  not compared cell-by-cell since no legacy capture of this exact file
+  was available and, per above, nothing downstream reads it anyway.
+
+No further GitHub push was needed for this step -- `dermok1010/PAC_data_pipeline`
+was already brought up to date with the current working-tree script
+versions at commit `8cb842d` in the prior update, and none of the legacy
+scripts were changed during this rerun (only sandboxed patched copies in
+this repo's `analysis/diagnostics/`).
+
 ### `dermok1010/Methane_Selection_Index_Analysis`
 
 - URL: https://github.com/dermok1010/Methane_Selection_Index_Analysis
