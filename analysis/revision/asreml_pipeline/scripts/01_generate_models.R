@@ -4,6 +4,10 @@
 # Usage:
 #   Rscript 01_generate_models.R --set=validation
 #   Rscript 01_generate_models.R --set=full
+#   Rscript 01_generate_models.R --set=components  # CH4 x raw-component
+#                                                   # pairs, see config's
+#                                                   # component_set/
+#                                                   # component_traits
 #
 # Writes into <pipeline_root>/models/ (git-tracked). Does not run ASReml,
 # does not touch run/. See README.md for the full VM -> HPC workflow.
@@ -43,7 +47,7 @@ suppressPackageStartupMessages({
 args <- commandArgs(trailingOnly = TRUE)
 set_arg <- sub("^--set=", "", grep("^--set=", args, value = TRUE))
 if (length(set_arg) == 0) set_arg <- "validation"
-stopifnot(set_arg %in% c("validation", "full"))
+stopifnot(set_arg %in% c("validation", "full", "components"))
 
 pipeline_root <- normalizePath(
   file.path(dirname(sub("--file=", "", grep("--file=", commandArgs(), value = TRUE))), ".."),
@@ -109,6 +113,15 @@ fixed_uni <- paste(c("mu", fixed_terms), collapse = " ")
 fixed_bi <- paste(c("Trait", paste0("Tr.", fixed_terms)), collapse = " ")
 
 trait_by_code <- setNames(cfg$traits, sapply(cfg$traits, `[[`, "code"))
+# component_traits (config/models.yaml) are the raw denominator variables
+# behind each ratio trait (e.g. Metabolic_BW behind CH4/MBW) -- kept in a
+# separate list, not merged into cfg$traits, so that --set=full's
+# generate_all_pairs (all pairwise combinations of cfg$traits) is
+# unaffected by their addition. They're only reachable via --set=components.
+if (!is.null(cfg$component_traits)) {
+  trait_by_code <- c(trait_by_code,
+                      setNames(cfg$component_traits, sapply(cfg$component_traits, `[[`, "code")))
+}
 
 # ---------------------------------------------------------------------
 # Note on the fixed-effects list: the legacy bi_ch4_ch4ratio.as file has
@@ -259,6 +272,13 @@ gen_bivariate <- function(trait1, trait2) {
 if (set_arg == "validation") {
   uni_codes <- cfg$validation_set$univariate
   bi_pairs <- cfg$validation_set$bivariate
+} else if (set_arg == "components") {
+  # Bivariate CH4 x raw-denominator-component pairs, for deriving each
+  # ratio trait's h2/rg from component (co)variances instead of fitting
+  # the ratio directly -- docs/revision_plan.md Section 5 step 7. See
+  # scripts/04_derive_ratio_from_components.R for the derivation itself.
+  uni_codes <- cfg$component_set$univariate
+  bi_pairs <- cfg$component_set$bivariate
 } else {
   uni_codes <- sapply(cfg$traits, `[[`, "code")
   if (isTRUE(cfg$full_sweep$generate_all_pairs)) {

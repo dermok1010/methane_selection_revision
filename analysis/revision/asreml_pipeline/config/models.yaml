@@ -180,3 +180,55 @@ validation_set:
 full_sweep:
   generate_all_pairs: true
   exclude_pairs: []
+
+# Raw denominator/component variables behind each ratio trait above --
+# kept separate from `traits:` (not part of the Table 2 sweep, and NOT
+# included in full_sweep's generate_all_pairs) so this addition can't
+# silently change what --set=full generates. Used only via --set=components,
+# to get each component's own genetic variance and its genetic covariance
+# with CH4, from which scripts/04_derive_ratio_from_components.R derives
+# each ratio trait's h2/rg by the first-order Taylor linearisation of a
+# ratio -- the same delta-method gradient already used for real in the
+# upstream Methane_Selection_Index_Analysis repo (index_weight_methane.R /
+# MC_weight.R, commit fb1f0a2cddb82ba322cfd86b4ad3d99830385a44), extended
+# from "selection response" to "heritability/genetic correlation" (same
+# quadratic form a'Ga, a'Pa -- not a new derivation).
+# Component codes match analysis/legacy/asreml_scripts/ filename codes
+# exactly wherever a legacy pair exists (bi_ch4_mbw.as, bi_ch4_muscle.as,
+# bi_ch4_weight.as), so 01_generate_models.R's legacy-starting-value
+# lookup (matching on `bi_<code1>_<code2>.as`) finds them automatically --
+# not just cosmetic naming. No legacy bi_ch4_co2.as, bi_ch4_rumen.as, or
+# bi_ch4_adg.as exists (adg's only legacy bivariate partner is adg_g,
+# a grams-rescaled variant -- not reused here since methane_per_adg is
+# constructed from the kg/day `adg` column, not `adg_g`; see
+# 00_prepare_asreml_phenotype.R), so those three fall back to ASReml
+# auto-initialisation, same as any other never-before-fit pair.
+component_traits:
+  - code: co2
+    variable: co2_g_day2_1v3
+    label: "CO2 (g/day) -- component of CH4 ratio = CH4/(CH4+CO2)"
+  - code: mbw
+    variable: Metabolic_BW
+    label: "Metabolic BW -- component of CH4/MBW"
+  - code: adg
+    variable: adg
+    label: "ADG -- component of CH4/ADG"
+  - code: muscle
+    variable: ct_muscle_kg
+    label: "CT muscle (kg) -- component of CH4/MM"
+  - code: rumen
+    variable: rumen
+    label: "Rumen -- component of CH4/rumen"
+  - code: weight
+    variable: weight
+    label: "Liveweight -- component of CH4/LW"
+
+component_set:
+  univariate: [methane, co2, mbw, adg, muscle, rumen, weight]
+  bivariate:
+    - [methane, co2]
+    - [methane, mbw]
+    - [methane, adg]
+    - [methane, muscle]
+    - [methane, rumen]
+    - [methane, weight]

@@ -62,6 +62,20 @@ manuscript editing, no data received, no analysis started.
   HPC with real ASReml** -- that is the next step before generating the
   full submitted-style sweep. Full detail and flagged items in
   `analysis/revision/asreml_pipeline/README.md`.
+- **2026-09-15 (later still)**: `--set=full` ran successfully on HPC
+  (results not yet pulled/parsed back to the VM). Started step 7 (ratio
+  traits derived from component-trait (co)variances): added
+  `--set=components` to `01_generate_models.R`, generating six new
+  bivariate CH4 x raw-denominator models (CO2, MBW, ADG, muscle, rumen,
+  liveweight -- the actual measured variables behind each ratio trait,
+  reusing legacy ASReml starting values automatically wherever a real
+  legacy pair exists), and a new `04_derive_ratio_from_components.R` that
+  derives each ratio trait's h2 and rg-with-CH4 via first-order Taylor
+  linearisation of the ratio -- the identical delta-method gradient
+  already used for real in the upstream `Methane_Selection_Index_Analysis`
+  repo (commit `fb1f0a2`), not a new derivation. Verified against analytic
+  edge cases; not yet run on HPC. See
+  `analysis/revision/asreml_pipeline/README.md` for full detail.
 
 ---
 

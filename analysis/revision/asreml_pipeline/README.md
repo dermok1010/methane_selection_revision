@@ -52,6 +52,29 @@ the per-job-directory fix in place; once all 3 converge cleanly and
 `03_parse_results.R`'s cross-check columns agree, `--set=full` can be
 generated and run.
 
+**Update, later same day: `--set=full` ran successfully on HPC.**
+
+**Update, later still: component-trait ratio derivation added
+(docs/revision_plan.md Section 5 step 7).** `--set=components` generates
+six new bivariate CH4 x <raw denominator> models (`co2`, `mbw`, `adg`,
+`muscle`, `rumen`, `weight` -- the actual measured variables behind each
+ratio trait, not the pre-computed ratio columns), reusing legacy starting
+values automatically for the three pairs with a real legacy counterpart
+(`bi_ch4_mbw.as`, `bi_ch4_muscle.as`, `bi_ch4_weight.as`); `co2`/`adg`/
+`rumen` have no legacy bivariate pair with CH4 and fall back to ASReml
+auto-initialisation. `04_derive_ratio_from_components.R` then derives
+each ratio trait's h2 and its rg with CH4 from these bivariate (co)variances
+via first-order Taylor linearisation of the ratio -- the same delta-method
+gradient already used for real in the upstream selection-index repo
+(commit `fb1f0a2`), not a new derivation, extended from "selection
+response" to "heritability/genetic correlation." Verified against two
+analytic edge cases (denominator with zero genetic variance reduces
+exactly to the CH4-alone h2 and rg=1; the CH4+CO2 sum case for `ch4_ratio`
+correctly reduces to the nonlinear Mobius-function derivative) -- **not
+yet run on HPC**. Next step: generate + stage + submit `--set=components`
+on HPC same as the full sweep was, then run `03_parse_results.R` followed
+by `04_derive_ratio_from_components.R`.
+
 ## Directory layout
 
 ```
@@ -65,12 +88,21 @@ scripts/     00_prepare_asreml_phenotype.R  -- derive the curated,
                  bins, etc.) from this repo's canonical PAC pipeline
                  output. Platform-aware (--platform=vm|hpc).
              01_generate_models.R  -- config -> .as/.pin files in models/.
-                 --set=validation | --set=full
+                 --set=validation | --set=full | --set=components
              02_stage_run_dir.R  -- populate run/ with phenotype +
                  pedigree + generated models under the bare filenames
                  the .as files reference. --platform=vm|hpc
              03_parse_results.R  -- run/*.asr(+.pvc) -> results/*.csv,
                  with independent cross-checks (see below).
+             04_derive_ratio_from_components.R  -- reads
+                 results/bivariate_summary.csv for the --set=components
+                 pairs (CH4 x each ratio trait's raw denominator) and
+                 derives each ratio trait's h2 and its genetic correlation
+                 with CH4 via first-order Taylor linearisation of the
+                 ratio, instead of (or as a cross-check against) fitting
+                 the ratio directly. docs/revision_plan.md Section 5 step
+                 7; see the script's own header for the method and its
+                 upstream provenance.
              lib_classify_convergence.R  -- shared convergence-status
                  classifier (used by both the Slurm retry loop and the
                  result parser), using ASReml's own documented message
@@ -129,6 +161,13 @@ Rscript scripts/01_generate_models.R --set=full
 Rscript scripts/02_stage_run_dir.R --platform=hpc
 slurm/submit_batch.sh                     # submits ONE array job, throttled -- see "License concurrency" below
 Rscript scripts/03_parse_results.R
+
+# Component-trait ratio derivation (docs/revision_plan.md Section 5 step 7)
+Rscript scripts/01_generate_models.R --set=components
+Rscript scripts/02_stage_run_dir.R --platform=hpc
+slurm/submit_batch.sh
+Rscript scripts/03_parse_results.R
+Rscript scripts/04_derive_ratio_from_components.R  # -> results/ratio_from_components.csv
 ```
 
 ## License concurrency
