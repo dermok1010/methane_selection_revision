@@ -6,6 +6,12 @@
 # starting point -- revisit if the full sweep's bivariate models need
 # more time/memory than the legacy single-pair runs did.
 #SBATCH --job-name=asreml_model
+# --output/--error left as relative-path fallbacks here, but
+# submit_batch.sh always overrides these with absolute paths on the
+# sbatch command line -- do not rely on these two lines if submitting
+# any other way (a relative path is resolved against wherever `sbatch`
+# was invoked from, not this script's location, and fails instantly if
+# that directory doesn't exist).
 #SBATCH --output=slurm_logs/%x-%j.out
 #SBATCH --error=slurm_logs/%x-%j.err
 #SBATCH --ntasks=1

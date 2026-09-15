@@ -41,6 +41,16 @@ for jobname in "${jobnames[@]}"; do
     echo "  SKIP: ${jobname}.as not found in $RUN_DIR" >&2
     continue
   fi
-  jobid=$(sbatch --parsable --job-name="$jobname" --export="ALL,JOBNAME=$jobname" "$SCRIPT_DIR/asreml_job.slurm")
+  # --output/--error given as absolute paths on the command line: Slurm
+  # resolves #SBATCH --output=slurm_logs/... relative to wherever sbatch
+  # was INVOKED from, not relative to the .slurm script's own location --
+  # a relative path there fails instantly (job can't even start if Slurm
+  # can't open the output file) unless submit_batch.sh happens to be run
+  # from exactly slurm/. Command-line options override #SBATCH lines, so
+  # this makes submission location-independent.
+  jobid=$(sbatch --parsable --job-name="$jobname" \
+    --output="$SCRIPT_DIR/slurm_logs/%x-%j.out" \
+    --error="$SCRIPT_DIR/slurm_logs/%x-%j.err" \
+    --export="ALL,JOBNAME=$jobname" "$SCRIPT_DIR/asreml_job.slurm")
   echo "  submitted ${jobname} as Slurm job ${jobid}"
 done
