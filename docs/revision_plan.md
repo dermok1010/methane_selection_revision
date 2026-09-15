@@ -1,0 +1,336 @@
+# Revision strategy: "Genetic Parameters and Selection Responses for
+# Alternative Methane Trait Definitions in Pasture-Based Sheep" (GSEV-D-26-00126)
+
+This is a living document recording the revision strategy as currently
+agreed, not a fixed spec. It should be updated as the rebuild proceeds and
+decisions firm up or change. See `docs/manuscript_context.md` for the
+detailed read of the submitted manuscript itself, and
+`reviews/GSEV-D-26-00126_reviewer_comments.txt` for the reviewer comments
+verbatim.
+
+Status as of this document's creation: reviewer comments read; no
+manuscript editing, no data received, no analysis started.
+
+---
+
+## 1. Reviewers' main substantive concerns (interpretation)
+
+### Reviewer 1 -- three stated reasons for major revision
+
+**(a) A genetic parameter estimate that conflicts with prior literature,
+uncommented.** CH4 ratio: h²=0.08(0.02), t=0.09(0.01) in this manuscript,
+vs. Jonker et al. (2018) reporting h²=0.17-0.25 and t=0.27-0.43 across
+three lamb/ewe x respiration-chamber/PAC combinations. This is Reviewer
+1's headline concern and the one they explicitly say "made me suspect
+there is some underlying issue with the analysis itself." They back this
+suspicion with a list of secondary observations that read as symptoms of
+insufficient rigor rather than independent complaints:
+  - `CH4/MBW` is defined once then silently renamed `MI` for the rest of
+    the paper.
+  - Units for `CH4 ratio` (and CO2 generally) are never stated, and no
+    table of means/units exists for CO2 at all -- with values this small,
+    a rounding/unit error is plausible.
+  - No formal tabulation of fixed-effect/covariate significance or
+    variance explained (e.g. how much variance breed proportion
+    accounts for).
+  - No reported genetic connectedness/confounding diagnostics.
+  - The model equation as printed is missing "+ e" even though the text
+    describes a residual term -- **this exact discrepancy was
+    independently found during the initial manuscript read** (see
+    `docs/manuscript_context.md` §6) via a second-pass extraction that
+    recovered the embedded equation object directly; it is very likely a
+    write-up/typesetting slip rather than evidence the model was actually
+    misspecified, but it is real and needs fixing regardless.
+  - PAC contemporary groups pooled animals of very different ages/sizes
+    (and therefore very different absolute liveweight and gas-production
+    scale) with no discussion of variance-scaling/normalisation across
+    groups.
+  - Overall ask: re-examine the analysis, and add literature comparison
+    plus supplementary diagnostic detail.
+
+**(b) Trait/index justification vs. a real farm economic model.**
+Ratio/residual methane traits are, in Reviewer 1's reading, implicitly
+acting as proxies for feed intake (which was never measured). The
+economically relevant question is methane and production *per unit feed
+intake*. More importantly: **~70% of a ewe flock's feed goes to ewe
+maintenance and reproduction, only ~30% to lamb carcass production** --
+so fecundity, ewe longevity, and lamb survival plausibly matter more to
+a real bio-economic outcome than liveweight or ADG, and none of that is
+in the paper's trait set.
+
+**(c) Smith-Hazel/selection-index oversimplification.** "Progress per
+generation" language is used throughout but is actually response at
+selection intensity i=1 -- reviewer wants this made explicit everywhere,
+not just derivable from one line. Real sheep breeding operates at
+i approx 1.7, generation interval approx 2.8 years, with partial trait
+measurement, sex differences, and variable genomic/EBV accuracy across
+animals -- none of which is acknowledged, even as a caveat. Smith-Hazel
+theory itself is a first-order approximation whose limitations under
+selection (changing genetic (co)variances over generations) are
+increasingly well documented -- reviewer explicitly requests a citation
+to Cuyabano et al. (2025, bioRxiv, "Trajectories of Genetic Correlations
+in Populations under Selection") and an acknowledgement of this
+limitation.
+
+### Reviewer 2 -- more general, plus a minor-comments list
+
+- Wants deeper **biological interpretation** of the range of methane
+  phenotypes, not just statistical description.
+- Asks **why CO2** was chosen as a covariate for `RMTMBW+CO2`
+  specifically, and suggests analysing CO2 **as its own trait** given it
+  was already measured -- for insight into energy balance/physiology.
+- PAC method: pros/cons for this specific study, whether it captures
+  "real" emissions, and how the generally low number of repeated records
+  per animal was handled.
+- Wants the Discussion to compare findings against other studies more
+  directly (similar? surprising?) and to address **transferability**
+  beyond an Irish grass-based system.
+- Asks whether **splitting by physiological stage** (growing vs. adult)
+  was considered, given known physiological differences in methane
+  between stages.
+- Minor comments include several genuinely substantive points despite
+  being filed as "minor": pedigree completeness/sire count not reported;
+  the permanent environmental effect is fit despite only ~25% of animals
+  having repeats, with no discussion of alternatives; heritability/
+  repeatability calculation formulas not given in Methods; and -- **line
+  499**: explicitly notes that a *phenotypic* residual (CH4 regressed on
+  weight) does not make the resulting trait *genetically* independent of
+  weight. This is the same point already identified independently in
+  `docs/manuscript_context.md` and in the user's own framing of the
+  residual-trait reinterpretation below -- reviewer and author have
+  converged on the same concern from different directions.
+
+### Where the two reviewers overlap
+Both raise: comparison against prior literature (R1 as a suspected-error
+flag, R2 as a general Discussion request -- these are really the *same*
+underlying ask at different levels of urgency); physiological-stage
+handling (R1 via the heteroscedasticity/contemporary-group-scaling angle,
+R2 via a direct stage-stratification question); and the
+genetic-independence-of-residuals point (R2 line 499, and independently
+the author's own strategy note below).
+
+---
+
+## 2. Does the proposed strategy address these concerns?
+
+**Mostly yes, with real gaps.** Point-by-point against Section 1:
+
+| Reviewer concern | Addressed by current strategy? |
+|---|---|
+| (a) CH4-ratio vs. Jonker et al. discrepancy | **Not explicitly.** The PAC-pipeline rebuild will reproduce the numbers, but nothing in the stated plan singles out CH4 ratio for special scrutiny or commits to a systematic literature-comparison table. This is the reviewers' most serious "is this actually wrong" concern and needs to be a named checkpoint, not something expected to fall out incidentally. |
+| MI/CH4-MBW naming, missing "+e", units | Naturally fixed by careful manuscript rewriting once the pipeline is documented; low risk, just needs to not be forgotten. |
+| Fixed-effect significance/variance-explained tabulation | **Not currently planned.** Needs to be an explicit diagnostic deliverable. |
+| Connectedness/confounding | **Not currently planned.** Same -- needs to be explicit. |
+| CG heteroscedasticity across ages/sizes | **Not currently planned as a first-class item** -- "physiological-stage differences" is on the tracked-issues list, but this is really the same concern as R2's stage-stratification question and deserves elevation, not just tracking. |
+| (b) Feed-intake proxy / ewe-maintenance-cost critique | **Indirectly, by scope reduction.** Narrowing the selection-index section to a small, explicitly-limited demonstration largely defuses the "you're missing 70% of the economics" critique, because the paper would no longer claim to represent a real breeding objective. This needs to be stated explicitly and early in the paper, not just reflected in a smaller results section, or it will read as dodging the point rather than addressing it. |
+| (c) i=1 clarity, real intensity/generation interval, partial measurement/genomics caveats, Cuyabano et al. citation | **Not yet in the stated plan.** These are cheap (a paragraph + a citation) and should be added regardless of how much the index section itself shrinks. |
+| Biological interpretation depth (R2) | Not yet planned as a discrete task -- reasonable to leave until final rebuilt numbers exist, but should not be forgotten. |
+| Why CO2 as covariate / CO2 as its own trait (R2) | **Not currently planned.** Cheap to add given CO2 is already QC'd in the existing pipeline; directly answers R2. |
+| PAC pros/cons, sparse repeats (R2) | Partly a Discussion-writing task; partly connects to the RMTADG permanent-environmental-variance precision concern already flagged in `docs/manuscript_context.md` (sigma_pe = 0.54, SE 0.50) -- worth handling together. |
+| Literature comparison / transferability (R2) | Same as (a) above -- should be unified into one systematic comparison, not two separate small fixes. |
+| Stage-splitting (R2) | See CG heteroscedasticity above -- same underlying issue from two reviewers. |
+| Pedigree completeness (R2 minor) | Directly served by the planned pedigree-pipeline rebuild -- just needs to be reported in the revised text. |
+| PE effect with sparse repeats (R2 minor) | Not currently planned as an explicit check; connects to the RMTADG precision concern. |
+| Residual != genetically independent (R2 line 499) | **Yes, directly.** This is exactly the point in the user's own residual-trait reinterpretation. |
+| Ratio/residual reinterpretation, residual transparency argument | **Yes**, this is the strategy's most developed piece and is scientifically sound (see caveat in Section 4). |
+| Smith-Hazel-is-an-approximation critique | Addressed by scope reduction, but the specific citation/caveat request is not yet explicitly slotted in. |
+
+---
+
+## 3. What the user's framing may be overlooking
+
+1. **The CH4-ratio discrepancy needs to be a named, early rebuild
+   checkpoint**, not an incidental output of reproducing everything else.
+   If the rebuild reproduces the same low h²/t, that's a genuinely useful
+   result (rules out a code bug, and motivates a real biological/
+   measurement-based explanation for the Discussion -- e.g. this ratio's
+   very small genetic SD, CVa=0.24%, the lowest of any trait examined, is
+   itself informative). If it doesn't reproduce, that is exactly the kind
+   of silently-wrong result this project's own working principles
+   (`CLAUDE.md`) are designed to catch early rather than late.
+2. **Connectedness/confounding diagnostics and formal fixed-effect
+   variance-explained reporting** are explicit, specific reviewer
+   requests with no current home in the plan. These belong in
+   `analysis/diagnostics/` alongside the reproduction work, not treated
+   as an afterthought for the response letter.
+3. **Contemporary-group heteroscedasticity across physiological stages**
+   (R1) and **stage-stratification** (R2) are the same underlying
+   question asked two different ways, and it is a real statistical
+   question, not just a writing gap: if lambs, hoggets, and mature ewes
+   differ substantially in absolute methane/liveweight scale, pooling
+   them under a single residual/genetic variance structure with only a
+   fixed contemporary-group mean adjustment could distort heritability
+   estimates. This deserves an explicit sensitivity analysis (e.g. a
+   heterogeneous-residual-variance model, or stage-stratified univariate
+   reruns) during the rebuild, not just a Discussion caveat.
+4. **A systematic literature-comparison table** (this study's h²/t/rg
+   against Jonker et al. and the other cited sheep/beef/dairy methane
+   genetics literature) would answer R1's most serious concern and R2's
+   general comparison request with one deliverable. Worth planning as a
+   concrete table, not just narrative text.
+5. **CO2 as its own analysed trait** is a cheap, direct answer to R2 that
+   isn't in the current plan, and the phenotype pipeline already
+   QC-screens CO2 (per the submitted Methods), so the marginal cost of
+   adding it is low.
+6. **The selection-index scope reduction needs to be framed explicitly
+   and early in the paper** (e.g. in the Introduction/Discussion, not
+   just reflected by a smaller Results section), or Reviewer 1's "this
+   doesn't represent a real breeding objective" critique will look
+   dodged rather than answered. Explicitly naming the omission (ewe
+   maintenance cost, fecundity/longevity/survival) even while declining
+   to model it is likely to land better with a reviewer who raised it
+   specifically.
+7. **Practical caveats for the selection-index section are cheap and
+   currently unplanned**: stating the real i approx 1.7 / generation
+   interval approx 2.8 years, acknowledging partial measurement and
+   variable genomic/EBV accuracy in practice, and citing Cuyabano et al.
+   (2025) on Smith-Hazel's limitations under selection. None of this
+   requires new analysis, just text -- but it directly answers a named
+   reviewer request and should not be left implicit.
+
+---
+
+## 4. What I'd push back on or refine in the proposed strategy
+
+1. **The residual/weight algebraic equivalence is correct, but should be
+   framed carefully to avoid overclaiming novelty.** Given
+   `R = CH4 - beta*W` with `beta` fixed, `R` is by construction a linear
+   function of `CH4` and `W`. Any two linear combinations of `{CH4, W}`
+   span the same two-dimensional space, so it is close to a direct
+   consequence of Smith-Hazel index theory being invariant under linear
+   reparameterisation of the goal-trait basis, rather than a new
+   mathematical result. That does not make it a weak point for the
+   paper -- **the actual contribution is diagnosing that the resulting
+   nominal index weights on `(R, W)` are less transparent/interpretable
+   than on `(CH4, W)`**, which is a genuinely useful, underappreciated
+   point. The revision should frame it that way explicitly (clarifying
+   an underappreciated consequence of standard theory) rather than as a
+   novel derivation, so a sharp reviewer or editor doesn't dismiss it
+   with "well, of course -- R is linear in CH4 and W."
+2. **beta itself is estimated, not fixed, and this has knock-on
+   consequences worth flagging (not necessarily resolving) during the
+   rebuild.** `R`'s own variance components are computed from data that
+   already embeds the estimated `beta`, so `R`'s heritability/genetic
+   correlations are not independent of `beta`'s sampling error. If Monte
+   Carlo uncertainty propagation resamples variance components/
+   correlations for `R` and separately for `beta`-dependent quantities
+   without accounting for that shared dependence, the uncertainty
+   intervals could be mis-stated. Worth a specific check during the
+   diagnostics stage, not something to assume is fine or broken either
+   way right now.
+3. **Ratios correctly excluded from the same equivalence argument** --
+   agreed, forcing a symmetric "ratio equivalence" analysis would be
+   artificial given the linearisation depends on population means (not a
+   fixed linear transform of the same two variables), and the strategy
+   is right not to force it.
+4. **The genomic/H-matrix comparison should stay explicitly secondary
+   and possibly deferred**, for the same reason the selection-index
+   section is being narrowed: the reviewers did not ask for it, and this
+   revision's job is to defensibly answer what reviewers *did* ask,
+   cleanly, rather than to grow scope. Treat it as an optional robustness
+   analysis to attempt only once the pedigree rebuild, ratio/residual
+   work, and selection-index reduction are solid -- and include it in the
+   revised paper only if it strengthens the response without diluting
+   focus. This mirrors the discipline the user is already applying to the
+   selection-index section; worth applying consistently.
+5. **"Rebuild from the beginning" is the right instinct given a suspected
+   analysis discrepancy, but should be explicitly checkpointed against
+   the submitted numbers at each stage** (phenotype construction -> Table
+   1 descriptive stats; pedigree -> stated pedigree/animal counts;
+   variance components -> Table 2; correlations -> Tables 3-5), not just
+   run end-to-end and compared only at the final output. Catching a
+   divergence early (e.g. at the phenotype-construction stage) is far
+   cheaper to diagnose than after a full ASReml re-run.
+
+---
+
+## 5. Proposed order for introducing pipelines and rebuilding
+
+This follows the user's own instinct (PAC pipeline first, then genetics,
+then selection index, genomics last/optional) but makes the diagnostic
+checkpoints explicit and inserts the cheap wins (CO2-as-trait, literature
+comparison, caveat text) where they naturally fall out of other work
+rather than being bolted on at the end.
+
+1. **PAC raw-data -> QC/editing -> phenotype-construction pipeline**
+   (as specified first). Reproduce exactly as submitted; check against
+   Table 1's n/mean/SD/range for every trait as the validation target.
+   Document in `analysis/legacy/` (as received) and, once understood,
+   note any proposed changes separately rather than editing in place.
+2. **Rebuilt pedigree pipeline.** Needed before any ASReml rerun; also
+   directly produces the pedigree-completeness/sire-count reporting R2
+   asked for.
+3. **Reproduce the submitted ASReml genetic-parameter analyses on the
+   rebuilt phenotype + pedigree pipeline** (Tables 1-5), checkpointed
+   trait-by-trait against the submitted values. **CH4 ratio gets
+   dedicated, explicit scrutiny at this stage** -- units, construction,
+   outlier handling, and model fit specifically -- given it's the
+   reviewers' headline concern.
+4. **Diagnostics bundle**, run alongside step 3 since it shares the same
+   rebuilt model: connectedness/confounding metrics, formal fixed-effect
+   significance/variance-explained tabulation, and a contemporary-group
+   heteroscedasticity / physiological-stage-stratified sensitivity check
+   (answering R1's scaling concern and R2's stage-splitting question
+   together).
+5. **Systematic literature-comparison table** (this study vs. Jonker et
+   al. and other cited methane-genetics literature), built once step 3's
+   numbers are final.
+6. **CO2 as its own analysed trait** -- cheap extension once the
+   phenotype pipeline (which already QC-screens CO2) and base ASReml
+   reproduction are working.
+7. **Ratio-trait component-based (mean/variance/covariance-derived)
+   analysis**, compared against the direct-fit reproduction from step 3,
+   per the user's plan.
+8. **Residual-methane reinterpretation**: the CH4+weight <-> residual+
+   weight equivalence demonstration, framed per Section 4 point 1 above,
+   including a check of point 2 above (beta's estimation uncertainty).
+9. **Selection-index section reduced to a small demonstration**,
+   incorporating the transparency/equivalence point from steps 7-8, the
+   explicit-scope-limitation framing (Section 3 point 6), and the cheap
+   caveat text (i approx 1.7, generation interval, partial measurement/
+   genomics, Cuyabano et al. citation).
+10. **(Optional, deferred) H-matrix/genomic robustness comparison** --
+    attempted only after 1-9 are solid; included in the paper only if it
+    clearly strengthens the response without diluting focus.
+11. **Manuscript rewrite**: integrate all of the above, plus the
+    editorial/terminology punch-list (Section 6 below), plus the
+    biological-interpretation, literature-comparison, and transferability
+    Discussion improvements, plus the point-by-point response-to-reviewers
+    document.
+
+---
+
+## 6. Editorial / low-risk punch-list (track, don't lose)
+
+- `CH4/MBW` defined once, then called `MI` throughout -- pick one name
+  and use it consistently.
+- Model equation missing "+ e" as printed (embedded-equation-object issue
+  confirmed independently, see `docs/manuscript_context.md` §6).
+- State units for CH4 ratio and CO2 explicitly; add a means/SD/units
+  table entry for CO2.
+- "Charollais" (as printed) vs. "Charolais" (correct spelling, per
+  Reviewer 2) -- note the manuscript is internally consistent in using
+  the double-l spelling throughout, so this is a single global fix, not
+  scattered typos.
+- "alternative" -> "different" (or similar) per Reviewer 2's stylistic
+  preference, throughout.
+- Introduce heritability/repeatability calculation formulas explicitly in
+  Methods.
+- Introduce the CH4/CO2-related ratio trait properly in Methods if not
+  already fully specified there (Reviewer 2, line 297) -- verify against
+  the rebuilt Section 5 trait definitions once code is available.
+- Check "why two numbers for CH4 ratio" (Reviewer 2, line 304) against
+  the actual submitted table/text at that location -- not yet diagnosed.
+- Italicise model term symbols consistently (Reviewer 2, line 202).
+
+---
+
+## 7. Open questions for the user (not urgent, for when convenient)
+
+- Should the literature-comparison table live in the main text or
+  supplementary material?
+- For the CG heteroscedasticity / stage-stratification check: full
+  heterogeneous-residual-variance model, or simpler stage-stratified
+  univariate reruns as a sensitivity check?
+- Preferred venue/format for the H-matrix comparison if it does end up
+  included (main text table, supplementary, or just narrative mention)?

@@ -192,6 +192,13 @@ a  ~ N(0, A * sigma_a^2)      additive genetic
 pe ~ N(0, I * sigma_pe^2)     permanent environmental
 e  ~ N(0, I * sigma_e^2)      residual
 ```
+**Note**: the "+ e" is added here for clarity but is genuinely absent from
+the equation as embedded in the submitted `.docx` -- confirmed
+independently by Reviewer 1 (see `docs/revision_plan.md`), who flagged
+the identical discrepancy. The text narrative describes a residual term,
+so this is very likely a write-up/typesetting slip rather than evidence
+the fitted model omitted a residual -- but it needs an explicit fix in
+the revision regardless.
 A = numerator relationship matrix; I = identity.
 
 Fixed effects: sex (class); breed-proportion covariates BR/CL/CV/LY/SU/TX;
