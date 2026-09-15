@@ -32,7 +32,9 @@ if [ "$#" -gt 0 ]; then
 else
   jobnames=()
   for d in "$RUN_DIR"/*/; do
-    jobnames+=("$(basename "$d")")
+    name="$(basename "$d")"
+    [ "$name" = "state" ] && continue  # not a job directory -- see config/paths.yaml's state_dir
+    jobnames+=("$name")
   done
 fi
 
