@@ -611,6 +611,71 @@ principles of flagging uncertainty rather than resolving it prematurely.)
 
 ## 16. External / upstream analysis resources
 
+### `dermok1010/PAC_data_pipeline`
+
+- URL: https://github.com/dermok1010/PAC_data_pipeline (public)
+- Status: this is the raw-PAC-to-analysis-dataset pipeline referenced in
+  the user's revision strategy (`docs/revision_plan.md`) -- taking raw PAC
+  records through QC/editing and phenotype construction. Unlike
+  `Methane_Selection_Index_Analysis`, this one's *code* has been brought
+  into this repository at `analysis/legacy/PAC_data_pipeline/scripts/`
+  (per this repo's own structure: `analysis/legacy/` = "material carried
+  over from the original submission"), preserved as received, not yet
+  read in technical depth or modified. Its **data** was explicitly not
+  brought into git anywhere -- copied only to
+  `analysis/legacy/PAC_data_pipeline/data/` on the VM filesystem, which
+  `.gitignore` blanket-excludes (`**/data/`), consistent with the
+  manuscript's own Data Availability statement that the underlying data
+  is commercially sensitive and not public.
+- **Provenance is a three-way divergence, not a single commit SHA** --
+  recorded precisely because silently treating these as equivalent would
+  violate this project's own "distinguish what is known from unverified"
+  principle:
+  1. **GitHub HEAD** (public repo, cloned as a sibling reference checkout
+     at `~/PAC_data_pipeline`, not modified): `0bdc041` "fixed CT script".
+  2. **HPC-committed but never pushed** (present in the tarball snapshot
+     the user provided via `gs://dermot-phd-backup/PAC_data_pipeline_2026-09-15.tar.gz`,
+     absent from GitHub): one further commit, `7fbecaf` "added carcass
+     and phenotype scripts", adding `10_carcass_data_integration.R` and
+     `phenotype_table.R` and extending `08_outlier_removal.R`/
+     `09_trait_derivation.R`.
+  3. **HPC working tree at the time of the snapshot (uncommitted, most
+     current)** -- this is what was actually brought into this
+     repository. Relative to commit `7fbecaf`: `git diff --stat` showed
+     436 insertions / 537 deletions across
+     `01_sheep_ire_merge.R` (297 lines changed -- the largest single
+     change), `02_dmi_merge.R`, `03_weight_before_after_merge.R`,
+     `04_adg.R`, `05_CG_creation.R`, `06_breed_integration.R`,
+     `07_CT_merge.R`, `08_outlier_removal.R` (350 lines changed, mostly
+     deletions -- plausibly a substantial simplification, not yet read),
+     `09_trait_derivation.R`, and `phenotype_table.R`; plus two entirely
+     new, never-committed files: `11_dam_parity_integration.R` and
+     `data_generation.R`.
+- **Which state actually produced the submitted manuscript's numbers is
+  not yet established** -- but the working-tree state is the most
+  plausible candidate: the manuscript explicitly uses dam parity as a
+  model covariate (Section 6 above), and only `11_dam_parity_integration.R`
+  (present solely in the working-tree state) accounts for that. This is
+  an inference, not a confirmed fact, and should be verified once the
+  pipeline is actually read and run, not assumed.
+- **Scripts, in the order implied by their numbering** (01-11, plus two
+  unnumbered): `01_sheep_ire_merge.R`, `02_dmi_merge.R`,
+  `03_weight_before_after_merge.R`, `04_adg.R`, `05_CG_creation.R`,
+  `06_breed_integration.R`, `07_CT_merge.R`, `08_outlier_removal.R`,
+  `09_trait_derivation.R`, `10_carcass_data_integration.R`,
+  `11_dam_parity_integration.R`, plus `data_generation.R` and
+  `phenotype_table.R` (position in the sequence not yet established).
+  None of these have been opened/read yet -- this is a placement-and-
+  provenance record only, not a technical review. The numbered stages
+  plausibly map onto the manuscript's Methods subsections (contemporary-
+  group construction, breed proportion, CT merge, outlier removal, trait
+  derivation, dam parity) but this mapping has not yet been verified
+  script-by-script.
+- The pipeline's own `.gitignore` (copied for reference to
+  `analysis/legacy/PAC_data_pipeline/.gitignore.upstream_reference`)
+  confirms `data/*` was never tracked in its git history -- consistent
+  with the manuscript's data-availability statement.
+
 ### `dermok1010/Methane_Selection_Index_Analysis`
 
 - URL: https://github.com/dermok1010/Methane_Selection_Index_Analysis

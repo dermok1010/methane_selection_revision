@@ -46,12 +46,24 @@ venv/
 # Generated binaries / large data
 # Raw data and heavy generated artifacts do not belong in this repo;
 # analysis code and small, reviewable result summaries do.
+#
+# The underlying PAC/pedigree/phenotype data is commercially sensitive
+# (per the submitted manuscript's own Data Availability statement) and
+# must never be committed, regardless of where it lands in the tree --
+# blanket-ignore any "data/" directory anywhere, not just at the repo
+# root, plus the raw file types themselves as defense-in-depth.
 # ===============================
 *.zip
 *.tar.gz
 *.tar.zst
-data/raw/
+data/
+**/data/
 *.rds.bak
+*.csv
+*.xlsx
+*.xls
+*.rds
+*.parquet
 
 # ===============================
 # Logs / caches
