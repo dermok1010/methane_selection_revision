@@ -173,9 +173,9 @@ if (length(uni_rows) > 0) {
   uni_df <- do.call(rbind, lapply(uni_rows, as.data.frame, stringsAsFactors = FALSE))
   write.csv(uni_df, file.path(results_dir, "univariate_summary.csv"), row.names = FALSE)
   cat("Wrote", nrow(uni_df), "rows to results/univariate_summary.csv\n")
-  if (any(!isTRUE(uni_df$check_agree_h2) & !is.na(uni_df$check_agree_h2))) {
+  if (any(!is.na(uni_df$check_agree_h2) & !uni_df$check_agree_h2)) {
     cat("*** WARNING: h2 mismatch between VPREDICT and independent Model_Term recomputation for:",
-        paste(uni_df$trait_code[!isTRUE(uni_df$check_agree_h2) & !is.na(uni_df$check_agree_h2)], collapse = ", "), "\n")
+        paste(uni_df$trait_code[!is.na(uni_df$check_agree_h2) & !uni_df$check_agree_h2], collapse = ", "), "\n")
   }
 } else {
   cat("No a_uni_* job directories found in", run_dir, "\n")
@@ -239,9 +239,9 @@ if (length(bi_rows) > 0) {
   bi_df <- do.call(rbind, lapply(bi_rows, as.data.frame, stringsAsFactors = FALSE))
   write.csv(bi_df, file.path(results_dir, "bivariate_summary.csv"), row.names = FALSE)
   cat("Wrote", nrow(bi_df), "rows to results/bivariate_summary.csv\n")
-  if (any(!isTRUE(bi_df$check_agree_rg) & !is.na(bi_df$check_agree_rg))) {
+  if (any(!is.na(bi_df$check_agree_rg) & !bi_df$check_agree_rg)) {
     cat("*** WARNING: rg mismatch between VPREDICT and independent Model_Term recomputation for:",
-        paste(bi_df$pair[!isTRUE(bi_df$check_agree_rg) & !is.na(bi_df$check_agree_rg)], collapse = ", "), "\n")
+        paste(bi_df$pair[!is.na(bi_df$check_agree_rg) & !bi_df$check_agree_rg], collapse = ", "), "\n")
   }
 } else {
   cat("No bi_* job directories found in", run_dir, "\n")
