@@ -6,9 +6,9 @@ Pasture-Based Sheep". This repository manages tracing reported results back
 to source analysis, addressing reviewer comments, any additional revision
 analyses, and producing a revised manuscript.
 
-See also `~/.claude/CLAUDE.md` for VM-wide conventions (this repo is not yet
-listed in that file's project table; add it there if this becomes a
-standing project rather than a one-off revision).
+See also `~/.claude/CLAUDE.md` for VM-wide conventions (this repo is
+listed in that file's project table). GitHub: `dermok1010/methane_selection_revision`
+(private, created 2026-09-15).
 
 ## Working principles
 
