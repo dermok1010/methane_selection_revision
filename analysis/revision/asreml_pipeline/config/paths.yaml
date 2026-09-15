@@ -1,0 +1,59 @@
+# Central path configuration -- the ONLY place machine-specific paths
+# should appear. Generated .as files never contain absolute paths (they
+# reference phenotype/pedigree files by bare filename, matching legacy
+# convention and ASReml's own working-directory-relative resolution);
+# portability between VM and HPC is handled entirely by each platform
+# populating run/ with the right files under these paths before
+# generation/submission.
+#
+# Select a platform by passing it explicitly to each script
+# (--platform vm|hpc), or via the ASREML_PIPELINE_PLATFORM environment
+# variable. There is no auto-detection -- silently guessing the wrong
+# platform and writing to the wrong absolute path is worse than a
+# missing-argument error.
+
+vm:
+  # This repository's root on the VM.
+  repo_root: /home/dermodkkelly/methane_selection_revision
+  pipeline_root: /home/dermodkkelly/methane_selection_revision/analysis/revision/asreml_pipeline
+  # Canonical phenotype input BEFORE the 00_prepare_asreml_phenotype.R
+  # derivation step (the verified PAC pipeline output).
+  raw_phenotype_file: /home/dermodkkelly/PAC_data_pipeline/data/PAC_data_covariates_QC_NA_with_traits_plus_dam_parity.csv
+  # Pedigree file to use -- see analysis/revision/pedigree/README.md.
+  # Replace this one line once the new validated pedigree is ready; the
+  # rest of the pipeline reads only this path.
+  pedigree_file: /home/dermodkkelly/methane_selection_revision/analysis/revision/pedigree/data/pedigree_full_2026-09-15.csv
+  # ASReml is not installed on the VM (by design -- see CLAUDE.md/revision_plan.md,
+  # models are generated/checked here and actually run on HPC). asreml_bin
+  # is left null so any script that tries to invoke ASReml on this
+  # platform fails loudly instead of silently doing nothing.
+  asreml_bin: null
+  asreml_module: null
+
+hpc:
+  # PLACEHOLDER -- confirm/replace before first HPC run. Following the
+  # convention of every other project path on this HPC account
+  # (Dermot_analysis/Phd/<project>/...); update if the actual intended
+  # location differs.
+  repo_root: /home/dermot.kelly/Dermot_analysis/Phd/methane_selection_revision
+  pipeline_root: /home/dermot.kelly/Dermot_analysis/Phd/methane_selection_revision/analysis/revision/asreml_pipeline
+  # PLACEHOLDER -- the phenotype/pedigree files need to be staged onto
+  # the HPC (e.g. via the same GCS bucket handoff used elsewhere on this
+  # VM) into pipeline_root/data/ before a run; these two paths assume
+  # that staging step used the same filenames the VM side produces.
+  raw_phenotype_file: /home/dermot.kelly/Dermot_analysis/Phd/methane_selection_revision/analysis/revision/asreml_pipeline/data/PAC_data_covariates_QC_NA_with_traits_plus_dam_parity.csv
+  pedigree_file: /home/dermot.kelly/Dermot_analysis/Phd/methane_selection_revision/analysis/revision/asreml_pipeline/data/pedigree_full_2026-09-15.csv
+  # From the legacy Slurm scripts (analysis/legacy/asreml_scripts/*.slurm).
+  asreml_bin: asreml
+  asreml_module: asreml/4.2
+  # Legacy jobs used this to report license details before running --
+  # kept for continuity; !CONTINUE etc. do not depend on it having run.
+  license_key: GIAB-EJBD-IDHC-FDAE
+
+# Sub-paths, relative to <platform>.pipeline_root, shared by both platforms.
+relative:
+  run_dir: run              # execution directory: .as files + phenotype/pedigree copies + raw ASReml output land here (gitignored except .as/.pin)
+  models_dir: models        # generated, git-tracked .as/.pin files (source of truth; copied into run/ before execution)
+  results_dir: results      # git-tracked, parsed summary tables
+  slurm_dir: slurm          # git-tracked submission scripts
+  state_dir: run/state      # gitignored -- per-model convergence/attempt tracking (JSON), see scripts/03_check_and_continue.sh

@@ -1,0 +1,175 @@
+# Trait definitions and model sweep configuration.
+#
+# Fixed-effects formula, response-variable names and the VPREDICT
+# structure below are all taken directly from the legacy .as files
+# (analysis/legacy/asreml_scripts/a_uni_methane.as,
+# bi_ch4_ch4ratio.as) and cross-checked against
+# docs/asreml_legacy_map.md -- they are not re-derived assumptions.
+# Every trait in this list shares the identical fixed-effects formula in
+# the legacy dump (verified by grepping every a_uni_*.as model line);
+# only the response variable changes.
+
+phenotype_file: phenotype_asreml.csv   # produced by scripts/00_prepare_asreml_phenotype.R
+pedigree_file: pedigree.csv.SRT        # ASReml-sorted copy of config/paths.yaml's pedigree_file, staged into run/
+
+# ASReml's field-definition block is POSITIONAL: one line per column of
+# the data file, IN ORDER (a field can only be omitted by using !SKIP
+# before the next one, or by being at the very end of the line -- see
+# ASReml-4.2-Functional-Specification.pdf Section 5.4). This list must
+# therefore match phenotype_asreml.csv's actual column order exactly.
+# 01_generate_models.R checks this against the file header at generation
+# time and refuses to generate anything if they disagree, rather than
+# silently emitting misaligned .as files. This list matches
+# scripts/00_prepare_asreml_phenotype.R's column order exactly (which in
+# turn reproduces legacy data_generation.R's, cross-checked against
+# analysis/legacy/asreml_scripts/a_uni_methane.as's own field block).
+# type: "1" (numeric/covariate), "A" (alphanumeric factor)
+phenotype_columns:
+  - {name: ANI_ID, type: "1"}   # also gets the !P pedigree-match flag, added separately
+  - {name: ch4_g_day2_1v3, type: "1"}
+  - {name: co2_g_day2_1v3, type: "1"}
+  - {name: ch4_ratio, type: "1"}
+  - {name: methane_per_dmi, type: "1"}
+  - {name: methane_per_mbw, type: "1"}
+  - {name: Metabolic_BW, type: "1"}
+  - {name: SEX, type: "A"}
+  - {name: TX, type: "1"}
+  - {name: BR, type: "1"}
+  - {name: SU, type: "1"}
+  - {name: CL, type: "1"}
+  - {name: CV, type: "1"}
+  - {name: LY, type: "1"}
+  - {name: UN, type: "1"}
+  - {name: het, type: "1"}
+  - {name: rec, type: "1"}
+  - {name: age_in_years, type: "1"}
+  - {name: ch4_GroupNumber, type: "A"}
+  - {name: weight, type: "1"}
+  - {name: DMI, type: "1"}
+  - {name: adg, type: "1"}
+  - {name: methane_per_adg, type: "1"}
+  - {name: methane_per_rumen, type: "1"}
+  - {name: methane_per_muscle, type: "1"}
+  - {name: rumen, type: "1"}
+  - {name: age_in_months, type: "1"}
+  - {name: age_in_weeks, type: "1"}
+  - {name: REARING_RANK, type: "1"}
+  - {name: BIRTH_RANK, type: "1"}
+  - {name: ewe_birth_rank, type: "1"}
+  - {name: ewe_rearing_rank, type: "1"}
+  - {name: dam_parity_group_num, type: "1"}
+  - {name: ct_muscle_kg, type: "1"}
+  - {name: methane_per_lw, type: "1"}
+  - {name: ch4_adj_MBW, type: "1"}
+  - {name: ch4_adj_MBW_co2, type: "1"}
+  - {name: ch4_adj_DMI, type: "1"}
+  - {name: ch4_adj_adg, type: "1"}
+  - {name: adg_g, type: "1"}
+
+workspace_mb: 5000
+maxit: 300
+
+# Verbatim from every legacy a_uni_*.as / bi_*.as model line (Trait.-prefixed
+# for bivariate models). Do not add/remove terms without updating
+# docs/asreml_legacy_map.md Section 1's manuscript-model comparison --
+# this list includes the undocumented `UN` breed term flagged there.
+fixed_effects:
+  - SEX
+  - TX
+  - BR
+  - SU
+  - CL
+  - CV
+  - LY
+  - UN
+  - het
+  - rec
+  - REARING_RANK
+  - BIRTH_RANK
+  - ewe_birth_rank
+  - ewe_rearing_rank
+  - age_in_weeks
+  - dam_parity_group_num
+  - ch4_GroupNumber
+
+random_effects:
+  univariate: "ped(ANI_ID) ide(ANI_ID)"
+  # ide(ANI_ID) is deliberately NOT Trait.-prefixed here: the legacy
+  # bivariate models fit a single shared (not trait-specific) permanent-
+  # environment term -- confirmed from bi_ch4_ch4ratio.asr, where
+  # ide(ANI_ID) reports one IDV_V value, not a 2x2 US block. This is a
+  # real modelling choice in the submitted analysis, reproduced as-is,
+  # not a simplification introduced here.
+  bivariate: "Trait.ped(ANI_ID) ide(ANI_ID)"
+
+# code: short filename token (matches legacy a_uni_<code>.as / bi_<codeA>_<codeB>.as)
+# variable: column name in phenotype_file
+# table2: whether this is one of the manuscript's 9 Table 2 traits
+traits:
+  - code: methane
+    # Legacy filenames are inconsistent for this one trait: the
+    # univariate job is a_uni_methane.as but every bivariate job uses
+    # "ch4" (e.g. bi_ch4_ch4ratio.as), not "methane". legacy_bi_alias
+    # lets the structure-block lookup in 01_generate_models.R find those
+    # files; no other trait in this list has this inconsistency.
+    legacy_bi_alias: ch4
+    variable: ch4_g_day2_1v3
+    label: "CH4 (g/day)"
+    table2: true
+  - code: ch4mbw
+    variable: methane_per_mbw
+    label: "MI (CH4/MBW)"
+    table2: true
+  - code: ch4ratio
+    variable: ch4_ratio
+    label: "CH4 ratio (CH4/(CH4+CO2))"
+    table2: true
+  - code: ch4adg
+    variable: methane_per_adg
+    label: "CH4/ADG"
+    table2: true
+  - code: ch4muscle
+    variable: methane_per_muscle
+    label: "CH4/MM"
+    table2: true
+  - code: ch4rumen
+    variable: methane_per_rumen
+    label: "CH4/rumen"
+    table2: true
+  - code: ch4rmtmbw
+    variable: ch4_adj_MBW
+    label: "RMTMBW (residual, MBW)"
+    table2: true
+  - code: ch4rmtmbwco2
+    variable: ch4_adj_MBW_co2
+    label: "RMTMBW+CO2 (residual, MBW+CO2)"
+    table2: true
+  - code: ch4rmtadg
+    variable: ch4_adj_adg
+    label: "RMTADG (residual, ADG)"
+    table2: true
+  - code: ch4lw
+    variable: methane_per_lw
+    label: "CH4/LW (not in Table 2 -- selection-index input, see docs/asreml_legacy_map.md Section 1)"
+    table2: false
+
+# The small set to run and validate FIRST, against known legacy results
+# (docs/asreml_legacy_map.md Section 6/7): CH4 and CH4 ratio univariate
+# (anchors Table 2's most literature-contested row), plus their bivariate
+# pair (fully worked/decoded example -- exact VPREDICT index provenance
+# documented in scripts/01_generate_models.R).
+validation_set:
+  univariate: [methane, ch4ratio]
+  bivariate:
+    - [methane, ch4ratio]
+
+# Once the validation set matches legacy results, generate_all_pairs
+# produces the full submitted-style sweep: all 10 univariate models, plus
+# every pairwise bivariate combination among them (45 pairs) -- a
+# near-complete sweep, matching the legacy dump's own coverage per
+# docs/asreml_legacy_map.md Section 1. No pairs are excluded by default;
+# add trait codes to `exclude_pairs` (as [a, b] entries) to skip specific
+# combinations later without editing the generator itself.
+full_sweep:
+  generate_all_pairs: true
+  exclude_pairs: []
