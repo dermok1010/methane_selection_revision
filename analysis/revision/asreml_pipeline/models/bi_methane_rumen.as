@@ -60,4 +60,14 @@ H h2_2 7 Vp2
 R rg 5 6 7
 R re 2 3 4
 R cp Vp1 Cp Vp2
+# CH4/rumen (delta-method SE via ASReml VPREDICT, see composite_vpredict_specs)
+P crua1 5 * 0.02632939992
+P crua2 6 * -0.1529862087
+P crua3 7 * 0.2222304736
+P cruVA crua1 + crua2 + crua3
+P crup1 Vp1 * 0.02632939992
+P crup2 Cp * -0.1529862087
+P crup3 Vp2 * 0.2222304736
+P cruVP crup1 + crup2 + crup3
+H cru_h2 cruVA cruVP
 

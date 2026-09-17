@@ -237,6 +237,116 @@ gen_univariate <- function(trait) {
 # matrix positive definite during early iterations, same as every
 # other structure block in this pipeline. ide(ANI_ID) is left as the
 # plain classic term -- it wasn't implicated in any of the 4 failures.
+# ---------------------------------------------------------------------
+# Delta-method SEs for component-derived composite-trait h2 (2026-09-17,
+# per user's written revision plan A1: "Calculate SEs for the
+# component-derived h2 values using the delta method (preferably ASReml
+# vpredict ... using the sampling covariance matrix of the variance-
+# component estimates)"). scripts/04_derive_ratio_from_components.R
+# computes each composite trait's VA/VP point estimate in R from
+# univariate_summary.csv + bivariate_summary.csv, but has no SE -- it
+# can't, because it combines parameter estimates from SEPARATE ASReml
+# runs (a univariate fit and a bivariate fit) with no shared sampling
+# covariance matrix between them.
+#
+# Fix: for composite traits built from exactly the pair (CH4, comp) --
+# i.e. every one except RMTMBW+CO2, which needs a third trait -- the
+# SAME bivariate model already estimates VA_ch4, CovA and VA_comp
+# jointly (indices 5, 6, 7 in this pipeline's documented VPREDICT
+# numbering, see the file-header comment), so its own .vvp sampling
+# covariance matrix is exactly what the delta method needs. Appending
+# extra VPREDICT lines to that SAME bivariate .as/.pin file lets ASReml
+# compute both the point estimate AND its correct joint-delta-method SE
+# directly -- no new model fit required, just reprocessing the already-
+# converged .rsv via the .pin file (see README's "Convergence and
+# !CONTINUE" section on .pin post-processing being separate from the
+# main iteration).
+#
+# Coefficients (a1^2, 2*a1*a2, a2^2 for ratio traits; 1, -2b, b^2 for
+# linear/residual traits) are precomputed in R from this pipeline's own
+# trait means/betas -- IDENTICAL formulas to
+# scripts/04_derive_ratio_from_components.R's ratio_result()/
+# ratio2_result_ch4ratio()/linear_result_1cov(), so the point estimate
+# ASReml reports here should match derived_h2.csv exactly; any
+# disagreement is itself a useful cross-check.
+#
+# Deliberately conservative on VPREDICT grammar: only the two forms
+# confirmed in reference/ASReml-4.2-Functional-Specification.pdf Section
+# 13.2.1 are used -- "name * coefficient" (single-term scaling, e.g.
+# "F genvar idv(Sire) * 4") and pure "+"-separated addition of
+# already-named components (e.g. "F phenvar idv(Sire) + idv(units)").
+# The manual's compact multi-coefficient-per-line form ("F label a +
+# b*cb + c") is NOT used because its grammar for >1 independently
+# weighted term per line isn't fully confirmed from available examples
+# -- chaining single-coefficient P lines avoids that ambiguity entirely
+# at the cost of a few extra lines.
+composite_vpredict_specs <- list(
+  methane_mbw = list(
+    list(prefix = "mi",  h2_name = "mi_h2",  label = "MI=CH4/MBW",
+         c1 = 0.0020476511, c2 = -0.0033179877, c3 = 0.0013441062),
+    list(prefix = "rtm", h2_name = "rtm_h2", label = "RMTMBW",
+         c1 = 1, c2 = -1.5444, c3 = 0.596293)
+  ),
+  methane_co2 = list(
+    list(prefix = "cr", h2_name = "cr_h2", label = "CH4ratio=CH4/(CH4+CO2)",
+         c1 = 0.00000066560967, c2 = -0.000000020035280, c3 = 0.00000000015076871)
+  ),
+  methane_adg = list(
+    list(prefix = "ca",  h2_name = "ca_h2",  label = "CH4/ADG",
+         c1 = 29.88687532, c2 = -5850.750901, c3 = 286340.4566),
+    list(prefix = "rta", h2_name = "rta_h2", label = "RMTADG",
+         c1 = 1, c2 = -5.984, c3 = 8.952064)
+  ),
+  methane_muscle = list(
+    list(prefix = "cm", h2_name = "cm_h2", label = "CH4/MM",
+         c1 = 0.007288099237, c2 = -0.0222798497, c3 = 0.01702747474)
+  ),
+  methane_rumen = list(
+    list(prefix = "cru", h2_name = "cru_h2", label = "CH4/rumen",
+         c1 = 0.02632939992, c2 = -0.1529862087, c3 = 0.2222304736)
+  ),
+  methane_weight = list(
+    list(prefix = "cl", h2_name = "cl_h2", label = "CH4/LW",
+         c1 = 0.0002542448978, c2 = -0.0001451674372, c3 = 0.00002072173818)
+  )
+  # mbw_co2: not given a composite spec here -- it's only used as the
+  # third pairwise block for RMTMBW+CO2, which needs all three of
+  # (methane,mbw), (methane,co2) and (mbw,co2) simultaneously. A single
+  # bivariate model's .vvp cannot give a joint delta-method SE across
+  # three separate model fits; that composite's SE stays deferred until
+  # a CH4-MBW-CO2 trivariate model is fit (revision plan A1, "if
+  # feasible and stable").
+)
+
+# Emits the extra VPREDICT lines for a composite trait spec, referencing
+# the bivariate model's own indices 5 (VA trait1), 6 (CovA), 7 (VA
+# trait2) for the genetic part and the already-defined named quantities
+# Vp1/Cp/Vp2 for the phenotypic part (see gen_bivariate's base VPREDICT
+# block). p = spec's prefix, used to keep every generated name unique
+# and short within the file.
+composite_vpredict_lines <- function(spec) {
+  p <- spec$prefix
+  # ASReml is a fixed-format Fortran-style parser; scientific notation
+  # ("e-07") is avoided in generated coefficients for the same reason
+  # already established elsewhere in this generator (see the
+  # !INIT starting-value formatting above) -- format(..., scientific =
+  # FALSE) with enough digits to not lose precision on the smallest
+  # coefficients here (CH4-ratio's are ~1e-10).
+  fmt <- function(x) format(x, scientific = FALSE, trim = TRUE, digits = 12)
+  c(
+    sprintf("# %s (delta-method SE via ASReml VPREDICT, see composite_vpredict_specs)", spec$label),
+    sprintf("P %sa1 5 * %s", p, fmt(spec$c1)),
+    sprintf("P %sa2 6 * %s", p, fmt(spec$c2)),
+    sprintf("P %sa3 7 * %s", p, fmt(spec$c3)),
+    sprintf("P %sVA %sa1 + %sa2 + %sa3", p, p, p, p),
+    sprintf("P %sp1 Vp1 * %s", p, fmt(spec$c1)),
+    sprintf("P %sp2 Cp * %s", p, fmt(spec$c2)),
+    sprintf("P %sp3 Vp2 * %s", p, fmt(spec$c3)),
+    sprintf("P %sVP %sp1 + %sp2 + %sp3", p, p, p, p),
+    sprintf("H %s %sVA %sVP", spec$h2_name, p, p)
+  )
+}
+
 uni_ped_sigma <- c(
   methane = 3.91959,     # run/a_uni_methane -- CONVERGED
   co2     = 19164.6,     # run/a_uni_co2     -- CONVERGED
@@ -297,6 +407,13 @@ gen_bivariate <- function(trait1, trait2) {
         " -- see comment in generated .as file\n", sep = "")
   }
 
+  composite_specs <- composite_vpredict_specs[[code_pair]]
+  composite_lines <- if (!is.null(composite_specs)) {
+    unlist(lapply(composite_specs, composite_vpredict_lines))
+  } else {
+    character(0)
+  }
+
   as_lines <- c(
     sprintf(
       "!WORKSPACE %d !CONTINUE !NODISPLAY !LOGFILE !MAXIT %d !MP %d",
@@ -324,6 +441,7 @@ gen_bivariate <- function(trait1, trait2) {
     "R rg 5 6 7",
     "R re 2 3 4",
     "R cp Vp1 Cp Vp2",
+    composite_lines,
     ""
   )
   writeLines(as_lines, file.path(models_dir, sprintf("bi_%s.as", code_pair)))
@@ -336,7 +454,8 @@ gen_bivariate <- function(trait1, trait2) {
     "H h2_2 7 Vp2",
     "R rg 5 6 7",
     "R re 2 3 4",
-    "R cp Vp1 Cp Vp2"
+    "R cp Vp1 Cp Vp2",
+    composite_lines
   )
   writeLines(pin_lines, file.path(models_dir, sprintf("bi_%s.pin", code_pair)))
 }

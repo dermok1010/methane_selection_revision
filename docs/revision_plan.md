@@ -107,6 +107,108 @@ manuscript editing, no data received, no analysis started.
   index work are explicitly deferred to a later, separate task. Trial (7
   uni + 3 pairs: methane-mbw, mbw-co2, methane-rumen) ready to run; not
   yet run on HPC.
+- **2026-09-15/16**: the narrowed component-trial set (7 univariate + 7
+  bivariate pairs) actually run on HPC. All 16 univariate models
+  CONVERGED with clean cross-checks. Four of the bivariate pairs --
+  `bi_methane_co2`, `bi_methane_adg`, `bi_methane_rumen`,
+  `bi_mbw_co2` -- failed across 3 submission attempts with "Iteration
+  aborted because of singularities in AI matrix" and implausible
+  boundary h2 estimates; these are exactly the four pairs with no legacy
+  bivariate starting values (relying on ASReml's classic-syntax
+  auto-init). Separately, a resubmission-safety gap was caught and
+  cancelled on this same first real HPC attempt: `run/` accumulates
+  staged jobs from every `--set=` ever generated, so a no-argument
+  `submit_batch.sh` resubmitted the already-completed 55-model
+  `--set=full` sweep alongside the new component-trial jobs on the
+  capacity-shared ASReml license. Fixed by having `submit_batch.sh` skip
+  any candidate job already classified CONVERGED by default
+  (`ASREML_FORCE_RERUN=1` to opt back into the old behaviour).
+- **2026-09-17**: root cause of the 4 AI-matrix-singularity failures
+  diagnosed against the ASReml 4.2 functional specification (Section
+  7.7.5): Release 4's improved phenotypic-variance-based
+  auto-initialisation applies only to functional-syntax (`us()`/`idv()`)
+  terms, not the classic `Trait.ped(ANI_ID)` term this pipeline
+  otherwise uses for consistency with the legacy `.as` files -- and
+  CO2's genetic variance is ~1000-19000x the other traits' on this raw
+  scale, a poor-scaling combination the classic auto-init can't handle.
+  Fixed for these 4 pairs only by switching to
+  `us(Trait !INIT v11 0 v22 !GP).ped(ANI_ID)`, with `v11`/`v22` taken
+  from each trait's own converged univariate `ped(ANI_ID)` Sigma (not
+  invented values) -- the same diagonal-from-univariate-analyses
+  strategy the manual's own worked multivariate example uses (Section
+  16.11). Resubmitted and converged cleanly on HPC. This then exposed a
+  parser blind spot: functional-syntax output prints the genetic term's
+  data rows as bare `Trait US_V/C ...` with the `ANI_ID` identity only
+  on one preceding "N effects" header row, unlike classic syntax (which
+  repeats `Trait.ANI_ID` on every data row) -- so `get_sigma`'s
+  name-based match silently returned `NA` for these 4 pairs' independent
+  Model_Term cross-check (`results/bivariate_summary.csv` showed
+  `check_agree_rg`/`check_agree_rp` as `NA`, not a real disagreement).
+  Hand-verified all 4 pairs' h2s against their raw `.asr` Model_Term
+  tables first (matched the VPREDICT-derived numbers exactly), then
+  fixed the actual bug in `03_parse_results.R` (track which "N effects"
+  block header a data row falls under, match against that too), verified
+  against a real functional-syntax fixture and an existing classic-syntax
+  legacy `.asr` (no regression). `results/` re-parsed with the fix:
+  `results/derived_h2.csv` now reports real, HPC-derived heritabilities
+  for all 9 composite traits (revision plan step 7), not trial values.
+  **Two things intentionally left open rather than folded into this
+  entry:** (1) the full `--set=full` sweep (step 3) currently shows 29/52
+  bivariate models CONVERGED and 23 still `UNKNOWN` -- not yet triaged
+  as "not run" vs. "ran and failed," and needed before Tables 2-5 can be
+  called reproduced; (2) the rebuilt univariate CH4-ratio h2 (0.1016,
+  SE 0.0125) is closer to the manuscript's submitted 0.08(0.02) than to
+  Jonker et al.'s 0.17-0.25, so the rebuild does not on its own resolve
+  Reviewer 1's headline discrepancy -- the dedicated CH4-ratio scrutiny
+  this plan's step 3 calls for has not yet been done.
+- **2026-09-17 (later still)**: user supplied a detailed, workstream-by-
+  workstream action plan (`reviewer_revision_detailed_action_plan.docx`,
+  converted to text for review) covering all non-selection-index reviewer
+  comments. Reviewed against the pipeline's actual state: the plan's
+  explicit correctness requirement for the CH4-ratio derivative ("do not
+  treat CH4+CO2 as an independent denominator") was already satisfied --
+  `04_derive_ratio_from_components.R`'s `ratio2_result_ch4ratio()` uses
+  the direct two-variable gradient wrt (CH4,CO2), not a naive one-variable
+  ratio. Confirmed with the user: the existing 36,449-animal pedigree
+  (phenotyped animals + recursively traced ancestors) is frozen as final
+  for the plan's step 1 -- no further reconciliation against the
+  manuscript's 330,812-animal pedigree. Real gaps identified: no SEs on
+  any component-derived h2 (the plan's A1 requires delta-method SEs); no
+  CH4-MBW-CO2 trivariate model attempted; A2 diagnostics bundle,
+  A3 stage-heterogeneity sensitivity, and the literature-comparison table
+  not started; CH4/rumen's historical discrepancy still unresolved; the
+  comparison table can't be built until the direct-fit `--set=full` sweep
+  is triaged (still 29/52 CONVERGED).
+- **2026-09-17 (later still)**: implemented delta-method SEs for the 6 of
+  7 component-set bivariate pairs that involve exactly two traits (every
+  "methane, X" pair) -- `01_generate_models.R` now appends extra VPREDICT
+  lines to each of those pairs' `.as`/`.pin` files, computing each
+  composite trait's VA/VP as a chain of single-coefficient `P` scalings
+  (`P name idx * coefficient`) plus addition of already-named components
+  -- the two VPREDICT grammar forms directly confirmed in
+  `reference/ASReml-4.2-Functional-Specification.pdf` Section 13.2.1, not
+  its more compact (but not fully confirmed for this pipeline's purposes)
+  multi-coefficient-per-line form. This lets ASReml itself compute the
+  composite h2's SE from that bivariate model's own sampling covariance
+  matrix (`.vvp`), rather than approximating it in R across two separate
+  model fits. Coefficients (a1^2, 2*a1*a2, a2^2 for ratio traits; 1, -2b,
+  b^2 for linear/residual traits) are precomputed in R using the
+  identical formulas already in `04_derive_ratio_from_components.R`, so
+  ASReml's point estimate should match `derived_h2.csv` exactly -- a
+  built-in cross-check. Regenerated and locally sanity-checked (no
+  scientific notation left in any coefficient, given ASReml's
+  fixed-format Fortran-style parser; max generated line length 92 chars).
+  **RMTMBW+CO2 is explicitly NOT covered** -- it needs all three of
+  (CH4,MBW), (CH4,CO2) and (MBW,CO2) simultaneously, and a single
+  bivariate model's `.vvp` can't give a joint SE across three separate
+  fits; its SE stays deferred until a CH4-MBW-CO2 trivariate model is
+  fit, per the user's own plan ("if feasible and stable"). **Not yet run
+  on HPC** -- since the 6 underlying bivariate models already CONVERGED
+  (2026-09-17, see above), this only needs the cheap `.pin`
+  post-processing step (`asreml -P<jobname> <jobname>.pin`, reprocessing
+  the existing `.rsv`) rather than a fresh REML run, but per this VM's
+  standing rule HPC submission still needs explicit user confirmation of
+  the batch before dispatch.
 
 ---
 

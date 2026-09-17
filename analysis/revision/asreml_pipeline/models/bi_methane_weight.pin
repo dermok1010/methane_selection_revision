@@ -6,3 +6,13 @@ H h2_2 7 Vp2
 R rg 5 6 7
 R re 2 3 4
 R cp Vp1 Cp Vp2
+# CH4/LW (delta-method SE via ASReml VPREDICT, see composite_vpredict_specs)
+P cla1 5 * 0.0002542448978
+P cla2 6 * -0.0001451674372
+P cla3 7 * 0.00002072173818
+P clVA cla1 + cla2 + cla3
+P clp1 Vp1 * 0.0002542448978
+P clp2 Cp * -0.0001451674372
+P clp3 Vp2 * 0.00002072173818
+P clVP clp1 + clp2 + clp3
+H cl_h2 clVA clVP
