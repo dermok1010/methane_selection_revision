@@ -208,13 +208,83 @@ gen_univariate <- function(trait) {
   writeLines(pin_lines, file.path(models_dir, sprintf("a_uni_%s.pin", trait$code)))
 }
 
+# ---- functional-syntax !INIT fallback for pairs with no legacy .as file ----
+#
+# 2026-09-17: bi_methane_co2, bi_methane_adg, bi_methane_rumen and
+# bi_mbw_co2 (the 4 of 7 --set=components pairs with no legacy bivariate
+# starting values) failed on HPC three submissions running with
+# "Iteration aborted because of singularities in AI matrix" -- landing
+# on implausible boundary heritabilities (e.g. h2~1.0 or h2~0.0). Root
+# cause: CO2's raw genetic variance is ~1000-19000x the other traits' on
+# this scale (see run/a_uni_co2 etc., below), and the classic bare
+# `Trait.ped(ANI_ID)` term does NOT get Release 4's improved
+# phenotypic-variance-based auto-initialisation -- per
+# ASReml-4.2-Functional-Specification.pdf Section 7.7.5, that only
+# applies "with the functional specification" (i.e. us()/idv()-wrapped
+# terms), not the classic bare term names used elsewhere in this
+# pipeline for consistency with the legacy .as files.
+#
+# Fix: for these 4 pairs only, use the functional us(Trait !INIT ...
+# !GP).ped(ANI_ID) form with explicit starting values -- diagonal
+# (V11, V22) taken from each trait's own converged univariate
+# ped(ANI_ID) Sigma (run/a_uni_<code>/*.asr, confirmed CONVERGED
+# 2026-09-15/16), and 0 for the starting covariance (C21). This is not
+# an invented number: it's the identical "fit diagonal matrices ...
+# using initial values from univariate analyses" strategy the manual's
+# own worked multivariate example uses for exactly this problem
+# (Section 16.11). Order is lower-triangle row-wise, per Section
+# 7.7.5's documented requirement for !INIT with us(). !GP keeps the
+# matrix positive definite during early iterations, same as every
+# other structure block in this pipeline. ide(ANI_ID) is left as the
+# plain classic term -- it wasn't implicated in any of the 4 failures.
+uni_ped_sigma <- c(
+  methane = 3.91959,     # run/a_uni_methane -- CONVERGED
+  co2     = 19164.6,     # run/a_uni_co2     -- CONVERGED
+  adg     = 0.000587469, # run/a_uni_adg     -- CONVERGED
+  rumen   = 0.166881,    # run/a_uni_rumen   -- CONVERGED (note: this
+                          # trait's ide(ANI_ID) itself had Sigma/SE=0.52,
+                          # i.e. barely identifiable -- see README's
+                          # note on rumen's 780 records / 3.2% repeat
+                          # rate; the ped(ANI_ID) value used here is
+                          # still the best available estimate)
+  mbw     = 2.19097      # run/a_uni_mbw     -- CONVERGED
+)
+functional_init_pairs <- c("methane_co2", "methane_adg", "methane_rumen", "mbw_co2")
+
 # ---- bivariate template ----
 
 gen_bivariate <- function(trait1, trait2) {
   code_pair <- sprintf("%s_%s", trait1$code, trait2$code)
+  reverse_pair <- sprintf("%s_%s", trait2$code, trait1$code)
 
   structure_block <- get_legacy_structure_block(trait1$code, trait2$code)
-  if (is.null(structure_block)) {
+  random_term <- cfg$random_effects$bivariate
+
+  if (is.null(structure_block) && (code_pair %in% functional_init_pairs ||
+                                    reverse_pair %in% functional_init_pairs)) {
+    v11 <- uni_ped_sigma[[trait1$code]]
+    v22 <- uni_ped_sigma[[trait2$code]]
+    if (is.null(v11) || is.null(v22)) {
+      stop("No recorded univariate ped(ANI_ID) starting value for ", code_pair,
+           " -- add it to uni_ped_sigma above before generating this pair.")
+    }
+    random_term <- sprintf(
+      "us(Trait !INIT %s 0 %s !GP).ped(ANI_ID) ide(ANI_ID)",
+      format(v11, scientific = FALSE, trim = TRUE),
+      format(v22, scientific = FALSE, trim = TRUE)
+    )
+    structure_block <- c(
+      "# Functional-syntax !INIT starting values used instead of a legacy",
+      "# structure block -- see uni_ped_sigma/functional_init_pairs comment",
+      "# above this function for the full explanation. Starting values are",
+      "# in the model line itself (us(Trait !INIT ...)), not here."
+    )
+    cat("  NOTE: ", code_pair,
+        " -- no legacy starting values; using functional us(Trait !INIT ",
+        format(v11, scientific = FALSE, trim = TRUE), " 0 ",
+        format(v22, scientific = FALSE, trim = TRUE),
+        " !GP).ped(ANI_ID)\n", sep = "")
+  } else if (is.null(structure_block)) {
     structure_block <- c(
       "# No matching legacy bi_*.as file found for this pair -- no tuned",
       "# starting values available. ASReml will auto-initialize this",
@@ -240,7 +310,7 @@ gen_bivariate <- function(trait1, trait2) {
     "",
     sprintf(
       "%s %s ~ %s !r %s",
-      trait1$variable, trait2$variable, fixed_bi, cfg$random_effects$bivariate
+      trait1$variable, trait2$variable, fixed_bi, random_term
     ),
     "",
     structure_block,
