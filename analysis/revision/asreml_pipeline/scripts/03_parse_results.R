@@ -62,6 +62,24 @@ parse_model_terms <- function(asr_path) {
   rows <- lines[(hdr + 1):end]
   rows <- rows[grepl("[0-9]", rows)]  # drop stray blank/continuation lines
 
+  # Block tracking (added 2026-09-17): classic-syntax G-structure rows
+  # repeat the full term identity on every data row (e.g.
+  # "Trait.ANI_ID  US_V  1  1  ..."), but the functional us(Trait)
+  # syntax (used for 4 component-set pairs with no legacy starting
+  # values -- see 01_generate_models.R's uni_ped_sigma comment) prints
+  # the identity ONCE on a preceding "N effects" header row
+  # ("us(Trait).ped(ANI_ID)   72898 effects") and then bare "Trait ..."
+  # data rows with no ANI_ID in them at all. Without this, get_sigma's
+  # name-based match for the ped(ANI_ID) block silently returns NA for
+  # those 4 pairs (confirmed: results/bivariate_summary.csv showed
+  # sigma_ped_*/check_agree_* all NA for exactly methane_co2,
+  # methane_adg, methane_rumen, mbw_co2 -- the h2/rg VPREDICT numbers
+  # were hand-verified correct against the raw .asr regardless, this
+  # only fixes the automated independent cross-check). A block header
+  # is any row with exactly one numeric token whose line ends in
+  # "effects"; its name_part is carried forward to every subsequent row
+  # until the next block header.
+  current_block <- NA_character_
   out <- lapply(rows, function(ln) {
     toks <- strsplit(trimws(ln), "\\s+")[[1]]
     # numeric-looking tokens from the right: Sigma/SE, %C are always
@@ -72,7 +90,9 @@ parse_model_terms <- function(asr_path) {
     first_num <- which(is_num)[1]
     name_part <- paste(toks[seq_len(first_num - 1)], collapse = " ")
     num_toks <- toks[is_num]
-    list(raw = ln, name_part = name_part, num_toks = list(num_toks))
+    is_block_header <- length(num_toks) == 1 && grepl("effects\\s*$", ln)
+    if (is_block_header) current_block <<- name_part
+    list(raw = ln, name_part = name_part, block = current_block, num_toks = list(num_toks))
   })
   out <- out[!sapply(out, is.null)]
   if (length(out) == 0) return(NULL)
@@ -80,6 +100,7 @@ parse_model_terms <- function(asr_path) {
   data.frame(
     raw = sapply(out, `[[`, "raw"),
     name_part = sapply(out, `[[`, "name_part"),
+    block = sapply(out, function(x) if (is.null(x$block) || is.na(x$block)) "" else x$block),
     stringsAsFactors = FALSE
   ) -> df
   df$num_toks <- lapply(out, function(x) x$num_toks[[1]])
@@ -88,11 +109,16 @@ parse_model_terms <- function(asr_path) {
 
 get_sigma <- function(term_df, name_pattern, struct_pattern = NULL, ij = NULL) {
   # name_pattern matched against name_part (e.g. "ped(ANI_ID)", "ide(ANI_ID)",
-  # "Residual", "Trait.ANI_ID"); struct_pattern optionally matched against
+  # "Residual", "Trait.ANI_ID") OR against the row's block header (see
+  # parse_model_terms' block-tracking comment -- needed for functional
+  # us(Trait).ped(ANI_ID) syntax, where individual data rows no longer
+  # carry "ANI_ID" themselves); struct_pattern optionally matched against
   # the raw line (e.g. "US_V", "US_C", "IDV_V", "NRM_V", "SCA_V"); ij
   # optionally matches the two leading matrix-index tokens for US rows
   # (e.g. c("1","1"), c("2","1"), c("2","2")).
-  cand <- term_df[grepl(name_pattern, term_df$name_part, fixed = TRUE), , drop = FALSE]
+  name_match <- grepl(name_pattern, term_df$name_part, fixed = TRUE) |
+    grepl(name_pattern, term_df$block, fixed = TRUE)
+  cand <- term_df[name_match, , drop = FALSE]
   if (!is.null(struct_pattern)) cand <- cand[grepl(struct_pattern, cand$raw), , drop = FALSE]
   if (nrow(cand) == 0) return(NA_real_)
   for (i in seq_len(nrow(cand))) {
