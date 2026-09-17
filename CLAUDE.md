@@ -82,7 +82,17 @@ listed in that file's project table). GitHub: `dermok1010/methane_selection_revi
 
 ## Current stage
 
-Repository setup and deep technical reading of the submitted manuscript.
-Reviewer comments and legacy analysis code have not yet been introduced;
-no new statistical analysis has been performed; no results have been
-audited or re-derived yet.
+Rebuilding the submitted analysis on HPC via a new config-driven ASReml
+pipeline (`analysis/revision/asreml_pipeline/`), checkpointed against the
+submitted manuscript at each stage. The PAC phenotype pipeline and a new
+validated pedigree are done. All 16 univariate genetic-parameter models
+have converged with clean independent cross-checks. The narrowed
+component-trait analysis (revision plan Section 5 step 7 -- heritabilities
+for the 9 composite/ratio traits, derived from their underlying components'
+(co)variances) has real HPC-derived results in
+`analysis/revision/asreml_pipeline/results/derived_h2.csv`. The full
+`--set=full` bivariate sweep (step 3, reproducing Tables 2-5) is partially
+run (29/52 pairs CONVERGED) and not yet triaged to completion. See
+`docs/revision_plan.md`'s decision log for the detailed, dated history and
+open items -- it is the authoritative current-status record, kept more
+up to date than this section.
