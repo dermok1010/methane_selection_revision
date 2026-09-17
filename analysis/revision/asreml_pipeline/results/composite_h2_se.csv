@@ -1,0 +1,9 @@
+trait,label,h2,se,pe_structure,source_pair,note
+ch4mbw,MI (CH4/MBW),0.2489,0.0114,shared,bi_methane_mbw,"mild drift vs univariate (~15-30%) not yet sensitivity-checked with trait-specific PE"
+ch4rmtmbw,RMTMBW,0.2460,0.0115,shared,bi_methane_mbw,"mild drift vs univariate (~15-30%) not yet sensitivity-checked with trait-specific PE"
+ch4adg,CH4/ADG,0.1929,0.0398,shared,bi_methane_adg,"mild-moderate drift vs univariate (~31%) not yet sensitivity-checked with trait-specific PE"
+ch4rmtadg,RMTADG,0.3129,0.0129,shared,bi_methane_adg,"mild-moderate drift vs univariate (~31%) not yet sensitivity-checked with trait-specific PE"
+ch4muscle,CH4/MM,0.2443,0.0314,shared,bi_methane_muscle,"mild drift vs univariate (~15-25%) not yet sensitivity-checked with trait-specific PE"
+ch4rumen,CH4/rumen,0.1282,0.0447,shared,bi_methane_rumen,"mild drift vs univariate (~9-19%) not yet sensitivity-checked with trait-specific PE"
+ch4lw,CH4/LW,0.1527,0.0181,diag(Trait) trait-specific,bi_methane_weight_petrait,"CORRECTED -- shared-PE version was 0.2938, a 2.3x-inflated artefact; use this value"
+ch4ratio,CH4/(CH4+CO2),0.1865,0.0187,diag(Trait) trait-specific,bi_methane_co2_petrait,"CORRECTED -- shared-PE version was 0.3490, a 2.1x-inflated artefact; use this value"

@@ -70,7 +70,14 @@ data/
 # ASReml raw run outputs (analysis/revision/asreml_pipeline/)
 # .as/.pin job specs and parsed results/ summary tables ARE tracked --
 # only the large/regenerable per-run artifacts are excluded here.
+#
+# 2026-09-17: the blanket *.csv rule above silently swallowed this too
+# (results/*.csv was never actually committed despite this comment
+# saying it should be -- caught when composite_h2_se.csv wouldn't
+# stage). These are small, parsed, reviewable summary tables, not raw
+# commercially-sensitive data, so explicitly re-include them.
 # ===============================
+!analysis/revision/asreml_pipeline/results/*.csv
 *.asr
 *.rsv
 *.msv
