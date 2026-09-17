@@ -209,6 +209,47 @@ manuscript editing, no data received, no analysis started.
   the existing `.rsv`) rather than a fresh REML run, but per this VM's
   standing rule HPC submission still needs explicit user confirmation of
   the batch before dispatch.
+- **2026-09-17 (later still)**: HPC returned the 6 `.pvc` files. Cross-
+  checking each bivariate model's own within-model genetic variance
+  against that trait's univariate estimate (a check this pipeline's own
+  discipline calls for, not something assumed safe) found two pairs
+  badly out of line: `bi_methane_weight`'s within-model VA(weight) came
+  out 70.52 vs. its univariate 30.47 (2.3x), and `bi_methane_co2`'s
+  VA(co2) came out 40219.8 vs. 19164.6 (2.1x); `methane_mbw`/`adg`/
+  `muscle`/`rumen` showed only mild (~15-30%) drift. All 6 models
+  formally report CONVERGED, so this would not have been caught by
+  convergence checking alone. Root cause: every bivariate model's
+  `ide(ANI_ID)` (permanent environment) term is a single value SHARED
+  across both traits -- a deliberate, faithful reproduction of the
+  legacy submitted analysis's own modelling choice (config/models.yaml),
+  not a simplification introduced here. CH4's own PE variance is tiny
+  (univariate sigma_ide=1.19); weight's and CO2's are enormous (28.08
+  and 17141 respectively) -- a single shared scalar can't represent
+  both, and the variance that can't go into the PE term appears to leak
+  into the genetic (ped) variance estimate instead for exactly the two
+  pairs where the scale mismatch is largest.
+- **2026-09-17 (later still)**: user agreed this needs a trait-specific
+  PE sensitivity check for the 2 badly-affected pairs before their
+  composite h2/SE results can be trusted (methane_mbw/adg/muscle/rumen's
+  milder drift is not yet judged to need the same treatment).
+  `01_generate_models.R` gained `gen_bivariate_pe_sensitivity()`,
+  generating `bi_methane_weight_petrait.as`/`bi_methane_co2_petrait.as`
+  with `diag(Trait !INIT <uni_ide_1> <uni_ide_2>).ide(ANI_ID)` in place
+  of the shared scalar -- trait-specific PE variances, no PE covariance
+  between traits (the more conservative option; a full
+  `us(Trait).ide(ANI_ID)` would add a PE-covariance parameter these
+  sparse-repeat traits may not identify well). A genuine departure from
+  the legacy-faithful model spec, so generated as a separately-named,
+  separately-versioned variant (`_petrait` suffix), not a silent edit to
+  the original. Since changing the PE structure changes ASReml's
+  parameter count and print order, and the existing VPREDICT index
+  numbering was decoded from one specific (different) model structure,
+  these 2 files are generated as DISCOVERY-ONLY runs (bare
+  `VPREDICT !DEFINE` + blank line, per
+  ASReml-4.2-Functional-Specification.pdf Section 13.2's own suggestion
+  for exactly this situation) -- the real parameter names/numbers will
+  be read off the .pvc output before any h2/SE block is written for
+  these two pairs. Not yet run on HPC.
 
 ---
 

@@ -51,7 +51,7 @@ suppressPackageStartupMessages({
 args <- commandArgs(trailingOnly = TRUE)
 set_arg <- sub("^--set=", "", grep("^--set=", args, value = TRUE))
 if (length(set_arg) == 0) set_arg <- "validation"
-stopifnot(set_arg %in% c("validation", "full", "components", "components_trial"))
+stopifnot(set_arg %in% c("validation", "full", "components", "components_trial", "pe_sensitivity"))
 
 pipeline_root <- normalizePath(
   file.path(dirname(sub("--file=", "", grep("--file=", commandArgs(), value = TRUE))), ".."),
@@ -361,14 +361,73 @@ uni_ped_sigma <- c(
 )
 functional_init_pairs <- c("methane_co2", "methane_adg", "methane_rumen", "mbw_co2")
 
+# ---- PE-sensitivity variant: shared vs. trait-specific permanent
+# environment (2026-09-17) --------------------------------------------
+#
+# Every bivariate model's ide(ANI_ID) term is a SINGLE value shared
+# across both traits (config/models.yaml's random_effects$bivariate
+# comment: a deliberate, faithful reproduction of the legacy submitted
+# analysis's own modelling choice, not a simplification introduced
+# here). Cross-checking each bivariate model's own within-model genetic
+# variance against that trait's univariate estimate (2026-09-17, see
+# docs/revision_plan.md decision log) found this breaks down badly for
+# trait pairs whose own PE variances are on very different scales from
+# CH4's: bi_methane_weight's within-model VA(weight) came out 2.3x its
+# univariate value, bi_methane_co2's VA(co2) came out 2.1x -- consistent
+# with PE variance that can't be represented by one shared scalar
+# leaking into the genetic (ped) variance estimate instead. mbw/adg/
+# muscle/rumen showed only mild (~15-30%) drift, plausibly ordinary
+# joint-estimation variation rather than the same structural problem.
+#
+# Sensitivity check: refit methane_weight and methane_co2 with
+# diag(Trait).ide(ANI_ID) instead -- trait-specific PE variances, no PE
+# covariance between traits (the more conservative option; a full
+# us(Trait).ide(ANI_ID) would add a PE-covariance parameter these
+# sparse-repeat traits may not identify well). This is a genuine
+# departure from the legacy-faithful model spec, so it's generated as a
+# separately-named, separately-versioned variant (suffix _petrait), not
+# a silent edit to the original.
+#
+# Changing the PE structure changes how many parameters ASReml estimates
+# and their print order -- the existing VPREDICT index numbering (see
+# the file-header comment) was decoded from ONE specific model structure
+# and is not safe to reuse blindly here. Per the ASReml manual (Section
+# 13.2, "If the user is in doubt of the name or number of a parameter
+# then running the program with VPREDICT !DEFINE and a blank line will
+# construct a .pvc file with the names and numbers of parameters
+# identified"), this generates a DISCOVERY-ONLY run first (no derived
+# h2/SE block yet) -- the real index numbering gets read off that run's
+# .pvc output before any VPREDICT h2 block is written for these two
+# pairs.
+pe_sensitivity_pairs <- c("methane_weight", "methane_co2")
+uni_ide_sigma <- c(methane = 1.18589, weight = 28.0808, co2 = 17141)
+
+gen_bivariate_pe_sensitivity <- function(trait1, trait2) {
+  code_pair <- sprintf("%s_%s", trait1$code, trait2$code)
+  ide1 <- uni_ide_sigma[[trait1$code]]
+  ide2 <- uni_ide_sigma[[trait2$code]]
+  if (is.null(ide1) || is.null(ide2)) {
+    stop("No recorded univariate ide(ANI_ID) starting value for ", code_pair,
+         " -- add it to uni_ide_sigma above before generating this pair.")
+  }
+  pe_term <- sprintf(
+    "diag(Trait !INIT %s %s).ide(ANI_ID)",
+    format(ide1, scientific = FALSE, trim = TRUE),
+    format(ide2, scientific = FALSE, trim = TRUE)
+  )
+  gen_bivariate(trait1, trait2, pe_term = pe_term, discovery_only = TRUE,
+                filename_suffix = "_petrait")
+}
+
 # ---- bivariate template ----
 
-gen_bivariate <- function(trait1, trait2) {
+gen_bivariate <- function(trait1, trait2, pe_term = "ide(ANI_ID)",
+                           discovery_only = FALSE, filename_suffix = "") {
   code_pair <- sprintf("%s_%s", trait1$code, trait2$code)
   reverse_pair <- sprintf("%s_%s", trait2$code, trait1$code)
 
   structure_block <- get_legacy_structure_block(trait1$code, trait2$code)
-  random_term <- cfg$random_effects$bivariate
+  random_term <- sub("ide\\(ANI_ID\\)$", pe_term, cfg$random_effects$bivariate)
 
   if (is.null(structure_block) && (code_pair %in% functional_init_pairs ||
                                     reverse_pair %in% functional_init_pairs)) {
@@ -379,9 +438,10 @@ gen_bivariate <- function(trait1, trait2) {
            " -- add it to uni_ped_sigma above before generating this pair.")
     }
     random_term <- sprintf(
-      "us(Trait !INIT %s 0 %s !GP).ped(ANI_ID) ide(ANI_ID)",
+      "us(Trait !INIT %s 0 %s !GP).ped(ANI_ID) %s",
       format(v11, scientific = FALSE, trim = TRUE),
-      format(v22, scientific = FALSE, trim = TRUE)
+      format(v22, scientific = FALSE, trim = TRUE),
+      pe_term
     )
     structure_block <- c(
       "# Functional-syntax !INIT starting values used instead of a legacy",
@@ -407,19 +467,46 @@ gen_bivariate <- function(trait1, trait2) {
         " -- see comment in generated .as file\n", sep = "")
   }
 
-  composite_specs <- composite_vpredict_specs[[code_pair]]
+  # discovery_only pairs (PE-sensitivity variants) skip the numbered
+  # VPREDICT block entirely -- the parameter order for a changed
+  # structure isn't known yet (see gen_bivariate_pe_sensitivity's header
+  # comment), so guessing indices here would repeat exactly the mistake
+  # this cross-check was designed to catch.
+  composite_specs <- if (discovery_only) NULL else composite_vpredict_specs[[code_pair]]
   composite_lines <- if (!is.null(composite_specs)) {
     unlist(lapply(composite_specs, composite_vpredict_lines))
   } else {
     character(0)
   }
+  vpredict_lines <- if (discovery_only) {
+    c(
+      "# Discovery-only VPREDICT: no derived quantities yet. Per",
+      "# ASReml-4.2-Functional-Specification.pdf Section 13.2, a bare",
+      "# VPREDICT !DEFINE + blank line reports every parameter's real",
+      "# name and number in the .pvc file -- read those off before",
+      "# writing any h2/SE block for this changed model structure."
+    )
+  } else {
+    c(
+      "P Vp1 1 2 5",
+      "P Vp2 1 4 7",
+      "P Cp 3 6",
+      "H h2_1 5 Vp1",
+      "H h2_2 7 Vp2",
+      "R rg 5 6 7",
+      "R re 2 3 4",
+      "R cp Vp1 Cp Vp2",
+      composite_lines
+    )
+  }
+  out_name <- sprintf("bi_%s%s", code_pair, filename_suffix)
 
   as_lines <- c(
     sprintf(
       "!WORKSPACE %d !CONTINUE !NODISPLAY !LOGFILE !MAXIT %d !MP %d",
       cfg$workspace_mb, cfg$maxit, cfg$mp_threads
     ),
-    sprintf("bivariate_%s -- generated by 01_generate_models.R", code_pair),
+    sprintf("bivariate_%s -- generated by 01_generate_models.R", out_name),
     field_definition_lines(),
     "",
     cfg$pedigree_file,
@@ -433,31 +520,13 @@ gen_bivariate <- function(trait1, trait2) {
     structure_block,
     "",
     "VPREDICT !DEFINE",
-    "P Vp1 1 2 5",
-    "P Vp2 1 4 7",
-    "P Cp 3 6",
-    "H h2_1 5 Vp1",
-    "H h2_2 7 Vp2",
-    "R rg 5 6 7",
-    "R re 2 3 4",
-    "R cp Vp1 Cp Vp2",
-    composite_lines,
+    vpredict_lines,
     ""
   )
-  writeLines(as_lines, file.path(models_dir, sprintf("bi_%s.as", code_pair)))
+  writeLines(as_lines, file.path(models_dir, sprintf("%s.as", out_name)))
 
-  pin_lines <- c(
-    "P Vp1 1 2 5",
-    "P Vp2 1 4 7",
-    "P Cp 3 6",
-    "H h2_1 5 Vp1",
-    "H h2_2 7 Vp2",
-    "R rg 5 6 7",
-    "R re 2 3 4",
-    "R cp Vp1 Cp Vp2",
-    composite_lines
-  )
-  writeLines(pin_lines, file.path(models_dir, sprintf("bi_%s.pin", code_pair)))
+  pin_lines <- vpredict_lines
+  writeLines(pin_lines, file.path(models_dir, sprintf("%s.pin", out_name)))
 }
 
 # ---- select what to generate ----
@@ -476,6 +545,12 @@ if (set_arg == "validation") {
   set_key <- if (set_arg == "components") "component_set" else "component_trial_set"
   uni_codes <- cfg[[set_key]]$univariate
   bi_pairs <- cfg[[set_key]]$bivariate
+} else if (set_arg == "pe_sensitivity") {
+  # See gen_bivariate_pe_sensitivity's header comment -- no univariate
+  # models needed (reuses existing converged ones' ide estimates as
+  # !INIT values), just the 2 discovery-only bivariate pairs.
+  uni_codes <- character(0)
+  bi_pairs <- lapply(pe_sensitivity_pairs, function(p) strsplit(p, "_")[[1]])
 } else {
   uni_codes <- sapply(cfg$traits, `[[`, "code")
   if (isTRUE(cfg$full_sweep$generate_all_pairs)) {
@@ -507,8 +582,13 @@ for (pair in bi_pairs) {
   t1 <- trait_by_code[[pair[[1]]]]
   t2 <- trait_by_code[[pair[[2]]]]
   if (is.null(t1) || is.null(t2)) stop("Unknown trait code in pair: ", paste(pair, collapse = ","))
-  gen_bivariate(t1, t2)
-  cat("  wrote bi_", t1$code, "_", t2$code, ".as\n", sep = "")
+  if (set_arg == "pe_sensitivity") {
+    gen_bivariate_pe_sensitivity(t1, t2)
+    cat("  wrote bi_", t1$code, "_", t2$code, "_petrait.as (discovery-only)\n", sep = "")
+  } else {
+    gen_bivariate(t1, t2)
+    cat("  wrote bi_", t1$code, "_", t2$code, ".as\n", sep = "")
+  }
 }
 
 cat("\nDone. Models written to:", models_dir, "\n")
