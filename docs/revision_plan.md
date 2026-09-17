@@ -319,6 +319,23 @@ manuscript editing, no data received, no analysis started.
   the pipeline. Still needed: pull back the already-CONVERGED univariate
   `.asr` files (no new computation) for a Wald F-significance table, and
   run the stage-heterogeneity model.
+- **2026-09-17 (later still)**: `a_ch4_stage_het_residual` CONVERGED on
+  HPC. Real result, not "materially unchanged": residual variance
+  differs 2.4x between stages (mature 14.91 vs. young 6.17, vs. the
+  pooled model's single 10.74), and VA/PE both increase modestly (~6-7%)
+  once that heterogeneity is allowed. Because h2/repeatability divide by
+  a residual that differs this much, stage-specific h2 differs ~75%
+  relative (mature 0.205, young 0.359, vs. pooled 0.247) -- straddling
+  the pooled estimate from both sides. This crosses the plan's own
+  escalation threshold ("only escalate if the simple heterogeneity check
+  reveals a biologically important change") and directly substantiates
+  Reviewer 1's contemporary-group/scale-heterogeneity concern and
+  Reviewer 2's stage-splitting question with a real number. Whether to
+  escalate further (stage-specific reruns of other component traits, or
+  a young-vs-mature bivariate genetic analysis) is left as an open scope
+  decision for the user -- not decided here. Full table in
+  `analysis/diagnostics/reviewer_a2_a3/README.md`. Wald F-stat `.asr`
+  pull still not landed.
 
 ---
 

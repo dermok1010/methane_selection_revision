@@ -89,7 +89,8 @@ animals -- consistent with the reviewers' concern that pooling groups
 of very different absolute scale is worth checking formally, not just
 noting descriptively.
 
-**Sensitivity model, not yet run**: `a_ch4_stage_het_residual.as`
+**Sensitivity model result -- CONVERGED, and the difference is real,
+not "materially unchanged."** `a_ch4_stage_het_residual.as`
 refits the pooled CH4 model (identical fixed/random-effects
 specification to `a_uni_methane.as`) with
 `residual sat(stage).idv(units)` instead of a single homogeneous
@@ -99,15 +100,41 @@ unnecessarily"). Generated as a discovery-only VPREDICT run (same
 discipline as the PE-sensitivity variants in
 `analysis/revision/asreml_pipeline/`) since `sat(stage).idv(units)` is a
 new residual structure for this pipeline and its parameter print order
-isn't assumed.
+isn't assumed. CONVERGED on HPC 2026-09-17.
+
+Real parameter numbering (read off the `.pvc`, not assumed): 1=`ped`
+(VA), 2=`ide` (PE), 3=`sat(stage,1).idv(units)` (residual for the
+8,269-record group = mature), 4=`sat(stage,2).idv(units)` (residual for
+the 7,600-record group = young).
+
+| | VA | PE | Residual | VP | h2 | repeatability |
+|---|---|---|---|---|---|---|
+| pooled (`a_uni_methane`) | 3.920 | 1.186 | 10.735 | 15.840 | 0.247 | 0.322 |
+| stage-het: mature | 4.157 | 1.269 | **14.905** | 20.331 | **0.205** | 0.267 |
+| stage-het: young | 4.157 | 1.269 | **6.165** | 11.591 | **0.359** | 0.468 |
+
+VA and PE both increase modestly (~6-7%) once residual heterogeneity is
+allowed, but the residual variance itself differs by **2.4x** between
+stages (mature 14.91 vs. young 6.17) -- consistent with the raw
+descriptive stats (mature CH4 mean 21.1 vs. young 14.4 g/day, higher
+absolute SD). Because the derived h2/repeatability divide by a residual
+that differs this much by stage, the **stage-specific heritabilities
+differ by ~75% relative to each other** (0.21 mature vs. 0.36 young),
+straddling the pooled model's single estimate (0.25) from both sides.
+
+**This crosses the plan's own escalation threshold** ("if estimates are
+materially unchanged, stop there... only escalate if the simple
+heterogeneity check reveals a biologically important change") -- this
+is not a materially-unchanged result. It directly substantiates
+Reviewer 1's contemporary-group/scale-heterogeneity concern and
+Reviewer 2's stage-splitting question with a real number, not just a
+descriptive caveat. Whether to escalate further (stage-specific
+univariate reruns of other component traits, or a young-vs-mature
+bivariate genetic analysis) is a scope decision for the user, not made
+here -- flagged in `docs/revision_plan.md`'s decision log.
 
 ## Next steps (need HPC)
 
 1. Pull back the already-CONVERGED univariate `.asr` files (no new
-   computation) to build the Wald F-significance table.
-2. Run `a_ch4_stage_het_residual.as`, read its discovery output, then
-   (if materially different from the pooled model) add the indexed
-   VPREDICT block and compare VA/PE/residual/h2/repeatability against
-   `a_uni_methane`'s pooled estimates -- per the plan, stop here unless
-   the difference is biologically important; do not escalate to
-   stage-specific reruns of every derived trait without cause.
+   computation) to build the Wald F-significance table -- requested but
+   not yet landed.
