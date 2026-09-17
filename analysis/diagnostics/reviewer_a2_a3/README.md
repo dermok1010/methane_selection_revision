@@ -62,11 +62,65 @@ output in `pedigree_connectedness_stage_summary.txt`; headline numbers:
   single-sex -- expected given male ram lambs are almost all <1yr and
   rarely co-measured with mature ewes.
 
-**Not yet done**: the formal fixed-effect Wald F-significance table and
-a compact convergence/variance-component diagnostics table both need
-the models' `.asr` files (Wald F statistics print there) -- these
-already exist on HPC from the earlier CONVERGED runs, just not pulled
-back to the VM yet.
+### Fixed-effect Wald F significance (all 7 component-trait univariate models)
+
+Parsed directly from each model's own `.asr` Wald F table by
+`03_wald_fixed_effects.R`; full F-inc/df/p-values in
+`wald_fixed_effects.csv`. `ch4_GroupNumber` (1435 levels) is excluded --
+ASReml itself drops it from the Wald table by default given that many
+levels ("Use !DENSE 1455 to force ... into Wald F table"); testing it
+formally would need a separate, much more expensive rerun, not
+attempted here.
+
+| term | methane | co2 | mbw | adg | muscle | rumen | weight |
+|---|---|---|---|---|---|---|---|
+| SEX | | *** | *** | | *** | * | *** |
+| TX | * | *** | *** | | *** | | *** |
+| BR | | | | | *** | *** | |
+| SU | * | | *** | | *** | *** | *** |
+| CL | *** | | *** | ** | *** | *** | *** |
+| CV | | ** | | | | | * |
+| LY | | | | | | | |
+| UN | *** | *** | *** | *** | *** | *** | *** |
+| het | * | | | *** | *** | | |
+| rec | | *** | | ** | *** | | *** |
+| REARING_RANK | *** | *** | *** | | *** | | *** |
+| BIRTH_RANK | *** | | *** | * | | | *** |
+| ewe_birth_rank | *** | *** | *** | n/a | n/a | n/a | *** |
+| ewe_rearing_rank | ** | | *** | n/a | n/a | n/a | *** |
+| age_in_weeks | * | ** | *** | *** | *** | *** | *** |
+| dam_parity_group_num | | | | * | | | ** |
+
+(`*` p<0.05, `**` p<0.01, `***` p<0.001, blank = not significant,
+n/a = term not in that model's Wald table as reported by ASReml.)
+
+**Notable**: the undocumented `UN` breed-proportion term (see model
+specification above) is significant at p<0.001 for **every single
+trait** -- it is not a minor/spurious covariate and needs proper
+description in the revised Methods, not just a passing mention. LY
+(Lleyn) is never significant for any trait -- consistent with its very
+low within/contemporary-group variance ratio (0.152) found above,
+i.e. there may simply not be enough independent information on Lleyn
+proportion once contemporary group is accounted for.
+
+### Model-diagnostics table (records, animals, convergence, variance components)
+
+| trait | n records | resid. df | VA (ped) | PE (ide) | residual | h2 | h2 SE |
+|---|---|---|---|---|---|---|---|
+| methane | 15,869 | 14,418 | 3.920 | 1.186 | 10.735 | 0.247 | 0.021 |
+| co2 | 15,869 | 14,418 | 19164.6 | 17141.0 | 31226.5 | 0.284 | 0.023 |
+| mbw | 15,869 | 14,418 | 2.191 | 1.919 | 0.958 | 0.432 | 0.026 |
+| adg | 4,437 | 3,941 | 0.00059 | 0.00172 | 0.00013 | 0.241 | 0.056 |
+| muscle | 780 | 693 | 0.396 | 0.277 | 0.578 | 0.317 | 0.115 |
+| rumen | 780 | 693 | 0.167 | 0.109 | 0.766 | 0.160 | 0.096 |
+| weight | 15,869 | 14,418 | 30.467 | 28.081 | 14.308 | 0.418 | 0.026 |
+
+All 7 CONVERGED with clean independent cross-checks (see
+`results/univariate_summary.csv`). muscle/rumen's small sample (~712
+records, CT-derived traits) drives their much larger h2 SEs (0.10-0.12
+vs. 0.02-0.06 for the others) -- worth stating explicitly alongside
+those two heritabilities rather than leaving the precision difference
+implicit.
 
 ## A3: physiological-stage heterogeneity
 
@@ -133,8 +187,13 @@ univariate reruns of other component traits, or a young-vs-mature
 bivariate genetic analysis) is a scope decision for the user, not made
 here -- flagged in `docs/revision_plan.md`'s decision log.
 
-## Next steps (need HPC)
+## Status
 
-1. Pull back the already-CONVERGED univariate `.asr` files (no new
-   computation) to build the Wald F-significance table -- requested but
-   not yet landed.
+All of A2 and A3's descriptive/diagnostic deliverables are done (model
+specification, pedigree completeness, connectedness, confounding, Wald
+F-significance, model-diagnostics table, CH4-by-stage descriptives and
+sensitivity model). The one open item is a scope decision, not more
+data work: whether to escalate the stage-heterogeneity finding beyond
+this single CH4 sensitivity check (see above), which the plan
+deliberately leaves to the user's judgement rather than an automatic
+next step.

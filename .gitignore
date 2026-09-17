@@ -78,6 +78,7 @@ data/
 # commercially-sensitive data, so explicitly re-include them.
 # ===============================
 !analysis/revision/asreml_pipeline/results/*.csv
+!analysis/diagnostics/reviewer_a2_a3/*.csv
 *.asr
 *.rsv
 *.msv

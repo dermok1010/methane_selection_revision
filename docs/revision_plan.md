@@ -334,8 +334,25 @@ manuscript editing, no data received, no analysis started.
   escalate further (stage-specific reruns of other component traits, or
   a young-vs-mature bivariate genetic analysis) is left as an open scope
   decision for the user -- not decided here. Full table in
-  `analysis/diagnostics/reviewer_a2_a3/README.md`. Wald F-stat `.asr`
-  pull still not landed.
+  `analysis/diagnostics/reviewer_a2_a3/README.md`.
+- **2026-09-17 (later still)**: Wald F-stat `.asr` files for all 7
+  univariate models landed; parsed directly from each model's own Wald
+  F table (not re-derived) by the new `03_wald_fixed_effects.R`, with an
+  approximate p-value added via F(NumDF, residual_df) since ASReml
+  reports F-inc but not p directly. `ch4_GroupNumber` (1435 levels)
+  cannot be tested this way -- ASReml drops it from the Wald table by
+  default; a `!DENSE` rerun would be needed and wasn't attempted.
+  **Notable finding**: the undocumented `UN` breed-proportion term is
+  significant at p<0.001 for every single trait -- a real, substantively
+  important covariate, not a minor one, and needs proper description in
+  the revised Methods rather than a passing mention. LY (Lleyn) is never
+  significant for any trait, consistent with its very low
+  within/contemporary-group variance ratio (0.152) found above.
+  Compiled a model-diagnostics table (records/df/VA/PE/residual/h2/SE
+  per trait) alongside it -- both in
+  `analysis/diagnostics/reviewer_a2_a3/README.md`. This closes out A2
+  and A3's descriptive/diagnostic deliverables; the only remaining open
+  item is the stage-heterogeneity escalation scope decision above.
 
 ---
 
