@@ -267,6 +267,33 @@ manuscript editing, no data received, no analysis started.
   the confirmed indices rather than the model .as file (already
   CONVERGED, so only `.pin` post-processing is needed). Not yet run on
   HPC.
+- **2026-09-17 (later still)**: `.pin` post-processing returned real
+  delta-method h2/SE for all 8 two-component composite traits (RMTMBW+CO2
+  still excluded, see above). Recorded in the new
+  `results/composite_h2_se.csv`:
+
+  | trait | h2 | SE | PE structure |
+  |---|---|---|---|
+  | MI (CH4/MBW) | 0.2489 | 0.0114 | shared |
+  | RMTMBW | 0.2460 | 0.0115 | shared |
+  | CH4/ADG | 0.1929 | 0.0398 | shared |
+  | RMTADG | 0.3129 | 0.0129 | shared |
+  | CH4/MM | 0.2443 | 0.0314 | shared |
+  | CH4/rumen | 0.1282 | 0.0447 | shared |
+  | **CH4/LW** | **0.1527** | 0.0181 | trait-specific (corrected; was 0.2938 with shared PE) |
+  | **CH4/(CH4+CO2)** | **0.1865** | 0.0187 | trait-specific (corrected; was 0.3490 with shared PE) |
+
+  Note for step 3's dedicated CH4-ratio scrutiny: the corrected
+  component-derived CH4-ratio h2 (0.1865) is now noticeably HIGHER than
+  the direct-fit univariate CH4-ratio h2 already computed
+  (0.1016, SE 0.0125) -- a real direct-fit-vs-component-derived
+  discrepancy for exactly the reviewers' headline trait, worth carrying
+  into the comparison table (plan A1) once the full direct-fit sweep is
+  triaged. mbw/adg/muscle/rumen pairs were deliberately NOT resubmitted
+  with trait-specific PE (scope was limited to the 2 pairs with >2x
+  inflation) -- their shared-PE h2/SE values are usable but this remains
+  an open question given the mechanism is now confirmed real, not pair-
+  specific.
 
 ---
 
