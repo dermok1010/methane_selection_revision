@@ -51,7 +51,8 @@ suppressPackageStartupMessages({
 args <- commandArgs(trailingOnly = TRUE)
 set_arg <- sub("^--set=", "", grep("^--set=", args, value = TRUE))
 if (length(set_arg) == 0) set_arg <- "validation"
-stopifnot(set_arg %in% c("validation", "full", "components", "components_trial", "pe_sensitivity"))
+stopifnot(set_arg %in% c("validation", "full", "components", "components_trial",
+                          "pe_sensitivity", "pe_sensitivity_final"))
 
 pipeline_root <- normalizePath(
   file.path(dirname(sub("--file=", "", grep("--file=", commandArgs(), value = TRUE))), ".."),
@@ -324,7 +325,12 @@ composite_vpredict_specs <- list(
 # Vp1/Cp/Vp2 for the phenotypic part (see gen_bivariate's base VPREDICT
 # block). p = spec's prefix, used to keep every generated name unique
 # and short within the file.
-composite_vpredict_lines <- function(spec) {
+# idx1/idx2/idx3 are the model's own indices for (VA trait1, CovA,
+# VA trait2) -- 5,6,7 for the standard shared-PE structure (see the
+# file-header comment), but a different, empirically-confirmed triple
+# for the PE-sensitivity variant (see petrait_vpredict_lines below),
+# since changing the PE structure changes every downstream index.
+composite_vpredict_lines_idx <- function(spec, idx1 = 5, idx2 = 6, idx3 = 7) {
   p <- spec$prefix
   # ASReml is a fixed-format Fortran-style parser; scientific notation
   # ("e-07") is avoided in generated coefficients for the same reason
@@ -335,9 +341,9 @@ composite_vpredict_lines <- function(spec) {
   fmt <- function(x) format(x, scientific = FALSE, trim = TRUE, digits = 12)
   c(
     sprintf("# %s (delta-method SE via ASReml VPREDICT, see composite_vpredict_specs)", spec$label),
-    sprintf("P %sa1 5 * %s", p, fmt(spec$c1)),
-    sprintf("P %sa2 6 * %s", p, fmt(spec$c2)),
-    sprintf("P %sa3 7 * %s", p, fmt(spec$c3)),
+    sprintf("P %sa1 %d * %s", p, idx1, fmt(spec$c1)),
+    sprintf("P %sa2 %d * %s", p, idx2, fmt(spec$c2)),
+    sprintf("P %sa3 %d * %s", p, idx3, fmt(spec$c3)),
     sprintf("P %sVA %sa1 + %sa2 + %sa3", p, p, p, p),
     sprintf("P %sp1 Vp1 * %s", p, fmt(spec$c1)),
     sprintf("P %sp2 Cp * %s", p, fmt(spec$c2)),
@@ -346,6 +352,7 @@ composite_vpredict_lines <- function(spec) {
     sprintf("H %s %sVA %sVP", spec$h2_name, p, p)
   )
 }
+composite_vpredict_lines <- function(spec) composite_vpredict_lines_idx(spec)
 
 uni_ped_sigma <- c(
   methane = 3.91959,     # run/a_uni_methane -- CONVERGED
@@ -401,6 +408,40 @@ functional_init_pairs <- c("methane_co2", "methane_adg", "methane_rumen", "mbw_c
 # pairs.
 pe_sensitivity_pairs <- c("methane_weight", "methane_co2")
 uni_ide_sigma <- c(methane = 1.18589, weight = 28.0808, co2 = 17141)
+
+# ---- PE-sensitivity, final .pin (2026-09-17) -------------------------
+# The two discovery-only runs above CONVERGED and confirmed the
+# diagnosis (weight/co2's within-model genetic variance dropped from
+# 2.1-2.3x their univariate values back to within normal ~6-11% drift
+# once PE is trait-specific -- see docs/revision_plan.md decision log).
+# Real index numbering read off both .pvc files by hand (NOT assumed --
+# this is exactly why the discovery step existed): for both pairs,
+# Residual prints as 1:3 (V11,C21,V22), the pedigree US block as 4:6
+# (V11,C21,V22), then diag(Trait).ide(ANI_ID) as 7:8 (V1,V2) -- PE now
+# prints AFTER pedigree, unlike the shared-ide structure where it
+# printed first as a single component. diag() has no PE covariance term
+# by construction, so Cp (phenotypic covariance) sums only the residual
+# and pedigree covariances, matching the original's own convention for
+# ide's (non-)contribution to Cp.
+petrait_vpredict_lines <- function(composite_spec) {
+  base <- c(
+    "P Vp1 7 1 4",
+    "P Vp2 8 3 6",
+    "P Cp 2 5",
+    "H h2_1 4 Vp1",
+    "H h2_2 6 Vp2",
+    "R rg 4 5 6",
+    "R re 1 2 3",
+    "R cp Vp1 Cp Vp2"
+  )
+  c(base, composite_vpredict_lines_idx(composite_spec, idx1 = 4, idx2 = 5, idx3 = 6))
+}
+
+gen_bivariate_pe_sensitivity_final <- function(jobname, composite_spec) {
+  lines <- petrait_vpredict_lines(composite_spec)
+  writeLines(lines, file.path(models_dir, sprintf("%s.pin", jobname)))
+  cat("  wrote ", jobname, ".pin (final, indices confirmed from discovery run)\n", sep = "")
+}
 
 gen_bivariate_pe_sensitivity <- function(trait1, trait2) {
   code_pair <- sprintf("%s_%s", trait1$code, trait2$code)
@@ -566,6 +607,19 @@ if (set_arg == "validation") {
       bi_pairs
     )
   }
+}
+
+if (set_arg == "pe_sensitivity_final") {
+  # Writes ONLY the .pin (not .as) for the 2 PE-sensitivity pairs, using
+  # the index numbering confirmed from their discovery runs' real .pvc
+  # output (see petrait_vpredict_lines' header comment) -- these already
+  # CONVERGED, so only .pin post-processing is needed, not a fresh fit.
+  gen_bivariate_pe_sensitivity_final("bi_methane_weight_petrait",
+                                      composite_vpredict_specs[["methane_weight"]][[1]])
+  gen_bivariate_pe_sensitivity_final("bi_methane_co2_petrait",
+                                      composite_vpredict_specs[["methane_co2"]][[1]])
+  cat("\nDone.\n")
+  quit(save = "no", status = 0)
 }
 
 cat(sprintf("Generating '%s' set: %d univariate, %d bivariate models\n",

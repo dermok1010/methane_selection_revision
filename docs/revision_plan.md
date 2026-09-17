@@ -250,6 +250,23 @@ manuscript editing, no data received, no analysis started.
   for exactly this situation) -- the real parameter names/numbers will
   be read off the .pvc output before any h2/SE block is written for
   these two pairs. Not yet run on HPC.
+- **2026-09-17 (later still)**: discovery runs converged and confirmed
+  the diagnosis cleanly. With trait-specific PE, `bi_methane_weight`'s
+  within-model VA(weight) dropped from 70.52 (2.3x its univariate value)
+  to 33.78 -- within normal ~11% joint-estimation drift of the
+  univariate 30.47. `bi_methane_co2`'s VA(co2) dropped from 40219.8
+  (2.1x) to 20331.0, ~6% of the univariate 19164.6. Real parameter
+  index numbering for this changed structure, read off both discovery
+  `.pvc` files (not assumed): Residual prints as indices 1:3, the
+  pedigree US block as 4:6, `diag(Trait).ide(ANI_ID)` as 7:8 -- PE now
+  prints AFTER pedigree, unlike the shared-PE structure where it printed
+  first. Wrote the final, correctly-indexed `.pin` files for both pairs
+  (CH4/LW and CH4-ratio's delta-method h2/SE, reusing the identical
+  coefficients already used for every other composite trait) --
+  `01_generate_models.R --set=pe_sensitivity_final` generates these from
+  the confirmed indices rather than the model .as file (already
+  CONVERGED, so only `.pin` post-processing is needed). Not yet run on
+  HPC.
 
 ---
 
