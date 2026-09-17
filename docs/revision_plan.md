@@ -294,6 +294,31 @@ manuscript editing, no data received, no analysis started.
   inflation) -- their shared-PE h2/SE values are usable but this remains
   an open question given the mechanism is now confirmed real, not pair-
   specific.
+- **2026-09-17 (later still)**: user asked to move on to action plan A2
+  (model documentation/diagnostics) and A3 (physiological-stage
+  heterogeneity). Work in `analysis/diagnostics/reviewer_a2_a3/` (see its
+  own README.md for full detail). Confirmed the same fixed/random-effects
+  specification is used across every component trait (an existing fact,
+  not new work). Computed pedigree completeness (100% of phenotyped
+  animals in the pedigree, 88.5% both parents known), sire/dam counts
+  (1,025 unique sires directly above phenotyped animals), basic pedigree
+  depth (mean 17.6 generations), and connectedness (73.1% of sires link
+  2+ PAC contemporary groups). **Real confounding finding**: Cheviot
+  (CV) and Lleyn (LY) breed-proportion covariates are close to fully
+  nested within contemporary group (within/total variance ratio 0.043
+  and 0.152 respectively) -- their fixed-effect estimates are not
+  cleanly separable from contemporary-group effects, worth flagging in
+  the revised text rather than claiming clean separability for all seven
+  breed terms. For A3: pre-specified young (age<2) vs mature (age>=2)
+  split gives mature CH4 ~46% higher in mean and higher absolute SD but
+  lower CV than young (14.43 vs 21.10 g/day mean). Generated (not yet
+  run) `a_ch4_stage_het_residual.as`, refitting the pooled CH4 model
+  with `residual sat(stage).idv(units)` instead of a single homogeneous
+  residual variance -- discovery-only VPREDICT (same discipline as the
+  PE-sensitivity variants), since this is a new residual structure for
+  the pipeline. Still needed: pull back the already-CONVERGED univariate
+  `.asr` files (no new computation) for a Wald F-significance table, and
+  run the stage-heterogeneity model.
 
 ---
 

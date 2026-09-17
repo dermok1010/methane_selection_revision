@@ -1,0 +1,56 @@
+=== A2: Pedigree completeness (phenotyped animals) ===
+Phenotyped animals in phenotype file: 8185
+Phenotyped animals found in pedigree: 8185 (100.0%)
+Both parents known:  7244 (88.5%)
+Sire known, dam not: 156 (1.9%)
+Dam known, sire not: 351 (4.3%)
+Neither known:       434 (5.3%)
+Unique sires (phenotyped animals' own sires): 1025
+Unique dams  (phenotyped animals' own dams):  5216
+
+Full pedigree size (all animals, phenotyped + ancestors): 36449
+Unique sires across the full pedigree: 8757
+Unique dams  across the full pedigree: 21637
+
+Basic pedigree depth (max traceable generations back, simple lineage
+count -- not equivalent-complete-generations): sampled 500 phenotyped
+animals -- mean 17.6, median 19, max 34
+
+=== A2: Connectedness (sires across ch4_GroupNumber contemporary groups) ===
+Sires with progeny records: 1025
+Sires linking only 1 contemporary group:  276 (26.9%)
+Sires linking 2-4 contemporary groups:     300 (29.3%)
+Sires linking 5+ contemporary groups:       449 (43.8%)
+Max contemporary groups linked by one sire: 205
+(A sire linking >=2 groups provides genetic connectedness between them;
+ a sire confined to 1 group cannot help separate genetic merit from
+ that group's own contemporary-group effect.)
+
+=== A2: Confounding/nesting checks ===
+Contemporary groups containing only one SEX: 1178 / 1435 (82.1%)
+(SEX is not itself confounded with ch4_GroupNumber overall -- both
+ sexes appear across many groups -- but a meaningful minority of
+ individual groups are single-sex, expected given ram lambs are
+ almost all <1yr and rarely co-measured with mature ewes.)
+
+Breed-proportion within-group vs total variance ratio (1.0 = no
+confounding with ch4_GroupNumber; near 0 = breed proportion is
+almost fully determined by which group an animal is in):
+  TX   within/total variance ratio: 0.639
+  BR   within/total variance ratio: 0.396
+  SU   within/total variance ratio: 0.676
+  CL   within/total variance ratio: 0.209
+  CV   within/total variance ratio: 0.043
+  LY   within/total variance ratio: 0.152
+  UN   within/total variance ratio: 0.278
+
+=== A3: CH4 descriptive stats by physiological stage ===
+Stage rule (pre-specified): young = age_in_years < 2 (lambs/hoggets,
+includes virtually all male ram lambs, which are ~100% <1yr in this
+dataset); mature = age_in_years >= 2 (this group is >99.8% female,
+i.e. effectively 'mature ewes' as the reviewers' comment names it,
+even though the rule itself is age- not sex-based).
+
+young: n records=7600, n animals=4231, mean=14.429, SD=5.622, CV=39.0%
+mature: n records=8269, n animals=4403, mean=21.099, SD=7.703, CV=36.5%
+Animals with records in BOTH stages: 449
