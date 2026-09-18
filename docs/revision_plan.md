@@ -625,6 +625,42 @@ the author's own strategy note below).
 
 ---
 
+
+## 4A. Decision update — 18 Sep 2026: heterogeneous residuals in bivariates
+
+The reviewer wording asks whether variance scaling across very different
+contemporary groups was examined; it does not require every bivariate
+model to be refit under the richest possible heterogeneous structure.
+However, the CH4 univariate CG-heterogeneous model changed variance
+partitioning materially, so the issue cannot be dismissed using only the
+young-vs-mature CH4 genetic correlation.
+
+The univariate evidence is now:
+- `methane`, `ch4mbw`, `ch4ratio`, `ch4rmtmbw`, and
+  `ch4rmtmbwco2` converge under both CG-mean-class and stage-specific
+  residual heterogeneity.
+- `ch4adg`, `ch4rmtadg`, `ch4muscle`, and `ch4rumen` fail at the
+  first AI update under both structures. In the two-stage model, the
+  second-stage residual component is Code S (no information), which is
+  consistent with their restricted recording structure; these are not
+  ordinary slow-convergence failures and should not be forced.
+
+Next step is deliberately bounded: fit one full-data bivariate prototype,
+CH4 x CH4/MBW, using independent PE and
+`sat(cg_mean_cl).us(Trait).units` residuals
+(`--set=bi_cg_het_trial`). This gives each source-within-CG-mean class
+its own 2x2 residual covariance matrix and is therefore a stress test,
+not automatically the final production model. Compare its genetic
+correlation and genetic variances with the homogeneous-residual fit.
+If stable and materially different, heterogeneous bivariates need more
+attention; if stable and the rg is essentially unchanged, the main
+message is that heterogeneity affects variance partitioning more than the
+standardized genetic relationship. If the trial is non-estimable, move
+to a more parsimonious heterogeneous-scale/common-correlation model
+rather than expanding the 55-pair sweep or forcing convergence.
+
+---
+
 ## 5. Proposed order for introducing pipelines and rebuilding
 
 This follows the user's own instinct (PAC pipeline first, then genetics,
@@ -710,8 +746,12 @@ rather than being bolted on at the end.
 
 - Should the literature-comparison table live in the main text or
   supplementary material?
-- For the CG heteroscedasticity / stage-stratification check: full
-  heterogeneous-residual-variance model, or simpler stage-stratified
-  univariate reruns as a sensitivity check?
+- CG heteroscedasticity / stage-stratification is no longer an open
+  design question: both univariate structures were run on 2026-09-18.
+  Five full-information methane definitions converged under both; the
+  four sparse ADG/CT traits were non-estimable under the extra residual
+  structure. A single CH4 x CH4/MBW CG-heterogeneous bivariate prototype
+  (`--set=bi_cg_het_trial`) is the next bounded test before deciding
+  whether any heterogeneous bivariate model belongs in the final paper.
 - Preferred venue/format for the H-matrix comparison if it does end up
   included (main text table, supplementary, or just narrative mention)?
