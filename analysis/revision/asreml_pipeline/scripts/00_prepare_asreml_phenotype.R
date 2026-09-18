@@ -123,6 +123,44 @@ asreml_data$stage_660 <- ifelse(data$age_at_treatment < 660, "young", "mature")
 asreml_data$ch4_young <- ifelse(asreml_data$stage_660 == "young", asreml_data$ch4_g_day2_1v3, NA_real_)
 asreml_data$ch4_old   <- ifelse(asreml_data$stage_660 == "mature", asreml_data$ch4_g_day2_1v3, NA_real_)
 
+# ---- Contemporary-group-mean residual-heterogeneity class (2026-09-18,
+# per user instruction -- adapted from ~/Dermot_analysis/Phd/Paper_3/
+# 2_genetic_analysis/scripts/CG_variance_adjust.R, a real prior ASReml/
+# MiX99 analysis the user had already built and run for a related
+# project) ----
+#
+# stage_660 (above) is an age-based PROXY for Reviewer 1's contemporary-
+# group heteroscedasticity concern -- literally fitting one residual
+# variance per ch4_GroupNumber (1435 levels) is intractable (most groups
+# are far too small to estimate their own variance). This is the more
+# direct version: bin each contemporary group by its OWN mean CH4 into
+# tertiles, computed WITHIN each data `source` (14 distinct farm/study
+# codes here, e.g. AYAF/CT/HILL/etc. -- every ch4_GroupNumber belongs to
+# exactly one source, confirmed 1435 unique (source, ch4_GroupNumber)
+# combinations = exactly the CG count) rather than pooling tertiles
+# across sources with different baseline CH4 levels. Consecutively
+# numbered per source (source i's three tertile classes are
+# 3*(i-1)+1 .. 3*(i-1)+3), giving up to 14*3=42 classes -- fewer where a
+# source has too few CGs to form 3 tertiles (HILL has only 2 CGs, the
+# smallest; ntile() distributes as evenly as possible rather than
+# erroring). Used as `residual sat(cg_mean_cl).idv(units)` in
+# --set=cg_het, alongside (not replacing) the stage_660-based models.
+cg_means <- data %>%
+  group_by(source, ch4_GroupNumber) %>%
+  summarise(cg_mean = mean(ch4_g_day2_1v3, na.rm = TRUE), cg_n = n(), .groups = "drop") %>%
+  mutate(source_cl = as.integer(factor(source))) %>%
+  group_by(source_cl) %>%
+  mutate(mean_class = ntile(cg_mean, 3)) %>%
+  ungroup() %>%
+  mutate(cg_mean_cl = (source_cl - 1L) * 3L + mean_class)
+
+asreml_data$cg_mean_cl <- cg_means$cg_mean_cl[
+  match(data$ch4_GroupNumber, cg_means$ch4_GroupNumber)
+]
+cat("\ncg_mean_cl class sizes (n contemporary groups, n records):\n")
+print(cg_means %>% count(cg_mean_cl, name = "n_cg"))
+stopifnot(!anyNA(asreml_data$cg_mean_cl))
+
 cat("\nFinal column list (", ncol(asreml_data), " columns):\n", sep = "")
 print(colnames(asreml_data))
 

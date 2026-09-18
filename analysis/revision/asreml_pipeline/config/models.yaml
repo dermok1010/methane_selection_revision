@@ -68,6 +68,7 @@ phenotype_columns:
   - {name: stage_660, type: "A"}   # growing(<660d)/mature split, see scripts/00_prepare_asreml_phenotype.R
   - {name: ch4_young, type: "1"}   # CH4, missing unless stage_660=="young"
   - {name: ch4_old, type: "1"}     # CH4, missing unless stage_660=="mature"
+  - {name: cg_mean_cl, type: "A"}  # contemporary-group-mean tertile class, see scripts/00_prepare_asreml_phenotype.R
 
 workspace_mb: 5000
 maxit: 300
@@ -304,3 +305,22 @@ young_old_pair:
   variable2: ch4_old
   label1: "CH4, young (<660 days)"
   label2: "CH4, mature (>=660 days)"
+
+# --set=cg_het: refits each listed trait's univariate model with
+# `residual sat(cg_mean_cl).idv(units)` -- heterogeneous residual variance
+# across contemporary-group-mean tertile classes (cg_mean_cl, up to 41
+# classes: each ch4_GroupNumber's own mean CH4, tertile-binned within its
+# data source), computed in scripts/00_prepare_asreml_phenotype.R and
+# adapted directly from a real prior ASReml/MiX99 analysis the user had
+# already built for a related project
+# (~/Dermot_analysis/Phd/Paper_3/2_genetic_analysis/scripts/
+# CG_variance_adjust.R). This is a more direct answer to Reviewer 1's
+# contemporary-group-heteroscedasticity concern than stage_het's age-
+# based proxy above -- literally fitting one residual variance per
+# ch4_GroupNumber (1435 levels) is intractable, but binning CGs by their
+# own mean is tractable and targets the concern (scale differences
+# between contemporary groups) directly rather than via an age surrogate.
+# Same trait set as stage_het_traits for consistency.
+cg_het_traits:
+  [methane, ch4mbw, ch4ratio, ch4adg, ch4muscle, ch4rumen, ch4rmtmbw,
+   ch4rmtmbwco2, ch4rmtadg]
