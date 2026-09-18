@@ -544,7 +544,8 @@ gen_bivariate_pe_sensitivity <- function(trait1, trait2) {
 
 gen_bivariate <- function(trait1, trait2, pe_term = "ide(ANI_ID)",
                            discovery_only = FALSE, filename_suffix = "",
-                           note = NULL, genetic_term = NULL) {
+                           note = NULL, genetic_term = NULL,
+                           residual_term = NULL) {
   code_pair <- sprintf("%s_%s", trait1$code, trait2$code)
   reverse_pair <- sprintf("%s_%s", trait2$code, trait1$code)
 
@@ -663,6 +664,7 @@ gen_bivariate <- function(trait1, trait2, pe_term = "ide(ANI_ID)",
       "%s %s ~ %s !r %s",
       trait1$variable, trait2$variable, fixed_bi, random_term
     ),
+    if (!is.null(residual_term)) sprintf("residual %s", residual_term) else character(0),
     "",
     structure_block,
     "",
@@ -751,9 +753,24 @@ gen_bivariate_young_old <- function() {
   # pair with no univariate estimate; the fallback there is about missing
   # DATA to seed !INIT with, not about whether independent PE is
   # appropriate here.
+  # Residual structure forced independent (idh(Trait).units, heterogeneous
+  # variances but NO covariance), not left to ASReml's US default -- the
+  # functional-genetic-term fix alone still aborted after 1 iteration
+  # (2026-09-18) with the RESIDUAL covariance specifically flagged
+  # Sigma/SE=0 and Code S ("Singular Information matrix... no information
+  # in the data for this parameter"). This is structural, not a scaling
+  # problem: no single measurement occasion ever has both a young-stage
+  # and old-stage value (mutually exclusive by construction, see
+  # 00_prepare_asreml_phenotype.R), so a residual covariance between them
+  # is genuinely inestimable -- the standard fix for this "same trait,
+  # two environments" design is to constrain it to zero rather than let
+  # ASReml try (and fail) to estimate it. The genetic covariance remains
+  # freely estimated (us(Trait).ped(ANI_ID)) since cross-occasion animal
+  # relationships DO carry information linking the two stages.
   gen_bivariate(t1, t2, pe_term = "diag(Trait).ide(ANI_ID)",
                 discovery_only = TRUE, filename_suffix = "",
-                genetic_term = "us(Trait).ped(ANI_ID)")
+                genetic_term = "us(Trait).ped(ANI_ID)",
+                residual_term = "idh(Trait).units")
 }
 
 # ---- select what to generate ----

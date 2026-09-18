@@ -48,6 +48,7 @@ pedigree.csv.SRT
 phenotype_asreml.csv !SKIP 1 !MVINCLUDE
 
 ch4_young ch4_old ~ Trait Tr.SEX Tr.TX Tr.BR Tr.SU Tr.CL Tr.CV Tr.LY Tr.UN Tr.het Tr.rec Tr.REARING_RANK Tr.BIRTH_RANK Tr.ewe_birth_rank Tr.ewe_rearing_rank Tr.age_in_weeks Tr.dam_parity_group_num Tr.ch4_GroupNumber !r us(Trait).ped(ANI_ID) diag(Trait).ide(ANI_ID)
+residual idh(Trait).units
 
 # Functional-syntax genetic term (us(Trait).ped(ANI_ID)), not classic bare
 # Trait.ped(ANI_ID) -- the classic form doesn't get ASReml's
