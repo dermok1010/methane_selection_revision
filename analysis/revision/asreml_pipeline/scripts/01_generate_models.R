@@ -60,7 +60,7 @@ set_arg <- sub("^--set=", "", grep("^--set=", args, value = TRUE))
 if (length(set_arg) == 0) set_arg <- "validation"
 stopifnot(set_arg %in% c("validation", "full", "components", "components_trial",
                           "pe_sensitivity", "pe_sensitivity_final",
-                          "stage_het", "young_old"))
+                          "stage_het", "young_old", "young_old_final"))
 
 pipeline_root <- normalizePath(
   file.path(dirname(sub("--file=", "", grep("--file=", commandArgs(), value = TRUE))), ".."),
@@ -449,6 +449,38 @@ gen_bivariate_pe_sensitivity_final <- function(jobname, composite_spec) {
   lines <- petrait_vpredict_lines(composite_spec)
   writeLines(lines, file.path(models_dir, sprintf("%s.pin", jobname)))
   cat("  wrote ", jobname, ".pin (final, indices confirmed from discovery run)\n", sep = "")
+}
+
+# ---- bi_young_old final .pin (2026-09-18) -------------------------------
+# Real parameter numbering read off run/bi_young_old/bi_young_old.pvc on
+# HPC after CONVERGED (not assumed -- this model's structure is unique on
+# this VM: idh(Trait).units residual, diag(Trait).ide(ANI_ID) PE with no
+# at(Trait,i) restriction so BOTH traits have a PE term, us(Trait).ped
+# genetic):
+#   1 = idh(Trait).units, young residual variance (9.12208)
+#   2 = idh(Trait).units, old residual variance   (10.7478)
+#   3 = us(Trait).ped(ANI_ID) V(1,1), young genetic variance (1.23722)
+#   4 = us(Trait).ped(ANI_ID) C(2,1), genetic covariance     (1.87648)
+#   5 = us(Trait).ped(ANI_ID) V(2,2), old genetic variance   (2.89891)
+#   6 = diag(Trait).ide(ANI_ID), young PE variance (0.00000, boundary/B)
+#   7 = diag(Trait).ide(ANI_ID), old PE variance   (4.00575)
+# idh(Trait) has no residual covariance term by construction (that's the
+# whole point of the fix -- it's structurally inestimable, see
+# gen_bivariate_young_old's header comment), so there is no "re"
+# (residual correlation) to compute here, unlike the standard bivariate
+# template's re line.
+gen_young_old_final <- function() {
+  lines <- c(
+    "P Vp1 1 3 6",
+    "P Vp2 2 5 7",
+    "P Cp 4",
+    "H h2_1 3 Vp1",
+    "H h2_2 5 Vp2",
+    "R rg 4 3 5",
+    "R rp Vp1 Cp Vp2"
+  )
+  writeLines(lines, file.path(models_dir, "bi_young_old.pin"))
+  cat("  wrote bi_young_old.pin (final, indices confirmed from converged .pvc)\n")
 }
 
 # ---- Independent PE for all --set=full bivariate models (2026-09-18,
@@ -858,6 +890,14 @@ if (set_arg == "young_old") {
   gen_bivariate_young_old()
   cat("  wrote bi_young_old.as (discovery-only)\n")
   cat("\nDone. Models written to:", models_dir, "\n")
+  quit(save = "no", status = 0)
+}
+
+if (set_arg == "young_old_final") {
+  # Writes ONLY the .pin (not .as) -- bi_young_old.as already CONVERGED
+  # (2026-09-18), so only .pin post-processing is needed, not a fresh fit.
+  gen_young_old_final()
+  cat("\nDone.\n")
   quit(save = "no", status = 0)
 }
 
