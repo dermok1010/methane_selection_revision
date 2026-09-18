@@ -544,14 +544,35 @@ gen_bivariate_pe_sensitivity <- function(trait1, trait2) {
 
 gen_bivariate <- function(trait1, trait2, pe_term = "ide(ANI_ID)",
                            discovery_only = FALSE, filename_suffix = "",
-                           note = NULL) {
+                           note = NULL, genetic_term = NULL) {
   code_pair <- sprintf("%s_%s", trait1$code, trait2$code)
   reverse_pair <- sprintf("%s_%s", trait2$code, trait1$code)
 
   structure_block <- get_legacy_structure_block(trait1$code, trait2$code)
   random_term <- sub("ide\\(ANI_ID\\)$", pe_term, cfg$random_effects$bivariate)
 
-  if (is.null(structure_block) && (code_pair %in% functional_init_pairs ||
+  if (is.null(structure_block) && !is.null(genetic_term)) {
+    # Explicit override (e.g. bi_young_old.as): the classic bare
+    # Trait.ped(ANI_ID) term doesn't get ASReml's improved phenotypic-
+    # variance-based auto-initialisation (Functional-Specification.pdf
+    # Section 7.7.5 -- confirmed the hard way 2026-09-18: bi_young_old.as
+    # aborted after 1 iteration with "singularities in AI matrix" using
+    # the classic form, then converged cleanly in the sibling
+    # sheep-methane-genomics-microbiome repo's bi_ch4_microtrait.as using
+    # this same functional us(Trait).ped(ANI_ID) form with no !INIT).
+    random_term <- sub("^Trait\\.ped\\(ANI_ID\\)", genetic_term, random_term)
+    structure_block <- c(
+      sprintf("# Functional-syntax genetic term (%s), not classic bare", genetic_term),
+      "# Trait.ped(ANI_ID) -- the classic form doesn't get ASReml's",
+      "# improved auto-initialisation and aborted this specific pair",
+      "# after 1 iteration with an AI-matrix singularity (2026-09-18).",
+      "# No !INIT values available (no prior univariate fit of either",
+      "# pseudo-trait to seed one from) -- functional syntax still gets",
+      "# the improved auto-init regardless."
+    )
+    cat("  NOTE: ", code_pair, " -- using functional ", genetic_term,
+        " (classic form failed to converge for this pair)\n", sep = "")
+  } else if (is.null(structure_block) && (code_pair %in% functional_init_pairs ||
                                     reverse_pair %in% functional_init_pairs)) {
     v11 <- uni_ped_sigma[[trait1$code]]
     v22 <- uni_ped_sigma[[trait2$code]]
@@ -731,7 +752,8 @@ gen_bivariate_young_old <- function() {
   # DATA to seed !INIT with, not about whether independent PE is
   # appropriate here.
   gen_bivariate(t1, t2, pe_term = "diag(Trait).ide(ANI_ID)",
-                discovery_only = TRUE, filename_suffix = "")
+                discovery_only = TRUE, filename_suffix = "",
+                genetic_term = "us(Trait).ped(ANI_ID)")
 }
 
 # ---- select what to generate ----
