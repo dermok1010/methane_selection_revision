@@ -353,6 +353,44 @@ manuscript editing, no data received, no analysis started.
   `analysis/diagnostics/reviewer_a2_a3/README.md`. This closes out A2
   and A3's descriptive/diagnostic deliverables; the only remaining open
   item is the stage-heterogeneity escalation scope decision above.
+- **2026-09-18**: User (voice instruction) closed the stage-heterogeneity
+  escalation scope decision left open above, plus generalized the
+  2026-09-17 PE-sensitivity fix beyond its original 2-pair pilot. All
+  three implemented as VM-side generation only (not yet run on HPC); full
+  detail in `analysis/revision/asreml_pipeline/README.md`'s 2026-09-18
+  update:
+  1. **Independent (trait-specific) permanent-environment variances for
+     every bivariate model, where possible** -- generalizes the
+     `methane_weight`/`methane_co2` diag(Trait) fix to `--set=full`,
+     `--set=components` and `--set=components_trial`, seeded from each
+     trait's own CONVERGED univariate `ide(ANI_ID)` estimate. All 45
+     `--set=full` pairs and the remaining 5 `--set=components` pairs
+     qualify (no trait currently lacks a CONVERGED univariate estimate).
+     Generated discovery-only (real parameter numbering not yet confirmed
+     for any pair beyond the original 2-pair pilot). **The existing
+     `results/bivariate_summary.csv` 52-row `--set=full` sweep (29
+     CONVERGED) was fit under the OLD shared-PE spec and is now a
+     historical record of a superseded model, not a result for the
+     regenerated `.as` files** -- needs rerunning on HPC before any of
+     its numbers are used going forward.
+  2. **`--set=stage_het`**: promotes the single-trait CH4 stage-
+     heterogeneous-residual pilot (`a_ch4_stage_het_residual.as`) into
+     the main pipeline for all 9 Table 2 traits, switched to the
+     manuscript's own official growing/mature cutoff (`age_at_treatment
+     < 660` days, matching ADG/CH4-ADG/CH4-MM/CH4-rumen/RMTADG) rather
+     than the pilot's ad hoc `age_in_years < 2` split. Discovery-only.
+  3. **`--set=young_old`**: a young(<660d)-vs-mature CH4 bivariate genetic
+     correlation, the escalation option named-but-undecided in the entry
+     above. New pseudo-trait columns `ch4_young`/`ch4_old` in
+     `scripts/00_prepare_asreml_phenotype.R`. Independent PE via
+     functional `diag(Trait).ide(ANI_ID)` with no `!INIT` (neither
+     pseudo-trait has a prior univariate fit to seed one from).
+     Discovery-only.
+
+  Not yet run on HPC. Next step for all three: stage + submit, then read
+  real `.pvc` parameter numbering off each converged `.asr` before writing
+  any indexed `h2`/`rg`/repeatability VPREDICT block (same discipline as
+  the original PE-sensitivity pilot's discovery -> final two-step flow).
 
 ---
 

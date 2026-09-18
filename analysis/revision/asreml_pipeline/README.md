@@ -7,9 +7,14 @@ univariate/bivariate ASReml sweep. This does **not** implement the
 "component-trait redesign" discussed for later revision -- it reproduces
 the existing model structure and trait definitions (including the
 existing residual-methane construction) so they can be regenerated and
-rerun reliably. See `docs/asreml_legacy_map.md` for the reconstruction
-this pipeline is built from, and `docs/revision_plan.md` for where it
-sits in the overall revision.
+rerun reliably, with two deliberate, explicitly-instructed departures from
+the legacy-faithful spec: independent (trait-specific) permanent-
+environment variances in bivariate models where possible, and two new
+model families (stage-heterogeneous residual variance, and a young-vs-
+mature bivariate genetic correlation) -- see the 2026-09-18 update below.
+See `docs/asreml_legacy_map.md` for the reconstruction this pipeline is
+built from, and `docs/revision_plan.md` for where it sits in the overall
+revision.
 
 ## Status (2026-09-15)
 
@@ -127,6 +132,74 @@ auto-initialisation.
 - SE/uncertainty propagation is explicitly deferred until these point
   estimates are confirmed, per the user's instruction.
 
+**Update, 2026-09-18 (per user instruction): three new/changed model sets,
+closing scope questions left open above.**
+
+1. **Independent (trait-specific) PE for every bivariate model, where
+   possible.** The 2026-09-17 PE-sensitivity finding below (shared
+   `ide(ANI_ID)` inflating genetic variance for `methane_weight`/
+   `methane_co2` specifically) was deliberately scoped to just those 2
+   pairs, leaving "this remains an open question" for the rest
+   (`docs/revision_plan.md`'s 2026-09-17 decision log). That question is
+   now closed: `--set=full`, `--set=components` and `--set=components_trial`
+   all default to `diag(Trait !INIT <ide1> <ide2>).ide(ANI_ID)` per pair,
+   seeded from each trait's own CONVERGED univariate `ide(ANI_ID)`
+   estimate in `results/univariate_summary.csv`. "Where possible" -- a
+   pair falls back to the original shared `ide(ANI_ID)` term, with a
+   `# NOTE:` comment in the generated `.as` file explaining why, only
+   when one of its two traits has no CONVERGED univariate estimate on
+   file to seed a starting value with (in practice this never triggers
+   for the current 10 Table-2 + 7 component traits, all CONVERGED, but
+   the mechanism exists for any future trait added before its univariate
+   model has run). Every pair using the new structure is generated
+   **discovery-only** (blank `VPREDICT !DEFINE`) -- changing the PE
+   structure changes ASReml's parameter print order, and that order is
+   only actually confirmed from real `.pvc` output for the 2 pilot pairs'
+   specific structure, not assumed to generalize without checking, per
+   this pipeline's own stated discipline (see the file-header VPREDICT
+   comment in `01_generate_models.R`). **Consequence: `results/
+   bivariate_summary.csv`'s existing 52-row `--set=full` sweep (29
+   CONVERGED) was fit under the OLD shared-PE model spec and no longer
+   matches the regenerated `models/bi_*.as` files** -- it is a valid
+   historical record of that prior spec, not stale/wrong, but it must
+   not be read as validating the new independent-PE models until they
+   are actually rerun on HPC and reparsed. The `_petrait`-suffixed pilot
+   files (`bi_methane_weight_petrait.as`, `bi_methane_co2_petrait.as`)
+   and their already-confirmed `pe_sensitivity_final` indices are
+   untouched and remain the one place real confirmed diag(Trait) index
+   numbering exists so far.
+2. **`--set=stage_het`** (Reviewer 1's contemporary-group/scale-
+   heterogeneity concern): generalizes the single-trait pilot in
+   `analysis/diagnostics/reviewer_a2_a3/a_ch4_stage_het_residual.as`
+   (CONVERGED on HPC 2026-09-17, found a real ~2.4x residual-variance
+   difference between stages for CH4) from CH4 alone to all 9 Table 2
+   traits, refitting each with `residual sat(stage_660).idv(units)`
+   instead of one pooled residual variance. Uses a *different* stage
+   cutoff than that pilot: the manuscript's own official growing/mature
+   split (`age_at_treatment < 660` days, the same cutoff already used for
+   ADG/CH4-ADG/CH4-MM/CH4-rumen/RMTADG -- `docs/manuscript_context.md`
+   Section 5) rather than the pilot's ad hoc `age_in_years < 2`
+   (~730 days). Discovery-only, same reasoning as above.
+3. **`--set=young_old`**: a young(<660 days)-vs-mature bivariate genetic
+   correlation for CH4 itself (`ch4_young`/`ch4_old`, two age-class
+   pseudo-traits derived in `scripts/00_prepare_asreml_phenotype.R`),
+   answering the scope decision explicitly left open in
+   `analysis/diagnostics/reviewer_a2_a3/README.md`'s A3 section ("a
+   young-vs-mature bivariate genetic analysis"). Uses independent PE too
+   (no shared-PE fallback attempted here -- forcing identical PE
+   magnitude across two stages already shown to differ ~2.4x in residual
+   variance alone would be a strange choice for this specific model), via
+   functional `diag(Trait).ide(ANI_ID)` with no `!INIT` (no prior
+   univariate fit of either pseudo-trait exists to seed one from --
+   ASReml's improved auto-initialisation for functional-syntax terms
+   applies regardless, Functional-Specification.pdf Section 7.7.5).
+   Discovery-only.
+
+None of these three have been run on HPC yet -- they are VM-side
+generation + structural review only. See "Workflow" below for the
+`--set=stage_het` / `--set=young_old` commands (same VM-generate ->
+HPC-run pattern as every other set).
+
 ## Directory layout
 
 ```
@@ -233,6 +306,23 @@ Rscript scripts/03_parse_results.R
 Rscript scripts/04_derive_ratio_from_components.R
 # -> results/derived_h2.csv (h2 per composite trait, plus every component
 #    parameter used to calculate it)
+
+# Reviewer 1 CG-heteroscedasticity: heterogeneous residual variance by the
+# manuscript's own growing(<660d)/mature split, one univariate model per
+# Table 2 trait
+Rscript scripts/01_generate_models.R --set=stage_het
+Rscript scripts/02_stage_run_dir.R --platform=hpc
+slurm/submit_batch.sh
+Rscript scripts/03_parse_results.R   # discovery-only -- read real .pvc
+                                      # parameter numbering off each .asr
+                                      # before writing any h2/repeatability-
+                                      # by-stage VPREDICT block
+
+# Young(<660d)-vs-mature CH4 bivariate genetic correlation
+Rscript scripts/01_generate_models.R --set=young_old
+Rscript scripts/02_stage_run_dir.R --platform=hpc
+slurm/submit_batch.sh
+Rscript scripts/03_parse_results.R   # discovery-only, same as above
 ```
 
 ## License concurrency

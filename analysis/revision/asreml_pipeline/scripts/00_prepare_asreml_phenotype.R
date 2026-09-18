@@ -98,6 +98,31 @@ asreml_data$ch4_adj_adg[ccadg] <- resid(fitadg)
 
 asreml_data$adg_g <- (asreml_data$adg * 1000)
 
+# ---- Growing/mature stage split at the manuscript's own <660-days cutoff
+# (2026-09-18, per user instruction) ----
+#
+# The manuscript itself already defines "growing animals" as <660 days at
+# measurement -- the cutoff used to restrict ADG/CH4-ADG/CH4-MM/CH4-rumen/
+# RMTADG to a subset of records (docs/manuscript_context.md Section 5).
+# Two new revision analyses reuse this same official cutoff rather than
+# inventing a new one:
+#   (a) stage_660 groups every record for a heterogeneous-residual-variance
+#       sensitivity model (Reviewer 1's contemporary-group/scale-
+#       heterogeneity concern -- see --set=stage_het in
+#       01_generate_models.R). This generalizes, and supersedes for the
+#       main pipeline, the earlier single-trait pilot
+#       (analysis/diagnostics/reviewer_a2_a3/a_ch4_stage_het_residual.as),
+#       which used a different, ad hoc age_in_years<2 (~730 days) split --
+#       that pilot's own result and files are left untouched, just no
+#       longer the cutoff used going forward here.
+#   (b) ch4_young/ch4_old split CH4 itself into two age-class pseudo-traits
+#       for a young-vs-mature bivariate genetic-correlation model
+#       (--set=young_old), answering the scope decision left open in
+#       analysis/diagnostics/reviewer_a2_a3/README.md's A3 section.
+asreml_data$stage_660 <- ifelse(data$age_at_treatment < 660, "young", "mature")
+asreml_data$ch4_young <- ifelse(asreml_data$stage_660 == "young", asreml_data$ch4_g_day2_1v3, NA_real_)
+asreml_data$ch4_old   <- ifelse(asreml_data$stage_660 == "mature", asreml_data$ch4_g_day2_1v3, NA_real_)
+
 cat("\nFinal column list (", ncol(asreml_data), " columns):\n", sep = "")
 print(colnames(asreml_data))
 

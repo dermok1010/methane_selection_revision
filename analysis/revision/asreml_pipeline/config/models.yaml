@@ -65,6 +65,9 @@ phenotype_columns:
   - {name: ch4_adj_DMI, type: "1"}
   - {name: ch4_adj_adg, type: "1"}
   - {name: adg_g, type: "1"}
+  - {name: stage_660, type: "A"}   # growing(<660d)/mature split, see scripts/00_prepare_asreml_phenotype.R
+  - {name: ch4_young, type: "1"}   # CH4, missing unless stage_660=="young"
+  - {name: ch4_old, type: "1"}     # CH4, missing unless stage_660=="mature"
 
 workspace_mb: 5000
 maxit: 300
@@ -270,3 +273,34 @@ component_trial_set:
     - [methane, mbw]
     - [mbw, co2]
     - [methane, rumen]
+
+# ---- Reviewer-1 contemporary-group/scale-heterogeneity concern, and the
+# young-vs-mature bivariate genetic correlation (2026-09-18, per user
+# instruction) -----------------------------------------------------------
+
+# --set=stage_het: refits each listed trait's univariate model with
+# `residual sat(stage_660).idv(units)` (heterogeneous residual variance
+# between the manuscript's own growing/mature <660-day split) instead of a
+# single pooled residual variance. Generalizes, into the main pipeline,
+# the single-trait pilot already run and CONVERGED in
+# analysis/diagnostics/reviewer_a2_a3/a_ch4_stage_het_residual.as (which
+# found a real, non-trivial effect for CH4: residual variance differs 2.4x
+# between stages) to every Table 2 trait. ch4lw is excluded -- it isn't a
+# Table 2 trait (see the `traits:` list's `table2` flags above).
+stage_het_traits:
+  [methane, ch4mbw, ch4ratio, ch4adg, ch4muscle, ch4rumen, ch4rmtmbw,
+   ch4rmtmbwco2, ch4rmtadg]
+
+# --set=young_old: a young(<660d)-vs-mature bivariate genetic correlation
+# for CH4 itself, treating the same measured trait in the two age classes
+# as two correlated pseudo-traits (classic across-environment genetic-
+# correlation design) -- answers the scope decision explicitly left open
+# in analysis/diagnostics/reviewer_a2_a3/README.md's A3 section ("a
+# young-vs-mature bivariate genetic analysis"). variable1/variable2 are
+# ch4_young/ch4_old from scripts/00_prepare_asreml_phenotype.R (CH4,
+# missing outside that record's own stage).
+young_old_pair:
+  variable1: ch4_young
+  variable2: ch4_old
+  label1: "CH4, young (<660 days)"
+  label2: "CH4, mature (>=660 days)"

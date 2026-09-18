@@ -12,6 +12,13 @@
 #                                                   # set, see config's
 #                                                   # component_set/
 #                                                   # component_traits
+#   Rscript 01_generate_models.R --set=stage_het    # Reviewer 1 CG-
+#                                                   # heteroscedasticity:
+#                                                   # residual sat(stage_660)
+#                                                   # for each Table 2 trait
+#   Rscript 01_generate_models.R --set=young_old    # young(<660d)-vs-
+#                                                   # mature CH4 bivariate
+#                                                   # genetic correlation
 #
 # Writes into <pipeline_root>/models/ (git-tracked). Does not run ASReml,
 # does not touch run/. See README.md for the full VM -> HPC workflow.
@@ -52,7 +59,8 @@ args <- commandArgs(trailingOnly = TRUE)
 set_arg <- sub("^--set=", "", grep("^--set=", args, value = TRUE))
 if (length(set_arg) == 0) set_arg <- "validation"
 stopifnot(set_arg %in% c("validation", "full", "components", "components_trial",
-                          "pe_sensitivity", "pe_sensitivity_final"))
+                          "pe_sensitivity", "pe_sensitivity_final",
+                          "stage_het", "young_old"))
 
 pipeline_root <- normalizePath(
   file.path(dirname(sub("--file=", "", grep("--file=", commandArgs(), value = TRUE))), ".."),
@@ -443,6 +451,78 @@ gen_bivariate_pe_sensitivity_final <- function(jobname, composite_spec) {
   cat("  wrote ", jobname, ".pin (final, indices confirmed from discovery run)\n", sep = "")
 }
 
+# ---- Independent PE for all --set=full bivariate models (2026-09-18,
+# per user instruction) --------------------------------------------------
+#
+# The 2026-09-17 PE-sensitivity check above (methane_weight, methane_co2)
+# confirmed the shared ide(ANI_ID) structural problem is real, but was
+# deliberately scoped to only the 2 pairs with >2x genetic-variance
+# inflation -- docs/revision_plan.md's 2026-09-17 decision log entry
+# explicitly left "this remains an open question" for the other pairs
+# (mbw/adg/muscle/rumen), which showed milder (~15-30%) drift and were not
+# resubmitted. The user has now closed that open question: every bivariate
+# model should use independent (trait-specific) PE where possible, not
+# just the 2 worst-affected pairs.
+#
+# "Where possible" = a real, CONVERGED univariate ide(ANI_ID) estimate
+# exists for BOTH traits in results/univariate_summary.csv (written by
+# 03_parse_results.R) to seed diag(Trait !INIT ...).ide(ANI_ID)'s starting
+# values -- diag() is a log-linked variance component and cannot start at
+# exactly 0, so a value is floored at a small positive epsilon rather than
+# used raw. If either trait has no CONVERGED univariate result on file
+# (never fit, or failed to converge), this falls back to the original
+# shared ide(ANI_ID) term and says why in a comment in the generated file
+# -- this is the genuine "not possible" case, not a judgement that the
+# fix doesn't apply.
+#
+# Every pair using the new diag(Trait) structure is generated
+# discovery-only (see gen_bivariate_pe_sensitivity's header comment above
+# for why: changing the PE structure changes the VPREDICT parameter print
+# order, and that order is only actually confirmed, from real .pvc output,
+# for the 2 pilot pairs' specific model structure -- not assumed to
+# generalize to every pair without checking, per this pipeline's own
+# stated discipline). Pairs that fall back to shared ide(ANI_ID) keep the
+# original, already-confirmed non-discovery VPREDICT numbering unchanged.
+uni_summary_path <- file.path(pipeline_root, "results", "univariate_summary.csv")
+uni_ide_sigma_full <- list()
+uni_convergence_full <- list()
+if (file.exists(uni_summary_path)) {
+  usum <- read.csv(uni_summary_path, stringsAsFactors = FALSE)
+  uni_ide_sigma_full <- setNames(as.list(usum$sigma_ide), usum$trait_code)
+  uni_convergence_full <- setNames(as.list(usum$convergence), usum$trait_code)
+} else {
+  cat("WARNING: ", uni_summary_path, " not found -- every pair will fall ",
+      "back to the shared ide(ANI_ID) term (no univariate PE estimates ",
+      "available yet to seed independent PE). Run scripts/03_parse_results.R ",
+      "once the univariate sweep has CONVERGED on HPC, then regenerate.\n",
+      sep = "")
+}
+
+choose_pe_term <- function(trait1, trait2) {
+  ide1 <- uni_ide_sigma_full[[trait1$code]]
+  ide2 <- uni_ide_sigma_full[[trait2$code]]
+  ok1 <- !is.null(ide1) && !is.na(ide1) &&
+    isTRUE(uni_convergence_full[[trait1$code]] == "CONVERGED")
+  ok2 <- !is.null(ide2) && !is.na(ide2) &&
+    isTRUE(uni_convergence_full[[trait2$code]] == "CONVERGED")
+  if (!ok1 || !ok2) {
+    missing_code <- if (!ok1) trait1$code else trait2$code
+    return(list(
+      term = "ide(ANI_ID)", independent = FALSE,
+      note = sprintf(
+        "independent PE not used for %s_%s -- no CONVERGED univariate ide(ANI_ID) estimate on file for %s in results/univariate_summary.csv. Falling back to the legacy shared ide(ANI_ID) term.",
+        trait1$code, trait2$code, missing_code)
+    ))
+  }
+  eps <- 1e-6  # diag() variance components are log-linked; cannot start at exactly 0
+  fmt_init <- function(x) format(x, scientific = FALSE, trim = TRUE, digits = 12)
+  list(
+    term = sprintf("diag(Trait !INIT %s %s).ide(ANI_ID)",
+                    fmt_init(max(ide1, eps)), fmt_init(max(ide2, eps))),
+    independent = TRUE, note = NULL
+  )
+}
+
 gen_bivariate_pe_sensitivity <- function(trait1, trait2) {
   code_pair <- sprintf("%s_%s", trait1$code, trait2$code)
   ide1 <- uni_ide_sigma[[trait1$code]]
@@ -463,7 +543,8 @@ gen_bivariate_pe_sensitivity <- function(trait1, trait2) {
 # ---- bivariate template ----
 
 gen_bivariate <- function(trait1, trait2, pe_term = "ide(ANI_ID)",
-                           discovery_only = FALSE, filename_suffix = "") {
+                           discovery_only = FALSE, filename_suffix = "",
+                           note = NULL) {
   code_pair <- sprintf("%s_%s", trait1$code, trait2$code)
   reverse_pair <- sprintf("%s_%s", trait2$code, trait1$code)
 
@@ -542,6 +623,10 @@ gen_bivariate <- function(trait1, trait2, pe_term = "ide(ANI_ID)",
   }
   out_name <- sprintf("bi_%s%s", code_pair, filename_suffix)
 
+  if (!is.null(note)) {
+    structure_block <- c(sprintf("# NOTE: %s", note), structure_block)
+  }
+
   as_lines <- c(
     sprintf(
       "!WORKSPACE %d !CONTINUE !NODISPLAY !LOGFILE !MAXIT %d !MP %d",
@@ -568,6 +653,85 @@ gen_bivariate <- function(trait1, trait2, pe_term = "ide(ANI_ID)",
 
   pin_lines <- vpredict_lines
   writeLines(pin_lines, file.path(models_dir, sprintf("%s.pin", out_name)))
+}
+
+# ---- stage-heterogeneous-residual template (Reviewer 1) ----
+#
+# Generalizes analysis/diagnostics/reviewer_a2_a3/a_ch4_stage_het_residual.as
+# (CH4 only, CONVERGED on HPC 2026-09-17, real ~2.4x residual-variance
+# difference found between stages) to any trait: identical fixed/random-
+# effects specification to gen_univariate, but with
+# `residual sat(stage_660).idv(units)` instead of a single pooled residual
+# variance. Discovery-only VPREDICT, same discipline as that pilot and as
+# gen_bivariate_pe_sensitivity above -- sat(stage_660).idv(units) is a new
+# residual structure for every trait except CH4 (whose real parameter
+# numbering was confirmed at 1=ped, 2=ide, 3=sat(stage,1), 4=sat(stage,2)
+# for the OLD age_in_years<2 stage split; not assumed to carry over here,
+# both because the split variable changed and because this pipeline does
+# not assume numbering generalizes across traits without checking).
+gen_univariate_stage_het <- function(trait) {
+  as_lines <- c(
+    sprintf(
+      "!WORKSPACE %d !CONTINUE !NODISPLAY !LOGFILE !MAXIT %d !MP %d",
+      cfg$workspace_mb, cfg$maxit, cfg$mp_threads
+    ),
+    sprintf("univariate_%s_stage_het -- generated by 01_generate_models.R, see README's Reviewer-1 CG-heteroscedasticity section", trait$code),
+    field_definition_lines(),
+    "",
+    cfg$pedigree_file,
+    sprintf("%s !SKIP 1 !MVINCLUDE", cfg$phenotype_file),
+    "",
+    sprintf(
+      "%s ~ %s !r %s",
+      trait$variable, fixed_uni, cfg$random_effects$univariate
+    ),
+    "residual sat(stage_660).idv(units)",
+    "",
+    "VPREDICT !DEFINE",
+    "# Discovery-only: per ASReml-4.2-Functional-Specification.pdf Section",
+    "# 13.2, a bare VPREDICT !DEFINE + blank line reports every parameter's",
+    "# real name and number in the .pvc file -- read those off before",
+    "# writing any stage-specific h2/repeatability block for this trait.",
+    ""
+  )
+  writeLines(as_lines, file.path(models_dir, sprintf("a_uni_%s_stage_het.as", trait$code)))
+
+  pin_lines <- c(
+    "# Discovery-only: see the .as file's VPREDICT comment."
+  )
+  writeLines(pin_lines, file.path(models_dir, sprintf("a_uni_%s_stage_het.pin", trait$code)))
+}
+
+# ---- young(<660d)-vs-mature CH4 bivariate genetic correlation ----
+#
+# Treats ch4_young/ch4_old (scripts/00_prepare_asreml_phenotype.R --
+# CH4 itself, missing outside that record's own age-based stage) as two
+# correlated pseudo-traits, the classic across-environment bivariate
+# genetic-correlation design. Answers the scope decision explicitly left
+# open in analysis/diagnostics/reviewer_a2_a3/README.md's A3 section.
+gen_bivariate_young_old <- function() {
+  yop <- cfg$young_old_pair
+  if (is.null(yop)) stop("config/models.yaml has no young_old_pair block.")
+  t1 <- list(code = "young", variable = yop$variable1, label = yop$label1)
+  t2 <- list(code = "old",   variable = yop$variable2, label = yop$label2)
+  # Unlike every pair in --set=full/components, neither pseudo-trait has
+  # ever been fit on its own (both are new columns derived from
+  # ch4_g_day2_1v3, not existing traits with their own univariate ide(ANI_ID)
+  # estimate) -- so there is no !INIT value to seed independent PE with.
+  # diag(Trait).ide(ANI_ID) with NO !INIT still gets ASReml's improved
+  # phenotypic-variance-based auto-initialisation (Functional-
+  # Specification.pdf Section 7.7.5 -- applies to any functional-syntax
+  # term, not just !INIT'd ones), the same fix already used for
+  # methane_co2/methane_adg/methane_rumen/mbw_co2 above. Fitting the two
+  # stages with a shared ide(ANI_ID) would force identical PE magnitude in
+  # both age stages, which the CH4 stage-heterogeneity pilot already found
+  # implausible (residual variance alone differs ~2.4x by stage) -- so this
+  # does NOT fall back to shared PE the way choose_pe_term() would for a
+  # pair with no univariate estimate; the fallback there is about missing
+  # DATA to seed !INIT with, not about whether independent PE is
+  # appropriate here.
+  gen_bivariate(t1, t2, pe_term = "diag(Trait).ide(ANI_ID)",
+                discovery_only = TRUE, filename_suffix = "")
 }
 
 # ---- select what to generate ----
@@ -622,6 +786,30 @@ if (set_arg == "pe_sensitivity_final") {
   quit(save = "no", status = 0)
 }
 
+if (set_arg == "stage_het") {
+  traits <- cfg$stage_het_traits
+  if (is.null(traits) || length(traits) == 0) {
+    stop("config/models.yaml has no stage_het_traits list.")
+  }
+  cat(sprintf("Generating 'stage_het' set: %d univariate models\n", length(traits)))
+  for (code in traits) {
+    trait <- trait_by_code[[code]]
+    if (is.null(trait)) stop("Unknown trait code in stage_het_traits: ", code)
+    gen_univariate_stage_het(trait)
+    cat("  wrote a_uni_", code, "_stage_het.as (discovery-only)\n", sep = "")
+  }
+  cat("\nDone. Models written to:", models_dir, "\n")
+  quit(save = "no", status = 0)
+}
+
+if (set_arg == "young_old") {
+  cat("Generating 'young_old' set: 1 bivariate model\n")
+  gen_bivariate_young_old()
+  cat("  wrote bi_young_old.as (discovery-only)\n")
+  cat("\nDone. Models written to:", models_dir, "\n")
+  quit(save = "no", status = 0)
+}
+
 cat(sprintf("Generating '%s' set: %d univariate, %d bivariate models\n",
             set_arg, length(uni_codes), length(bi_pairs)))
 
@@ -639,6 +827,18 @@ for (pair in bi_pairs) {
   if (set_arg == "pe_sensitivity") {
     gen_bivariate_pe_sensitivity(t1, t2)
     cat("  wrote bi_", t1$code, "_", t2$code, "_petrait.as (discovery-only)\n", sep = "")
+  } else if (set_arg %in% c("full", "components", "components_trial")) {
+    # 2026-09-18: independent (trait-specific) PE where possible, per
+    # choose_pe_term()'s header comment -- generalizes the 2026-09-17
+    # PE-sensitivity pilot (methane_weight/methane_co2 only) to every pair
+    # in these 3 sets, closing the "open question" left in
+    # docs/revision_plan.md's 2026-09-17 decision log for the other pairs.
+    pe <- choose_pe_term(t1, t2)
+    gen_bivariate(t1, t2, pe_term = pe$term, discovery_only = pe$independent,
+                  filename_suffix = "", note = pe$note)
+    cat("  wrote bi_", t1$code, "_", t2$code, ".as",
+        if (pe$independent) " (independent PE, discovery-only)" else " (shared PE, fallback -- see NOTE in file)",
+        "\n", sep = "")
   } else {
     gen_bivariate(t1, t2)
     cat("  wrote bi_", t1$code, "_", t2$code, ".as\n", sep = "")

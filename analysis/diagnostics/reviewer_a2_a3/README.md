@@ -192,8 +192,19 @@ here -- flagged in `docs/revision_plan.md`'s decision log.
 All of A2 and A3's descriptive/diagnostic deliverables are done (model
 specification, pedigree completeness, connectedness, confounding, Wald
 F-significance, model-diagnostics table, CH4-by-stage descriptives and
-sensitivity model). The one open item is a scope decision, not more
-data work: whether to escalate the stage-heterogeneity finding beyond
-this single CH4 sensitivity check (see above), which the plan
-deliberately leaves to the user's judgement rather than an automatic
-next step.
+sensitivity model).
+
+**2026-09-18 update**: the escalation scope decision above has been made
+(user instruction) -- both options are now implemented, generalized into
+the main pipeline rather than as further one-off diagnostics here:
+`analysis/revision/asreml_pipeline`'s `--set=stage_het` (all 9 Table 2
+traits, not just CH4) and `--set=young_old` (the young-vs-mature bivariate
+genetic correlation). Note these use the manuscript's own official
+growing/mature cutoff (`age_at_treatment < 660` days) rather than this
+folder's `age_in_years < 2` split, so their results are not directly
+comparable to `a_ch4_stage_het_residual`'s numbers above without
+accounting for the different cutoff. See
+`analysis/revision/asreml_pipeline/README.md`'s 2026-09-18 update for
+full detail; not yet run on HPC. This pilot's own files/results are left
+as-is (a real, CONVERGED, independently useful result in their own
+right), not superseded or deleted.

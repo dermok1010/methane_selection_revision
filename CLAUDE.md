@@ -90,9 +90,19 @@ have converged with clean independent cross-checks. The narrowed
 component-trait analysis (revision plan Section 5 step 7 -- heritabilities
 for the 9 composite/ratio traits, derived from their underlying components'
 (co)variances) has real HPC-derived results in
-`analysis/revision/asreml_pipeline/results/derived_h2.csv`. The full
-`--set=full` bivariate sweep (step 3, reproducing Tables 2-5) is partially
-run (29/52 pairs CONVERGED) and not yet triaged to completion. See
+`analysis/revision/asreml_pipeline/results/derived_h2.csv`.
+
+**2026-09-18**: bivariate models now default to independent (trait-
+specific) permanent-environment variances where possible (generalizing a
+2026-09-17 fix from a 2-pair pilot to every pair), and two new model
+families were added: `--set=stage_het` (heterogeneous residual variance
+by the manuscript's own growing/mature <660-day split, all 9 Table 2
+traits -- Reviewer 1's contemporary-group-heteroscedasticity concern) and
+`--set=young_old` (a young-vs-mature CH4 bivariate genetic correlation).
+**This means the existing `results/bivariate_summary.csv` `--set=full`
+sweep (29/52 pairs CONVERGED) reflects the OLD shared-PE model spec and
+is now a historical record, not a result for the current `models/bi_*.as`
+files** -- none of the three changes have been run on HPC yet. See
 `docs/revision_plan.md`'s decision log for the detailed, dated history and
 open items -- it is the authoritative current-status record, kept more
 up to date than this section.
