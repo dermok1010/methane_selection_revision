@@ -1,8 +1,5 @@
-P Vp1 1 2 5
-P Vp2 1 4 7
-P Cp 3 6
-H h2_1 5 Vp1
-H h2_2 7 Vp2
-R rg 5 6 7
-R re 2 3 4
-R cp Vp1 Cp Vp2
+# Discovery-only VPREDICT: no derived quantities yet. Per
+# ASReml-4.2-Functional-Specification.pdf Section 13.2, a bare
+# VPREDICT !DEFINE + blank line reports every parameter's real
+# name and number in the .pvc file -- read those off before
+# writing any h2/SE block for this changed model structure.
