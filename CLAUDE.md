@@ -106,3 +106,41 @@ files** -- none of the three changes have been run on HPC yet. See
 `docs/revision_plan.md`'s decision log for the detailed, dated history and
 open items -- it is the authoritative current-status record, kept more
 up to date than this section.
+
+
+**2026-09-18 later -- Reviewer 1 variance-heterogeneity follow-up.**
+The univariate `cg_het` and `stage_het` sweeps have now been run on
+HPC. The same five full-information methane definitions converged under
+both structures (`methane`, `ch4mbw`, `ch4ratio`, `ch4rmtmbw`,
+`ch4rmtmbwco2`); the ADG-derived and 780-record CT traits
+(`ch4adg`, `ch4rmtadg`, `ch4muscle`, `ch4rumen`) aborted at
+iteration 1 with an AI-matrix singularity. For the stage models the
+singularity is specifically the second stage residual variance (ASReml
+Code S: no information), consistent with those sparse traits being
+restricted to one physiological stage rather than evidence that the
+heterogeneity idea itself is invalid. The CH4 CG-heterogeneous model
+converged and materially changed variance partitioning relative to the
+homogeneous model, so this cannot be answered by the young-vs-mature
+rg alone.
+
+Do **not** launch a heterogeneous version of the full bivariate sweep.
+A single discovery prototype has been added:
+`--set=bi_cg_het_trial` -> `bi_methane_ch4mbw_cg_het_trial.as`.
+It fits independent PE, a freely estimated genetic US matrix, and
+`residual sat(cg_mean_cl).us(Trait).units`, i.e. one 2x2 residual US
+matrix per source-within-CG-mean class. This is intentionally a
+parameter-rich stress test (~90 residual parameters for ~30 classes),
+not yet the intended final model. Its purpose is to see whether the
+headline CH4 x CH4/MBW genetic correlation is materially altered when
+the observed residual heterogeneity is carried into a bivariate model.
+If the trial is unstable/non-estimable, do not force convergence; move
+to a more parsimonious heterogeneous-scale/common-correlation structure
+instead. Keep the run discovery-only until the real ASReml parameter
+numbering is read from `.pvc/.asr`.
+
+HPC resume commands after pulling main:
+`Rscript analysis/revision/asreml_pipeline/scripts/01_generate_models.R --set=bi_cg_het_trial`;
+`Rscript analysis/revision/asreml_pipeline/scripts/02_stage_run_dir.R --platform=hpc`;
+then submit only the new trial model (or use the normal batch script after
+confirming the staged model list). Commit/push the raw-result summary and
+the comparison with the homogeneous rg before expanding scope.
