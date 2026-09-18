@@ -323,6 +323,17 @@ Rscript scripts/01_generate_models.R --set=young_old
 Rscript scripts/02_stage_run_dir.R --platform=hpc
 slurm/submit_batch.sh
 Rscript scripts/03_parse_results.R   # discovery-only, same as above
+
+
+# Bounded Reviewer-1 bivariate heterogeneity follow-up:
+# ONE CH4 x CH4/MBW discovery prototype, not a full sweep.
+Rscript scripts/01_generate_models.R --set=bi_cg_het_trial
+Rscript scripts/02_stage_run_dir.R --platform=hpc
+ASREML_MAIL_USER= slurm/submit_batch.sh bi_methane_ch4mbw_cg_het_trial
+# Compare the resulting rg/genetic variances with bi_methane_ch4mbw.
+# The prototype fits sat(cg_mean_cl).us(Trait).units (~30 class-specific
+# 2x2 residual US matrices). If it is unstable, move to a more
+# parsimonious heterogeneity model rather than forcing convergence.
 ```
 
 ## License concurrency
