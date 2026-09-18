@@ -19,6 +19,12 @@
 #   Rscript 01_generate_models.R --set=young_old    # young(<660d)-vs-
 #                                                   # mature CH4 bivariate
 #                                                   # genetic correlation
+#   Rscript 01_generate_models.R --set=bi_cg_het_trial
+#                                                   # one discovery-only
+#                                                   # CH4 x CH4/MBW prototype
+#                                                   # with CG-mean-class-
+#                                                   # specific residual US
+#                                                   # matrices (Reviewer 1)
 #
 # Writes into <pipeline_root>/models/ (git-tracked). Does not run ASReml,
 # does not touch run/. See README.md for the full VM -> HPC workflow.
@@ -60,7 +66,8 @@ set_arg <- sub("^--set=", "", grep("^--set=", args, value = TRUE))
 if (length(set_arg) == 0) set_arg <- "validation"
 stopifnot(set_arg %in% c("validation", "full", "components", "components_trial",
                           "pe_sensitivity", "pe_sensitivity_final",
-                          "stage_het", "young_old", "young_old_final", "cg_het"))
+                          "stage_het", "young_old", "young_old_final", "cg_het",
+                          "bi_cg_het_trial"))
 
 pipeline_root <- normalizePath(
   file.path(dirname(sub("--file=", "", grep("--file=", commandArgs(), value = TRUE))), ".."),
@@ -589,11 +596,16 @@ gen_bivariate_pe_sensitivity <- function(trait1, trait2) {
 gen_bivariate <- function(trait1, trait2, pe_term = "ide(ANI_ID)",
                            discovery_only = FALSE, filename_suffix = "",
                            note = NULL, genetic_term = NULL,
-                           residual_term = NULL) {
+                           residual_term = NULL,
+                           ignore_legacy_structure = FALSE) {
   code_pair <- sprintf("%s_%s", trait1$code, trait2$code)
   reverse_pair <- sprintf("%s_%s", trait2$code, trait1$code)
 
-  structure_block <- get_legacy_structure_block(trait1$code, trait2$code)
+  structure_block <- if (isTRUE(ignore_legacy_structure)) {
+    NULL
+  } else {
+    get_legacy_structure_block(trait1$code, trait2$code)
+  }
   random_term <- sub("ide\\(ANI_ID\\)$", pe_term, cfg$random_effects$bivariate)
 
   if (is.null(structure_block) && !is.null(genetic_term)) {
@@ -825,6 +837,50 @@ gen_univariate_cg_het <- function(trait) {
   writeLines(pin_lines, file.path(models_dir, sprintf("a_uni_%s_cg_het.pin", trait$code)))
 }
 
+# ---- CG-heterogeneous bivariate prototype (Reviewer 1) --------------
+#
+# 2026-09-18 follow-up after the univariate cg_het sweep.  The rich
+# source-within-CG-mean residual structure was estimable for the
+# full-information methane definitions but not for the ADG/CT subsets.
+# Before propagating heterogeneous residuals into a broad bivariate
+# sweep, fit ONE central full-data pair (CH4 x CH4/MBW) as a discovery
+# model and compare its genetic correlation with the current
+# homogeneous-residual estimate.
+#
+# This is deliberately a stress-test rather than a final production
+# specification: sat(cg_mean_cl).us(Trait).units gives every
+# source-within-mean class its own 2x2 residual US matrix (variance 1,
+# covariance, variance 2). With ~30 classes this is ~90 residual
+# parameters. If this proves unstable or non-estimable, do NOT force
+# convergence or infer that residual heterogeneity is irrelevant; the
+# next step is a more parsimonious heterogeneous-scale/common-correlation
+# structure. Discovery-only VPREDICT because the parameter ordering is
+# unique to this model and must be read from its real .pvc/.asr output.
+gen_bivariate_cg_het_trial <- function() {
+  t1 <- trait_by_code[["methane"]]
+  t2 <- trait_by_code[["ch4mbw"]]
+  if (is.null(t1) || is.null(t2)) {
+    stop("methane/ch4mbw trait definitions missing from config/models.yaml")
+  }
+  pe <- choose_pe_term(t1, t2)
+  note <- paste(
+    "Reviewer-1 CG-heterogeneity prototype only:",
+    "CH4 x CH4/MBW with class-specific residual US matrices;",
+    "discovery-only; do not generalise to the full bivariate sweep",
+    "unless the fit is stable and scientifically useful."
+  )
+  gen_bivariate(
+    t1, t2,
+    pe_term = pe$term,
+    discovery_only = TRUE,
+    filename_suffix = "_cg_het_trial",
+    note = note,
+    genetic_term = "us(Trait).ped(ANI_ID)",
+    residual_term = "sat(cg_mean_cl).us(Trait).units",
+    ignore_legacy_structure = TRUE
+  )
+}
+
 # ---- young(<660d)-vs-mature CH4 bivariate genetic correlation ----
 #
 # Treats ch4_young/ch4_old (scripts/00_prepare_asreml_phenotype.R --
@@ -953,6 +1009,14 @@ if (set_arg == "cg_het") {
     gen_univariate_cg_het(trait)
     cat("  wrote a_uni_", code, "_cg_het.as (discovery-only)\n", sep = "")
   }
+  cat("\nDone. Models written to:", models_dir, "\n")
+  quit(save = "no", status = 0)
+}
+
+if (set_arg == "bi_cg_het_trial") {
+  cat("Generating 'bi_cg_het_trial' set: 1 bivariate discovery model\n")
+  gen_bivariate_cg_het_trial()
+  cat("  wrote bi_methane_ch4mbw_cg_het_trial.as (discovery-only)\n")
   cat("\nDone. Models written to:", models_dir, "\n")
   quit(save = "no", status = 0)
 }
