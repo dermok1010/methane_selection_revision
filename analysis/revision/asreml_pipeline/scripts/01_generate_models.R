@@ -658,11 +658,23 @@ gen_bivariate <- function(trait1, trait2, pe_term = "ide(ANI_ID)",
     field_definition_lines(),
     "",
     cfg$pedigree_file,
-    sprintf("%s !SKIP 1 !MVINCLUDE", cfg$phenotype_file),
+    # !ASUV required whenever the residual structure is anything other
+    # than the US default (Functional-Specification.pdf Section 8.2:
+    # "to use an error structure other than US for the residual stratum
+    # you must also specify !ASUV ... and include mv in the model if
+    # there are missing values") -- confirmed the hard way 2026-09-18:
+    # without it, idh(Trait).units aborted immediately with "Missing
+    # values in the data are not accommodated in the model specified."
+    sprintf(
+      "%s !SKIP 1 !MVINCLUDE%s",
+      cfg$phenotype_file, if (!is.null(residual_term)) " !ASUV" else ""
+    ),
     "",
     sprintf(
-      "%s %s ~ %s !r %s",
-      trait1$variable, trait2$variable, fixed_bi, random_term
+      "%s %s ~ %s%s !r %s",
+      trait1$variable, trait2$variable, fixed_bi,
+      if (!is.null(residual_term)) " mv" else "",
+      random_term
     ),
     if (!is.null(residual_term)) sprintf("residual %s", residual_term) else character(0),
     "",
