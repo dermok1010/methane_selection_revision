@@ -3,5 +3,5 @@ P Vp2 2 5 7
 P Cp 4
 H h2_1 3 Vp1
 H h2_2 5 Vp2
-R rg 4 3 5
+R rg 3 4 5
 R rp Vp1 Cp Vp2

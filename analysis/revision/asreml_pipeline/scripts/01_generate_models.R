@@ -469,6 +469,18 @@ gen_bivariate_pe_sensitivity_final <- function(jobname, composite_spec) {
 # gen_bivariate_young_old's header comment), so there is no "re"
 # (residual correlation) to compute here, unlike the standard bivariate
 # template's re line.
+#
+# ASReml's R statistic puts the NUMERATOR in the MIDDLE position, not
+# first -- "R name idx1 idx2 idx3" computes idx2/sqrt(idx1*idx3), i.e.
+# (var1, covariance, var2), not (covariance, var1, var2). Got this wrong
+# the first time (wrote "R rg 4 3 5", which computed var1/sqrt(cov*var2)
+# = 0.5305 -- nonsense) and only caught it because ASReml's own printed
+# rg didn't match the correlation matrix it had already printed
+# separately (0.9902). Confirmed correct by cross-referencing the
+# already-working "R rp Vp1 Cp Vp2" line right below (Cp, the named
+# covariance parameter, is also in the middle) and the standard
+# bivariate template's "R rg 5 6 7" (index 6 = covariance, per this
+# file's own header-comment numbering of the classic structure).
 gen_young_old_final <- function() {
   lines <- c(
     "P Vp1 1 3 6",
@@ -476,7 +488,7 @@ gen_young_old_final <- function() {
     "P Cp 4",
     "H h2_1 3 Vp1",
     "H h2_2 5 Vp2",
-    "R rg 4 3 5",
+    "R rg 3 4 5",
     "R rp Vp1 Cp Vp2"
   )
   writeLines(lines, file.path(models_dir, "bi_young_old.pin"))
