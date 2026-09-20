@@ -181,6 +181,12 @@ validation_set:
 # docs/asreml_legacy_map.md Section 1. No pairs are excluded by default;
 # add trait codes to `exclude_pairs` (as [a, b] entries) to skip specific
 # combinations later without editing the generator itself.
+#
+# SUPERSEDED as the production target (2026-09-20, user scope decision):
+# the paper needs the pairs that actually support its arguments, not an
+# indiscriminate matrix. Kept here, not deleted, since the config/data
+# is real and some of these 52 pairs are still useful cross-checks -- but
+# --set=key_bivariates (below) is what to run/finalize going forward.
 full_sweep:
   generate_all_pairs: true
   exclude_pairs: []
@@ -324,3 +330,105 @@ young_old_pair:
 cg_het_traits:
   [methane, ch4mbw, ch4ratio, ch4adg, ch4muscle, ch4rumen, ch4rmtmbw,
    ch4rmtmbwco2, ch4rmtadg]
+
+# ---- Curated bivariate matrix (2026-09-20, user scope decision) --------
+#
+# Supersedes --set=full's indiscriminate 52-pair sweep as the production
+# target. User's own framing: run/finalize only the bivariates that
+# actually support the revised paper, not a complete pairwise matrix.
+# Three purposes, three sub-lists below (all independent-PE, via the same
+# choose_pe_term() mechanism as --set=full/components):
+#
+#   1. alt_vs_ch4:    each of the 8 non-CH4 Table 2 definitions vs daily
+#      CH4 itself -- the paper's own headline comparison for every
+#      alternative methane trait.
+#   2. vs_components: daily CH4 vs the biologically relevant component
+#      traits each definition is built from (LW, MBW, CO2, ADG, muscle,
+#      rumen), plus mbw-co2 for the 3-way RMTMBW+CO2 block. This is
+#      IDENTICAL to component_set$bivariate above (not duplicated data,
+#      just reused for this purpose too) -- LW/weight is included even
+#      though CH4/LW itself isn't a Table 2 trait (user's explicit call,
+#      2026-09-20 AskUserQuestion: keep it for consistency, it's already
+#      generated and cheap).
+#   3. ratio_vs_denominator: each residual/ratio trait vs its own
+#      denominator/adjustment variable(s) -- answers "what does this
+#      phenotype actually represent" directly, distinct from (2)'s
+#      component-based h2-derivation purpose. RMTMBW+CO2 needs both of
+#      its adjustment variables (mbw AND co2).
+#
+# --set=key_bivariates generates all of these as one flat list (23 pairs
+# total, vs. --set=full's 52) using the same independent-PE, discovery-
+# only mechanism as --set=full/components -- see choose_pe_term() in
+# 01_generate_models.R.
+key_bivariates_alt_vs_ch4:
+  - [methane, ch4mbw]
+  - [methane, ch4ratio]
+  - [methane, ch4adg]
+  - [methane, ch4muscle]
+  - [methane, ch4rumen]
+  - [methane, ch4rmtmbw]
+  - [methane, ch4rmtmbwco2]
+  - [methane, ch4rmtadg]
+key_bivariates_ratio_vs_denominator:
+  - [ch4ratio, co2]
+  - [ch4rmtmbw, mbw]
+  - [ch4rmtmbwco2, mbw]
+  - [ch4rmtmbwco2, co2]
+  - [ch4rmtadg, adg]
+  - [ch4adg, adg]
+  - [ch4muscle, muscle]
+  - [ch4rumen, rumen]
+# key_bivariates_vs_components intentionally omitted as its own list --
+# --set=key_bivariates reuses component_set$bivariate directly (see
+# 01_generate_models.R) so there is exactly one source of truth for
+# those 7 pairs, not two lists that could drift apart.
+
+# ---- CG-heterogeneous bivariate follow-up, generalized (2026-09-20) ----
+#
+# Per user: "where the univariate work says heterogeneity matters, try
+# the corresponding heterogeneous bivariate model as well." "Matters" =
+# one of the 5 Table 2 traits whose --set=cg_het univariate model
+# CONVERGED and showed a real variance-partitioning shift (methane,
+# ch4mbw, ch4ratio, ch4rmtmbw, ch4rmtmbwco2) -- the other 4 (ch4adg,
+# ch4muscle, ch4rumen, ch4rmtadg) are not estimable under this residual
+# structure at all (AI-matrix singularity, see cg_het_traits comment
+# above), so no heterogeneous bivariate variant is generated for pairs
+# that only involve them. Filtered from key_bivariates_* above: every
+# pair below has at least one trait in that 5-trait "matters" set; raw
+# component traits (mbw, co2, adg, muscle, rumen, weight) were never
+# themselves tested for residual heterogeneity, so a pair between two
+# non-Table-2 traits (mbw_co2) is excluded even though it's in
+# component_set.
+#
+# IMPORTANT -- do NOT submit these to HPC before bi_methane_ch4mbw_cg_het_trial
+# (the single bounded prototype, --set=bi_cg_het_trial) has actually
+# CONVERGED and been checked for a stable, sensible fit. That trial is
+# generated but not yet run as of 2026-09-20 -- these 18 pairs are the
+# same parameter-rich sat(cg_mean_cl).us(Trait).units stress-test
+# structure (~90 residual parameters each), and the project's own
+# established discipline (analysis/revision/asreml_pipeline/README.md)
+# is explicit: do not launch a heterogeneous bivariate sweep until the
+# prototype confirms the structure is estimable and worth the ASReml
+# license cost. --set=key_bivariates_cg_het generates the .as files
+# (cheap, local, no ASReml needed) so they're ready the moment the
+# trial gives the go-ahead -- it does not imply they should be
+# submitted immediately.
+key_bivariates_cg_het:
+  - [methane, ch4mbw]
+  - [methane, ch4ratio]
+  - [methane, ch4adg]
+  - [methane, ch4muscle]
+  - [methane, ch4rumen]
+  - [methane, ch4rmtmbw]
+  - [methane, ch4rmtmbwco2]
+  - [methane, ch4rmtadg]
+  - [methane, mbw]
+  - [methane, co2]
+  - [methane, adg]
+  - [methane, muscle]
+  - [methane, rumen]
+  - [methane, weight]
+  - [ch4ratio, co2]
+  - [ch4rmtmbw, mbw]
+  - [ch4rmtmbwco2, mbw]
+  - [ch4rmtmbwco2, co2]

@@ -661,6 +661,122 @@ rather than expanding the 55-pair sweep or forcing convergence.
 
 ---
 
+## 4B. Scope decision -- 20 Sep 2026: final univariate set, heterogeneity policy, and a curated bivariate matrix (user instruction)
+
+Closes the open items left above (bivariate-sweep scope, and how the
+5/9-trait cg_het split above turns into an actual modelling decision).
+User's own four points, and what each means for the pipeline:
+
+1. **Keep all 9 methane definitions; get final univariate genetic
+   parameters for all of them.** Ratios stay in the paper -- narrowing
+   the selection-index section (Section 5 step 9 above) does not mean
+   narrowing the trait definitions themselves. No new work needed here:
+   all 9 Table 2 traits' univariate models are already CONVERGED with
+   clean independent cross-checks (`results/univariate_summary.csv`) --
+   this is now the final univariate result set, not a preliminary one.
+
+2. **Residual heterogeneity: for each important trait, compare the
+   homogeneous and CG-heterogeneous (`--set=cg_het`) models. Where
+   heterogeneity clearly improves the model and is estimable, that
+   becomes the preferred model for that trait.** The young-vs-mature
+   `--set=young_old` result (rg=0.9908) is explicitly supporting
+   evidence for the reviewers (very high young-mature genetic
+   correlation), not the primary heterogeneity treatment -- `cg_het` is
+   the primary one, being the more direct answer to Reviewer 1's actual
+   contemporary-group-heteroscedasticity concern (see the 18 Sep entry
+   above). Decision rule (2026-09-20 AskUserQuestion): **qualitative**,
+   matching the discipline already used for the single-trait stage_het
+   pilot above ("crosses the plan's own escalation threshold") -- no new
+   formal LRT/AIC infrastructure. For the 5 traits where `cg_het`
+   CONVERGED (methane, ch4mbw, ch4ratio, ch4rmtmbw, ch4rmtmbwco2), the
+   preferred model is decided by whether the CG-mean-class residual
+   structure produces a real, biologically important shift in
+   variance-partitioning (as methane's own aggregate sigma_ped/sigma_ide
+   shift, 3.92->2.15 / 1.19->0.37, already suggests -- see the 18 Sep
+   entry) -- not by a formal significance test. The 4 non-estimable
+   traits (ch4adg, ch4muscle, ch4rumen, ch4rmtadg) keep the homogeneous
+   model; heterogeneity is not estimable for them (AI-matrix singularity,
+   Code S, consistent with their restricted recording structure -- not a
+   modelling failure to fix).
+   **Not yet done: per-class residual variance and per-class h2 have
+   never actually been extracted for any cg_het trait.** The 5 CONVERGED
+   `--set=cg_het` models' VPREDICT blocks are still discovery-only
+   placeholders (`models/a_uni_*_cg_het.pin` says "read real .pvc
+   parameter numbering... before writing any indexed VPREDICT block" --
+   this was never done for the main 9-trait sweep, only informally, in
+   aggregate, in the ea3e9f8 commit message). The raw `.asr`/`.pvc` files
+   from that run are gitignored by design and no longer exist locally
+   (see `run/` and `.gitignore`) -- finishing this qualitative comparison
+   needs either the original run's `.pvc` pulled back from HPC (if still
+   present there) or a rerun of `--set=cg_het`, followed by writing the
+   real indexed VPREDICT block (same two-step discovery -> final
+   discipline used everywhere else in this pipeline) so a genuine
+   per-class h2/residual-variance table exists to compare against the
+   homogeneous model, not just the aggregate sigma_ped/sigma_ide shift.
+
+3. **Do not complete an indiscriminate 55-pair (actually 52, per
+   `full_sweep`) bivariate matrix. Run/finalize only the bivariates that
+   support the revised paper.** Implemented as a new curated set,
+   `--set=key_bivariates` (23 pairs, config/models.yaml's
+   `key_bivariates_*` lists, generated 2026-09-20 -- not yet run on
+   HPC), replacing `--set=full` as the production target (kept, not
+   deleted, as a historical/cross-check resource):
+   - **Each alternative definition vs daily CH4** (8 pairs) -- the
+     paper's own headline comparison for every alternative trait.
+   - **Daily CH4 vs the biologically relevant components it depends on**
+     (LW, MBW, CO2, ADG, muscle, rumen -- reuses `component_set`'s 7
+     pairs, including CH4-LW even though CH4/LW isn't itself a Table 2
+     trait, per the user's explicit 2026-09-20 call to keep it for
+     consistency).
+   - **Each residual/ratio trait vs its own denominator/adjustment
+     trait(s)** (8 pairs, new -- distinct from the component-derivation
+     purpose above: this directly tests what each constructed phenotype's
+     genetics actually represent, e.g. ch4ratio vs co2, ch4rmtmbwco2 vs
+     both mbw and co2).
+   All 23 use the same independent (trait-specific) PE mechanism as
+   `--set=full`/`components` (`choose_pe_term()`).
+4. **For those key bivariates, use the improved trait-specific PE
+   structure; then, where the univariate work says heterogeneity
+   matters, also try the corresponding heterogeneous bivariate model. If
+   rg barely moves, the genetic relationship is robust to the variance-
+   scale change; if it moves, use the better model.** Implemented as
+   `--set=key_bivariates_cg_het` (18 pairs -- every `key_bivariates` pair
+   with at least one trait in the 5-trait cg_het "matters" set;
+   generated 2026-09-20, not yet run). **Explicitly gated on the existing
+   `bi_cg_het_trial` prototype**: per this pipeline's own established
+   discipline (18 Sep entry above), a broad heterogeneous-residual
+   bivariate sweep should not be submitted before the single CH4 x
+   CH4/MBW prototype confirms the ~90-parameter
+   `sat(cg_mean_cl).us(Trait).units` structure is actually estimable and
+   worth the ASReml license cost -- that prototype itself has not been
+   run on HPC yet. Generating all 18 pairs now (cheap, local, no ASReml
+   needed) just means they're ready the moment that check passes.
+
+**Also flagged while implementing this (not yet actioned):**
+`results/derived_h2.csv` and `results/composite_h2_se.csv` (the
+component-derived h2/SE values, revision plan Section 5 step 7) were
+both finalized in commit `df51adf` (17 Sep), which predates the
+2026-09-18 shared->independent-PE fix (`cea5782`/`2123497`) to
+`--set=components`'s own bivariate pairs. **These two results files most
+likely reflect the OLD shared-PE component bivariate models, not the
+current independent-PE ones**, and should be treated as stale pending a
+rerun of `--set=components` on HPC and a rerun of
+`04_derive_ratio_from_components.R` against the fresh results -- not yet
+done, flagged here so it isn't missed.
+
+**HPC resume commands after pulling main** (none of this run yet):
+```
+Rscript analysis/revision/asreml_pipeline/scripts/01_generate_models.R --set=key_bivariates
+Rscript analysis/revision/asreml_pipeline/scripts/02_stage_run_dir.R --platform=hpc
+slurm/submit_batch.sh
+Rscript analysis/revision/asreml_pipeline/scripts/03_parse_results.R
+```
+`--set=key_bivariates_cg_het` models are generated but should NOT be
+submitted until `bi_methane_ch4mbw_cg_het_trial` (`--set=bi_cg_het_trial`)
+has itself converged and been checked for a sensible fit.
+
+---
+
 ## 5. Proposed order for introducing pipelines and rebuilding
 
 This follows the user's own instinct (PAC pipeline first, then genetics,
@@ -753,5 +869,10 @@ rather than being bolted on at the end.
   structure. A single CH4 x CH4/MBW CG-heterogeneous bivariate prototype
   (`--set=bi_cg_het_trial`) is the next bounded test before deciding
   whether any heterogeneous bivariate model belongs in the final paper.
+  **Resolved 2026-09-20** -- see Section 4B: the trial is generated but
+  not yet run; the answer (whether/how far heterogeneous bivariates go
+  into the paper) is now explicitly gated on that trial converging
+  cleanly, and a curated 18-pair heterogeneous follow-up set
+  (`--set=key_bivariates_cg_het`) is ready the moment it does.
 - Preferred venue/format for the H-matrix comparison if it does end up
   included (main text table, supplementary, or just narrative mention)?

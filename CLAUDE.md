@@ -144,3 +144,24 @@ HPC resume commands after pulling main:
 then submit only the new trial model (or use the normal batch script after
 confirming the staged model list). Commit/push the raw-result summary and
 the comparison with the homogeneous rg before expanding scope.
+
+**2026-09-20 -- scope decision, closes the bivariate-sweep question
+above (full detail: `docs/revision_plan.md` Section 4B).** User
+instruction, four points: (1) keep all 9 methane definitions, their
+univariate genetic parameters are now final (all CONVERGED already --
+no new work needed); (2) residual heterogeneity decided qualitatively
+per trait by comparing homogeneous vs `--set=cg_het` (the primary
+heterogeneity treatment; `young_old`'s rg=0.9908 is supporting evidence
+for reviewers, not the primary one) -- **not yet finished**: the 5
+CONVERGED `cg_het` traits' VPREDICT blocks are still discovery-only
+placeholders, and the raw `.pvc`/`.asr` needed to finish them no longer
+exists locally (gitignored by design); (3) `--set=full`'s 52-pair sweep
+is superseded (kept, not deleted) by a new curated 23-pair
+`--set=key_bivariates` (each alt. definition vs CH4; CH4 vs its
+biologically relevant components; each ratio/residual trait vs its own
+denominator) -- generated 2026-09-20, not yet run on HPC; (4) an 18-pair
+CG-heterogeneous variant, `--set=key_bivariates_cg_het`, is generated
+but explicitly gated on the `bi_cg_het_trial` prototype above actually
+converging first -- do not submit it before that. Also flagged while
+implementing this: `results/derived_h2.csv`/`composite_h2_se.csv` were
+finalized before the 18 Sep independent-PE fix and are likely stale.

@@ -25,6 +25,27 @@
 #                                                   # with CG-mean-class-
 #                                                   # specific residual US
 #                                                   # matrices (Reviewer 1)
+#   Rscript 01_generate_models.R --set=key_bivariates
+#                                                   # 2026-09-20 curated
+#                                                   # bivariate matrix (23
+#                                                   # pairs) -- supersedes
+#                                                   # --set=full as the
+#                                                   # production target,
+#                                                   # see config's
+#                                                   # key_bivariates_*
+#                                                   # comment
+#   Rscript 01_generate_models.R --set=key_bivariates_cg_het
+#                                                   # CG-heterogeneous
+#                                                   # residual variant of
+#                                                   # the 18 key_bivariates
+#                                                   # pairs involving a
+#                                                   # trait where cg_het
+#                                                   # mattered. Generation
+#                                                   # only -- do not submit
+#                                                   # before bi_cg_het_trial
+#                                                   # confirms the structure
+#                                                   # is stable (see config
+#                                                   # comment)
 #
 # Writes into <pipeline_root>/models/ (git-tracked). Does not run ASReml,
 # does not touch run/. See README.md for the full VM -> HPC workflow.
@@ -67,7 +88,7 @@ if (length(set_arg) == 0) set_arg <- "validation"
 stopifnot(set_arg %in% c("validation", "full", "components", "components_trial",
                           "pe_sensitivity", "pe_sensitivity_final",
                           "stage_het", "young_old", "young_old_final", "cg_het",
-                          "bi_cg_het_trial"))
+                          "bi_cg_het_trial", "key_bivariates", "key_bivariates_cg_het"))
 
 pipeline_root <- normalizePath(
   file.path(dirname(sub("--file=", "", grep("--file=", commandArgs(), value = TRUE))), ".."),
@@ -596,6 +617,7 @@ gen_bivariate_pe_sensitivity <- function(trait1, trait2) {
 gen_bivariate <- function(trait1, trait2, pe_term = "ide(ANI_ID)",
                            discovery_only = FALSE, filename_suffix = "",
                            note = NULL, genetic_term = NULL,
+                           genetic_term_reason = NULL,
                            residual_term = NULL,
                            ignore_legacy_structure = FALSE) {
   code_pair <- sprintf("%s_%s", trait1$code, trait2$code)
@@ -618,17 +640,31 @@ gen_bivariate <- function(trait1, trait2, pe_term = "ide(ANI_ID)",
     # sheep-methane-genomics-microbiome repo's bi_ch4_microtrait.as using
     # this same functional us(Trait).ped(ANI_ID) form with no !INIT).
     random_term <- sub("^Trait\\.ped\\(ANI_ID\\)", genetic_term, random_term)
+    # Default reason text is specifically what was confirmed for
+    # bi_young_old (2026-09-18) -- do NOT reuse this default for a
+    # different pair without evidence, since it makes a per-pair
+    # empirical claim ("aborted this specific pair") that would be
+    # false for any pair never actually tried with the classic form.
+    # Callers generalizing this override to other pairs (e.g. the
+    # cg_het functions below) must pass their own accurate
+    # genetic_term_reason instead.
+    reason_lines <- if (!is.null(genetic_term_reason)) {
+      genetic_term_reason
+    } else {
+      c(
+        "# Trait.ped(ANI_ID) -- the classic form doesn't get ASReml's",
+        "# improved auto-initialisation and aborted this specific pair",
+        "# after 1 iteration with an AI-matrix singularity (2026-09-18).",
+        "# No !INIT values available (no prior univariate fit of either",
+        "# pseudo-trait to seed one from) -- functional syntax still gets",
+        "# the improved auto-init regardless."
+      )
+    }
     structure_block <- c(
       sprintf("# Functional-syntax genetic term (%s), not classic bare", genetic_term),
-      "# Trait.ped(ANI_ID) -- the classic form doesn't get ASReml's",
-      "# improved auto-initialisation and aborted this specific pair",
-      "# after 1 iteration with an AI-matrix singularity (2026-09-18).",
-      "# No !INIT values available (no prior univariate fit of either",
-      "# pseudo-trait to seed one from) -- functional syntax still gets",
-      "# the improved auto-init regardless."
+      reason_lines
     )
-    cat("  NOTE: ", code_pair, " -- using functional ", genetic_term,
-        " (classic form failed to converge for this pair)\n", sep = "")
+    cat("  NOTE: ", code_pair, " -- using functional ", genetic_term, "\n", sep = "")
   } else if (is.null(structure_block) && (code_pair %in% functional_init_pairs ||
                                     reverse_pair %in% functional_init_pairs)) {
     v11 <- uni_ped_sigma[[trait1$code]]
@@ -856,6 +892,26 @@ gen_univariate_cg_het <- function(trait) {
 # next step is a more parsimonious heterogeneous-scale/common-correlation
 # structure. Discovery-only VPREDICT because the parameter ordering is
 # unique to this model and must be read from its real .pvc/.asr output.
+# Functional us(Trait).ped(ANI_ID) is used here for the CG-heterogeneous
+# residual structure's own sake -- any functional-syntax term gets
+# ASReml's improved phenotypic-variance-based auto-initialisation
+# (Functional-Specification.pdf Section 7.7.5), which is worth having
+# for a ~90-parameter residual structure regardless of whether the
+# classic bare Trait.ped(ANI_ID) form would also have worked. This is
+# NOT a claim that the classic form was tried and failed for these
+# specific pairs (only bi_young_old, a different model entirely, was
+# actually tested that way) -- see gen_bivariate's genetic_term_reason
+# parameter.
+cg_het_genetic_term_reason <- c(
+  "# Trait.ped(ANI_ID) -- functional syntax is used deliberately here",
+  "# to get ASReml's improved auto-initialisation for this parameter-",
+  "# rich CG-heterogeneous residual structure. This is NOT a claim that",
+  "# the classic bare form was tried and failed for this specific pair",
+  "# (untested) -- unlike bi_young_old, where that was actually",
+  "# confirmed. No !INIT values given for the genetic term since none",
+  "# apply cleanly to the classic-vs-functional distinction here."
+)
+
 gen_bivariate_cg_het_trial <- function() {
   t1 <- trait_by_code[["methane"]]
   t2 <- trait_by_code[["ch4mbw"]]
@@ -876,6 +932,47 @@ gen_bivariate_cg_het_trial <- function() {
     filename_suffix = "_cg_het_trial",
     note = note,
     genetic_term = "us(Trait).ped(ANI_ID)",
+    genetic_term_reason = cg_het_genetic_term_reason,
+    residual_term = "sat(cg_mean_cl).us(Trait).units",
+    ignore_legacy_structure = TRUE
+  )
+}
+
+# ---- CG-heterogeneous bivariate matrix, generalized (2026-09-20) ------
+#
+# Same model structure as gen_bivariate_cg_het_trial (the single CH4 x
+# CH4/MBW prototype above), parameterized to any pair -- generates the
+# key_bivariates_cg_het list from config/models.yaml (18 pairs: every
+# key_bivariates pair with at least one trait in cg_het's 5-trait
+# "matters" set). See that config list's comment for why these are
+# generated but must NOT be submitted to HPC before the single prototype
+# above has confirmed the structure actually converges to something
+# sensible -- generating them now just means they're ready the moment
+# that check passes, not that they should run immediately.
+gen_bivariate_cg_het <- function(code1, code2) {
+  t1 <- trait_by_code[[code1]]
+  t2 <- trait_by_code[[code2]]
+  if (is.null(t1) || is.null(t2)) {
+    stop("Unknown trait code in key_bivariates_cg_het pair: ", code1, ",", code2)
+  }
+  pe <- choose_pe_term(t1, t2)
+  note <- paste(
+    "Reviewer-1 CG-heterogeneity follow-up (2026-09-20, generalized from",
+    "the bi_methane_ch4mbw_cg_het_trial prototype):",
+    sprintf("%s x %s", t1$code, t2$code),
+    "with class-specific residual US matrices; discovery-only; DO NOT",
+    "submit before the single trial prototype has confirmed this",
+    "structure is stable -- see config/models.yaml's key_bivariates_cg_het",
+    "comment."
+  )
+  gen_bivariate(
+    t1, t2,
+    pe_term = pe$term,
+    discovery_only = TRUE,
+    filename_suffix = "_cg_het",
+    note = note,
+    genetic_term = "us(Trait).ped(ANI_ID)",
+    genetic_term_reason = cg_het_genetic_term_reason,
     residual_term = "sat(cg_mean_cl).us(Trait).units",
     ignore_legacy_structure = TRUE
   )
@@ -1017,6 +1114,45 @@ if (set_arg == "bi_cg_het_trial") {
   cat("Generating 'bi_cg_het_trial' set: 1 bivariate discovery model\n")
   gen_bivariate_cg_het_trial()
   cat("  wrote bi_methane_ch4mbw_cg_het_trial.as (discovery-only)\n")
+  cat("\nDone. Models written to:", models_dir, "\n")
+  quit(save = "no", status = 0)
+}
+
+if (set_arg == "key_bivariates") {
+  pairs <- c(cfg$key_bivariates_alt_vs_ch4, cfg$component_set$bivariate,
+             cfg$key_bivariates_ratio_vs_denominator)
+  if (length(pairs) == 0) {
+    stop("config/models.yaml has no key_bivariates_alt_vs_ch4/ratio_vs_denominator lists.")
+  }
+  cat(sprintf("Generating 'key_bivariates' set: %d bivariate models (independent PE)\n",
+              length(pairs)))
+  for (pair in pairs) {
+    t1 <- trait_by_code[[pair[[1]]]]
+    t2 <- trait_by_code[[pair[[2]]]]
+    if (is.null(t1) || is.null(t2)) stop("Unknown trait code in pair: ", paste(pair, collapse = ","))
+    pe <- choose_pe_term(t1, t2)
+    gen_bivariate(t1, t2, pe_term = pe$term, discovery_only = pe$independent,
+                  filename_suffix = "", note = pe$note)
+    cat("  wrote bi_", t1$code, "_", t2$code, ".as",
+        if (pe$independent) " (independent PE, discovery-only)" else " (shared PE, fallback -- see NOTE in file)",
+        "\n", sep = "")
+  }
+  cat("\nDone. Models written to:", models_dir, "\n")
+  quit(save = "no", status = 0)
+}
+
+if (set_arg == "key_bivariates_cg_het") {
+  pairs <- cfg$key_bivariates_cg_het
+  if (is.null(pairs) || length(pairs) == 0) {
+    stop("config/models.yaml has no key_bivariates_cg_het list.")
+  }
+  cat(sprintf("Generating 'key_bivariates_cg_het' set: %d bivariate models\n", length(pairs)))
+  cat("NOTE: generation only -- do not submit to HPC before bi_methane_ch4mbw_cg_het_trial\n")
+  cat("      (--set=bi_cg_het_trial) has CONVERGED and been checked for a stable fit.\n")
+  for (pair in pairs) {
+    gen_bivariate_cg_het(pair[[1]], pair[[2]])
+    cat("  wrote bi_", pair[[1]], "_", pair[[2]], "_cg_het.as (discovery-only)\n", sep = "")
+  }
   cat("\nDone. Models written to:", models_dir, "\n")
   quit(save = "no", status = 0)
 }

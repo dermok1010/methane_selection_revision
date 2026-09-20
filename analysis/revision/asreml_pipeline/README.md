@@ -334,6 +334,21 @@ ASREML_MAIL_USER= slurm/submit_batch.sh bi_methane_ch4mbw_cg_het_trial
 # The prototype fits sat(cg_mean_cl).us(Trait).units (~30 class-specific
 # 2x2 residual US matrices). If it is unstable, move to a more
 # parsimonious heterogeneity model rather than forcing convergence.
+
+# 2026-09-20 user scope decision (docs/revision_plan.md Section 4B):
+# curated 23-pair bivariate matrix, replaces --set=full as the target.
+Rscript scripts/01_generate_models.R --set=key_bivariates
+Rscript scripts/02_stage_run_dir.R --platform=hpc
+slurm/submit_batch.sh
+Rscript scripts/03_parse_results.R
+
+# CG-heterogeneous variant of the 18 key_bivariates pairs involving a
+# trait where cg_het mattered. GENERATION ONLY -- do not submit any of
+# these until bi_methane_ch4mbw_cg_het_trial above has itself converged
+# and been checked for a sensible fit (same "one prototype first"
+# discipline, just at curated-set scale).
+Rscript scripts/01_generate_models.R --set=key_bivariates_cg_het
+# (staging/submission intentionally not shown here yet -- see gate above)
 ```
 
 ## License concurrency
@@ -463,3 +478,11 @@ end-to-end in real ASReml. That is the first thing to check on HPC.
   correct these before the first HPC run; nothing else in the pipeline
   needs to change if they're wrong, since every other script reads paths
   from this one file.
+- **`results/derived_h2.csv` and `results/composite_h2_se.csv` are
+  likely stale (flagged 2026-09-20).** Both were finalized in commit
+  `df51adf` (17 Sep), which predates the 18 Sep shared->independent-PE
+  fix to `--set=components`'s own bivariate pairs. They most likely
+  still reflect the OLD shared-PE component models -- treat as
+  provisional until `--set=components` is rerun on HPC and
+  `04_derive_ratio_from_components.R` is rerun against the fresh
+  results.
