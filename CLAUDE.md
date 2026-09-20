@@ -165,3 +165,17 @@ but explicitly gated on the `bi_cg_het_trial` prototype above actually
 converging first -- do not submit it before that. Also flagged while
 implementing this: `results/derived_h2.csv`/`composite_h2_se.csv` were
 finalized before the 18 Sep independent-PE fix and are likely stale.
+
+**2026-09-20, later -- bivariate CG-heterogeneous residual abandoned
+(full detail: `docs/revision_plan.md` Section 4C).** Two structurally
+different attempts (`sat(cg_mean_cl).us(Trait).units`, then a more
+parsimonious `idh(cg_mean_cl).us(Trait).units` retry) both failed on
+HPC for real structural reasons (`cg_mean_cl`'s classes are too small
+and unbalanced for either form), not lack of signal. User decision:
+stop here -- rely on the univariate `cg_het` results (real, large
+variance-partitioning shifts for `methane`/`ch4mbw`/`ch4rmtmbw`/
+`ch4rmtmbwco2`) and the `young_old` bivariate check as the available
+evidence, and report the bivariate attempt as a transparent limitation
+in the revised paper rather than force a third guess at the syntax.
+`key_bivariates_cg_het`/`key_bivariates_cg_het_scale` stay generated
+for reference but should not be submitted without new information.

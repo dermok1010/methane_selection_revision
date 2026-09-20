@@ -777,6 +777,67 @@ has itself converged and been checked for a sensible fit.
 
 ---
 
+## 4C. Decision -- 20 Sep 2026: bivariate CG-heterogeneous residual abandoned; rely on univariate + young_old evidence
+
+**Both attempts at a heterogeneous-residual bivariate model failed on
+HPC, for structural reasons, not lack of a genetic signal.** Do not
+re-attempt without new evidence or a verified new syntax approach.
+
+1. `bi_methane_ch4mbw_cg_het_trial` (`residual sat(cg_mean_cl).us(Trait).units`,
+   `--set=bi_cg_het_trial`): failed immediately -- "Variance structure
+   does not match data". `sat()` fits a completely separate structure
+   per `cg_mean_cl` level rather than a genuine direct product
+   (ASReml-4.2-Functional-Specification.pdf Section 7.2/7.3.2), giving
+   208 variance parameters; several classes have as few as 4 records,
+   nowhere near enough to identify a full 3-parameter 2x2 covariance
+   matrix per class. Confirmed NOT a missingness mismatch between the
+   two traits (every class has identical non-missing counts for both,
+   since ch4mbw is derived from ch4 itself).
+2. `bi_methane_ch4mbw_cg_het_scale_trial` (`residual idh(cg_mean_cl).us(Trait).units`,
+   `--set=bi_cg_het_scale_trial`): a more parsimonious retry (per-class
+   residual scale only, one correlation shared across all 41 classes --
+   41 + 3 = 44 parameters, not 208). Also failed, differently: "RESIDUAL
+   model implies 41 data records" vs the actual 31738 (15869 records x 2
+   traits) -- ASReml resolved the declared residual structure's size as
+   just `cg_mean_cl`'s own level count, not correctly multiplied through
+   by `Trait` and `units`. The manual's direct-product examples are all
+   for balanced designs (fixed rows x columns); our `cg_mean_cl` classes
+   are highly unbalanced (4 to 1763 records each) -- `sat()` exists
+   specifically to handle that unbalance, but only by fitting fully
+   separate sections, which is exactly attempt 1's problem. A genuine
+   "separate scale, constrained-equal correlation across sat() sections"
+   mechanism may exist in ASReml (parameter constraints/equating), but
+   was not investigated -- would need real manual research before a
+   third attempt, not another guess.
+
+**Decision (user, 2026-09-20): stop here.** Two failed attempts,
+diminishing returns, is enough. The bivariate CG-heterogeneity question
+is answered instead by:
+- The univariate `cg_het` results (Section 4B above): `methane`,
+  `ch4mbw`, `ch4rmtmbw`, `ch4rmtmbwco2` all show a real 28-69% shift in
+  variance partitioning under CG-heterogeneity -- clear evidence
+  heterogeneity matters for these traits at the univariate level.
+- The `young_old` bivariate check (rg=0.9908, SE 0.0892) -- indirect but
+  real evidence that at least age-based heterogeneity doesn't move the
+  underlying genetic relationship much.
+- A principled statistical argument: genetic correlation is typically
+  more robust to residual misspecification than h2 is, since rg comes
+  from the between-animal genetic covariance (pedigree-driven) rather
+  than the within-class residual scale -- heteroscedasticity mainly
+  biases h2 and estimation efficiency, not the genetic correlation
+  itself. Not a guarantee, but a reason not to expect the bivariate rg
+  to move much even if the model had been estimable.
+For the revised paper: report this as a transparent limitation --
+attempted in two structurally different forms, not estimable given the
+`cg_mean_cl` class-size distribution, not for lack of a genetic signal
+-- rather than presenting either failed fit or silently omitting the
+attempt. `key_bivariates_cg_het` (18 pairs, `sat()` form) and
+`key_bivariates_cg_het_scale` (13 pairs, `idh()` form) remain generated
+in `models/` for reference but should not be submitted without new
+information changing this decision.
+
+---
+
 ## 5. Proposed order for introducing pipelines and rebuilding
 
 This follows the user's own instinct (PAC pipeline first, then genetics,
