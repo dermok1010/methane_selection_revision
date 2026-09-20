@@ -88,7 +88,8 @@ if (length(set_arg) == 0) set_arg <- "validation"
 stopifnot(set_arg %in% c("validation", "full", "components", "components_trial",
                           "pe_sensitivity", "pe_sensitivity_final",
                           "stage_het", "young_old", "young_old_final", "cg_het",
-                          "bi_cg_het_trial", "key_bivariates", "key_bivariates_cg_het"))
+                          "bi_cg_het_trial", "key_bivariates", "key_bivariates_cg_het",
+                          "key_bivariates_final"))
 
 pipeline_root <- normalizePath(
   file.path(dirname(sub("--file=", "", grep("--file=", commandArgs(), value = TRUE))), ".."),
@@ -459,7 +460,7 @@ uni_ide_sigma <- c(methane = 1.18589, weight = 28.0808, co2 = 17141)
 # by construction, so Cp (phenotypic covariance) sums only the residual
 # and pedigree covariances, matching the original's own convention for
 # ide's (non-)contribution to Cp.
-petrait_vpredict_lines <- function(composite_spec) {
+petrait_vpredict_lines <- function(composite_spec = NULL) {
   base <- c(
     "P Vp1 7 1 4",
     "P Vp2 8 3 6",
@@ -470,6 +471,7 @@ petrait_vpredict_lines <- function(composite_spec) {
     "R re 1 2 3",
     "R cp Vp1 Cp Vp2"
   )
+  if (is.null(composite_spec)) return(base)
   c(base, composite_vpredict_lines_idx(composite_spec, idx1 = 4, idx2 = 5, idx3 = 6))
 }
 
@@ -477,6 +479,35 @@ gen_bivariate_pe_sensitivity_final <- function(jobname, composite_spec) {
   lines <- petrait_vpredict_lines(composite_spec)
   writeLines(lines, file.path(models_dir, sprintf("%s.pin", jobname)))
   cat("  wrote ", jobname, ".pin (final, indices confirmed from discovery run)\n", sep = "")
+}
+
+# ---- key_bivariates final .pin (2026-09-20) ----------------------------
+# Real parameter numbering (1:3 Residual, 4:6 genetic, 7:8 independent
+# PE) confirmed against a converged bi_methane_ch4mbw.asr -- identical to
+# the petrait numbering above, now confirmed on a THIRD, previously-
+# unchecked pair, all sharing the same independent-PE term declaration
+# order (see docs/revision_plan.md decision log). Applies to every
+# key_bivariates pair since all 23 used independent PE at generation
+# time (none fell back to shared ide(ANI_ID) -- every pair had both
+# traits' CONVERGED univariate estimates on file). Reuses
+# petrait_vpredict_lines() rather than re-deriving the same 8 indices a
+# third time. Where a pair has a composite_vpredict_specs entry (the 6
+# methane-vs-component pairs, e.g. methane_mbw -> MI + RMTMBW), appends
+# ALL of that pair's composite delta-method blocks (a pair can have more
+# than one composite trait depending on it), giving derived_h2.csv a
+# path to be regenerated from these SAME independent-PE fits instead of
+# the stale pre-2026-09-18 shared-PE ones.
+gen_key_bivariates_final <- function(code_pair) {
+  specs <- composite_vpredict_specs[[code_pair]]
+  lines <- petrait_vpredict_lines()
+  if (!is.null(specs)) {
+    lines <- c(lines, unlist(lapply(specs, function(s) {
+      composite_vpredict_lines_idx(s, idx1 = 4, idx2 = 5, idx3 = 6)
+    })))
+  }
+  writeLines(lines, file.path(models_dir, sprintf("bi_%s.pin", code_pair)))
+  cat("  wrote bi_", code_pair, ".pin (final, indices confirmed against a converged key_bivariates .asr",
+      if (!is.null(specs)) ", incl. composite h2 delta-method SE" else "", ")\n", sep = "")
 }
 
 # ---- bi_young_old final .pin (2026-09-18) -------------------------------
@@ -1138,6 +1169,28 @@ if (set_arg == "key_bivariates") {
         "\n", sep = "")
   }
   cat("\nDone. Models written to:", models_dir, "\n")
+  quit(save = "no", status = 0)
+}
+
+if (set_arg == "key_bivariates_final") {
+  # Writes ONLY .pin files (not .as) -- all 23 key_bivariates pairs
+  # already CONVERGED under discovery-only VPREDICT (2026-09-20), so
+  # only .pin post-processing against each pair's existing .rsv is
+  # needed, not a fresh fit. Run `asreml -P<jobname> <jobname>.pin`
+  # directly per job on HPC (NOT slurm/submit_batch.sh -- its skip
+  # logic sees the already-CONVERGED .asr and won't reprocess), then
+  # rerun 03_parse_results.R.
+  pairs <- c(cfg$key_bivariates_alt_vs_ch4, cfg$component_set$bivariate,
+             cfg$key_bivariates_ratio_vs_denominator)
+  if (length(pairs) == 0) {
+    stop("config/models.yaml has no key_bivariates_alt_vs_ch4/ratio_vs_denominator lists.")
+  }
+  cat(sprintf("Generating 'key_bivariates_final' set: %d .pin files\n", length(pairs)))
+  for (pair in pairs) {
+    code_pair <- sprintf("%s_%s", pair[[1]], pair[[2]])
+    gen_key_bivariates_final(code_pair)
+  }
+  cat("\nDone.\n")
   quit(save = "no", status = 0)
 }
 

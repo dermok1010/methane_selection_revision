@@ -107,7 +107,7 @@ parse_model_terms <- function(asr_path) {
   df
 }
 
-get_sigma <- function(term_df, name_pattern, struct_pattern = NULL, ij = NULL) {
+get_sigma <- function(term_df, name_pattern, struct_pattern = NULL, ij = NULL, diag_idx = NULL) {
   # name_pattern matched against name_part (e.g. "ped(ANI_ID)", "ide(ANI_ID)",
   # "Residual", "Trait.ANI_ID") OR against the row's block header (see
   # parse_model_terms' block-tracking comment -- needed for functional
@@ -116,11 +116,32 @@ get_sigma <- function(term_df, name_pattern, struct_pattern = NULL, ij = NULL) {
   # the raw line (e.g. "US_V", "US_C", "IDV_V", "NRM_V", "SCA_V"); ij
   # optionally matches the two leading matrix-index tokens for US rows
   # (e.g. c("1","1"), c("2","1"), c("2","2")).
+  #
+  # diag_idx (added 2026-09-20, first exercised for real on the
+  # key_bivariates HPC run): diag(Trait).ide(ANI_ID) -- the independent-PE
+  # structure introduced 2026-09-18 -- prints as TWO separate rows sharing
+  # one block header ("Trait DIAG_V 1 ...", "Trait DIAG_V 2 ..."), unlike
+  # the classic single shared ide(ANI_ID) row this function was originally
+  # written for. Without diag_idx, a name/block match against "ide(ANI_ID)"
+  # found BOTH diag rows as candidates and silently returned only the
+  # first (trait 1's PE variance) for any caller -- including calls meant
+  # for trait 2 -- confirmed against a real converged bi_methane_ch4mbw.asr
+  # (Trait DIAG_V 1 = 0.574393, Trait DIAG_V 2 = 0.00157833; the old code
+  # would have returned 0.574393 for both). When more than one candidate
+  # row matches, diag_idx filters to the row whose leading index token
+  # equals it; when only one candidate matches (the classic shared-PE
+  # case), diag_idx is a no-op and that row's value is returned regardless
+  # -- correct, since a shared PE term applies to both traits identically.
   name_match <- grepl(name_pattern, term_df$name_part, fixed = TRUE) |
     grepl(name_pattern, term_df$block, fixed = TRUE)
   cand <- term_df[name_match, , drop = FALSE]
   if (!is.null(struct_pattern)) cand <- cand[grepl(struct_pattern, cand$raw), , drop = FALSE]
   if (nrow(cand) == 0) return(NA_real_)
+  if (!is.null(diag_idx) && nrow(cand) > 1) {
+    keep <- vapply(cand$num_toks, function(nt) length(nt) >= 1 && nt[1] == diag_idx, logical(1))
+    cand <- cand[keep, , drop = FALSE]
+    if (nrow(cand) == 0) return(NA_real_)
+  }
   for (i in seq_len(nrow(cand))) {
     nt <- cand$num_toks[[i]]
     nt_num <- suppressWarnings(as.numeric(gsub("E", "e", nt)))
@@ -216,7 +237,7 @@ for (jobname in bi_jobs) {
   asr_path <- file.path(job_dir, paste0(jobname, ".asr"))
   conv <- classify_convergence(asr_path)
   row <- list(pair = code_pair, convergence = conv,
-              sigma_ide = NA_real_,
+              sigma_ide = NA_real_, sigma_pe_1 = NA_real_, sigma_pe_2 = NA_real_,
               sigma_res_1 = NA_real_, sigma_res_c = NA_real_, sigma_res_2 = NA_real_,
               sigma_ped_1 = NA_real_, sigma_ped_c = NA_real_, sigma_ped_2 = NA_real_,
               h2_1 = NA_real_, h2_1_se = NA_real_, h2_2 = NA_real_, h2_2_se = NA_real_,
@@ -229,7 +250,16 @@ for (jobname in bi_jobs) {
   if (file.exists(asr_path)) {
     terms <- parse_model_terms(asr_path)
     if (!is.null(terms)) {
-      row$sigma_ide <- get_sigma(terms, "ide(ANI_ID)")
+      # sigma_pe_1/sigma_pe_2: each trait's OWN PE variance, correct for
+      # both the classic shared ide(ANI_ID) term (where both come out
+      # identical, since diag_idx is then a no-op -- see get_sigma) and
+      # the independent-PE diag(Trait).ide(ANI_ID) term introduced
+      # 2026-09-18 (where they differ). sigma_ide is kept only as a
+      # display column matching pre-2026-09-20 output (== sigma_pe_1);
+      # it must NOT be used for phenotypic-variance math below.
+      row$sigma_pe_1 <- get_sigma(terms, "ide(ANI_ID)", diag_idx = "1")
+      row$sigma_pe_2 <- get_sigma(terms, "ide(ANI_ID)", diag_idx = "2")
+      row$sigma_ide <- row$sigma_pe_1
       row$sigma_res_1 <- get_sigma(terms, "Residual", ij = c("1", "1"))
       row$sigma_res_c <- get_sigma(terms, "Residual", ij = c("2", "1"))
       row$sigma_res_2 <- get_sigma(terms, "Residual", ij = c("2", "2"))
@@ -237,8 +267,8 @@ for (jobname in bi_jobs) {
       row$sigma_ped_c <- get_sigma(terms, "ANI_ID", "US", ij = c("2", "1"))
       row$sigma_ped_2 <- get_sigma(terms, "ANI_ID", "US", ij = c("2", "2"))
 
-      vp1 <- row$sigma_ide + row$sigma_res_1 + row$sigma_ped_1
-      vp2 <- row$sigma_ide + row$sigma_res_2 + row$sigma_ped_2
+      vp1 <- row$sigma_pe_1 + row$sigma_res_1 + row$sigma_ped_1
+      vp2 <- row$sigma_pe_2 + row$sigma_res_2 + row$sigma_ped_2
       cp <- row$sigma_res_c + row$sigma_ped_c
       row$h2_1_check <- row$sigma_ped_1 / vp1
       row$h2_2_check <- row$sigma_ped_2 / vp2

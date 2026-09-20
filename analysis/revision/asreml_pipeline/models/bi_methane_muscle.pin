@@ -1,5 +1,18 @@
-# Discovery-only VPREDICT: no derived quantities yet. Per
-# ASReml-4.2-Functional-Specification.pdf Section 13.2, a bare
-# VPREDICT !DEFINE + blank line reports every parameter's real
-# name and number in the .pvc file -- read those off before
-# writing any h2/SE block for this changed model structure.
+P Vp1 7 1 4
+P Vp2 8 3 6
+P Cp 2 5
+H h2_1 4 Vp1
+H h2_2 6 Vp2
+R rg 4 5 6
+R re 1 2 3
+R cp Vp1 Cp Vp2
+# CH4/MM (delta-method SE via ASReml VPREDICT, see composite_vpredict_specs)
+P cma1 4 * 0.007288099237
+P cma2 5 * -0.0222798497
+P cma3 6 * 0.01702747474
+P cmVA cma1 + cma2 + cma3
+P cmp1 Vp1 * 0.007288099237
+P cmp2 Cp * -0.0222798497
+P cmp3 Vp2 * 0.01702747474
+P cmVP cmp1 + cmp2 + cmp3
+H cm_h2 cmVA cmVP
