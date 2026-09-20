@@ -401,9 +401,37 @@ uni_ped_sigma <- c(
                           # note on rumen's 780 records / 3.2% repeat
                           # rate; the ped(ANI_ID) value used here is
                           # still the best available estimate)
-  mbw     = 2.19097      # run/a_uni_mbw     -- CONVERGED
+  mbw     = 2.19097,     # run/a_uni_mbw     -- CONVERGED
+  # Added 2026-09-20: the same "no legacy starting values -> classic
+  # bare Trait.ped(ANI_ID) auto-init fails" problem hit 9 of the 23
+  # key_bivariates pairs (all either an alt-methane-definition-vs-CH4
+  # pair with no prior legacy .as, or a ratio/residual trait paired
+  # against its own denominator -- an entirely new category with no
+  # legacy counterpart at all). Values read from results/
+  # univariate_summary.csv's real CONVERGED sigma_ped column (pulled
+  # back from HPC), not re-derived.
+  ch4adg        = 1290.36,     # results/univariate_summary.csv -- CONVERGED
+  ch4rmtmbwco2  = 2.7319,      # results/univariate_summary.csv -- CONVERGED
+  ch4rmtadg     = 2.40876,     # results/univariate_summary.csv -- CONVERGED
+  ch4ratio      = 1.94886e-06, # results/univariate_summary.csv -- CONVERGED
+  ch4rmtmbw     = 2.53612,     # results/univariate_summary.csv -- CONVERGED
+  ch4muscle     = 0.0382923,   # results/univariate_summary.csv -- CONVERGED
+  muscle        = 0.396422     # results/univariate_summary.csv -- CONVERGED
 )
-functional_init_pairs <- c("methane_co2", "methane_adg", "methane_rumen", "mbw_co2")
+functional_init_pairs <- c(
+  "methane_co2", "methane_adg", "methane_rumen", "mbw_co2",
+  # Added 2026-09-20 (see uni_ped_sigma comment above): same fix,
+  # extended to the 9 key_bivariates pairs that failed with the classic
+  # bare genetic term. Confirmed 2026-09-20 that the functional-!INIT
+  # form uses the IDENTICAL VPREDICT parameter numbering (1:3 Residual,
+  # 4:6 genetic, 7:8 PE) as the classic form -- methane_co2/adg/rumen/
+  # mbw_co2 above already use this same final numbering successfully
+  # (check_agree_rg/rp both TRUE), so no separate discovery step is
+  # needed for these 9 either.
+  "methane_ch4adg", "methane_ch4rmtmbwco2", "methane_ch4rmtadg",
+  "ch4ratio_co2", "ch4rmtmbw_mbw", "ch4rmtmbwco2_co2",
+  "ch4rmtadg_adg", "ch4adg_adg", "ch4muscle_muscle"
+)
 
 # ---- PE-sensitivity variant: shared vs. trait-specific permanent
 # environment (2026-09-17) --------------------------------------------
@@ -654,7 +682,22 @@ gen_bivariate <- function(trait1, trait2, pe_term = "ide(ANI_ID)",
   code_pair <- sprintf("%s_%s", trait1$code, trait2$code)
   reverse_pair <- sprintf("%s_%s", trait2$code, trait1$code)
 
-  structure_block <- if (isTRUE(ignore_legacy_structure)) {
+  # A pair in functional_init_pairs needs the functional us(Trait !INIT
+  # ...).ped(ANI_ID) form specifically because the classic bare
+  # Trait.ped(ANI_ID) term doesn't get ASReml's improved auto-init
+  # (Section 7.7.5) -- true regardless of whether a legacy structure
+  # block with tuned classic-form starting values happens to exist for
+  # this pair. Confirmed 2026-09-20: bi_ch4rmtadg_adg and
+  # bi_ch4muscle_muscle DO have legacy .as files (with real tuned
+  # classic-form starting values), and still landed on degenerate
+  # boundary/near-singular fits under the new independent-PE structure
+  # -- the legacy values were tuned for the old shared-PE model, and the
+  # classic-form auto-init limitation applies independent of whether
+  # starting values are supplied. So functional_init_pairs membership
+  # overrides legacy-block lookup, not just the "no legacy block found"
+  # fallback.
+  force_functional <- code_pair %in% functional_init_pairs || reverse_pair %in% functional_init_pairs
+  structure_block <- if (isTRUE(ignore_legacy_structure) || force_functional) {
     NULL
   } else {
     get_legacy_structure_block(trait1$code, trait2$code)
@@ -710,14 +753,25 @@ gen_bivariate <- function(trait1, trait2, pe_term = "ide(ANI_ID)",
       format(v22, scientific = FALSE, trim = TRUE),
       pe_term
     )
+    legacy_overridden <- !is.null(get_legacy_structure_block(trait1$code, trait2$code))
     structure_block <- c(
-      "# Functional-syntax !INIT starting values used instead of a legacy",
-      "# structure block -- see uni_ped_sigma/functional_init_pairs comment",
-      "# above this function for the full explanation. Starting values are",
-      "# in the model line itself (us(Trait !INIT ...)), not here."
+      if (legacy_overridden) {
+        c("# A legacy bi_*.as structure block EXISTS for this pair but is",
+          "# deliberately overridden -- functional_init_pairs membership",
+          "# means the classic bare Trait.ped(ANI_ID) auto-init problem",
+          "# applies regardless of whether starting values are supplied",
+          "# (confirmed 2026-09-20 for this exact pair). See uni_ped_sigma/",
+          "# functional_init_pairs comment above this function.")
+      } else {
+        c("# Functional-syntax !INIT starting values used instead of a legacy",
+          "# structure block -- see uni_ped_sigma/functional_init_pairs comment",
+          "# above this function for the full explanation.")
+      },
+      "# Starting values are in the model line itself (us(Trait !INIT ...)), not here."
     )
     cat("  NOTE: ", code_pair,
-        " -- no legacy starting values; using functional us(Trait !INIT ",
+        if (legacy_overridden) " -- legacy starting values overridden; using functional us(Trait !INIT "
+        else " -- no legacy starting values; using functional us(Trait !INIT ",
         format(v11, scientific = FALSE, trim = TRUE), " 0 ",
         format(v22, scientific = FALSE, trim = TRUE),
         " !GP).ped(ANI_ID)\n", sep = "")

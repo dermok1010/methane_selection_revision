@@ -52,8 +52,8 @@ ch4_g_day2_1v3 co2_g_day2_1v3 ~ Trait Tr.SEX Tr.TX Tr.BR Tr.SU Tr.CL Tr.CV Tr.LY
 
 # Functional-syntax !INIT starting values used instead of a legacy
 # structure block -- see uni_ped_sigma/functional_init_pairs comment
-# above this function for the full explanation. Starting values are
-# in the model line itself (us(Trait !INIT ...)), not here.
+# above this function for the full explanation.
+# Starting values are in the model line itself (us(Trait !INIT ...)), not here.
 
 VPREDICT !DEFINE
 # Discovery-only VPREDICT: no derived quantities yet. Per
