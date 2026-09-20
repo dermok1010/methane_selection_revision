@@ -432,3 +432,39 @@ key_bivariates_cg_het:
   - [ch4rmtmbw, mbw]
   - [ch4rmtmbwco2, mbw]
   - [ch4rmtmbwco2, co2]
+
+# ---- CG-heterogeneous-SCALE bivariate matrix (2026-09-20 follow-up) ----
+#
+# key_bivariates_cg_het's sat(cg_mean_cl).us(Trait).units structure
+# failed on HPC (bi_methane_ch4mbw_cg_het_trial: "Variance structure does
+# not match data" -- several cg_mean_cl classes have as few as 4 records,
+# too few to identify a full per-class 2x2 covariance matrix). The
+# replacement structure, idh(cg_mean_cl).us(Trait).units (per-class
+# residual SCALE only, one correlation SHARED across all classes -- see
+# 01_generate_models.R's gen_bivariate_cg_het_scale_trial comment for the
+# ASReml-manual justification), needs far less data per class, but is
+# still worth testing on a narrower list than key_bivariates_cg_het's 18
+# pairs: per user instruction (2026-09-20), drop any pair whose
+# non-"matters" partner is one of the 4 traits already confirmed
+# NON-estimable under univariate cg_het (ch4adg, ch4muscle, ch4rumen,
+# ch4rmtadg) -- pairing them bivariately is very unlikely to succeed
+# either, for the identical underlying reason (their own univariate
+# cg_het fits hit the same AI-matrix singularity). Drops
+# methane_ch4adg, methane_ch4muscle, methane_ch4rumen, methane_ch4rmtadg,
+# and ch4ratio_co2 (neither trait is in the confirmed "matters" set --
+# ch4ratio's cg_het status is still ambiguous, not confirmed either way)
+# from the 18 -- 13 pairs.
+key_bivariates_cg_het_scale:
+  - [methane, ch4mbw]
+  - [methane, ch4ratio]
+  - [methane, ch4rmtmbw]
+  - [methane, ch4rmtmbwco2]
+  - [methane, mbw]
+  - [methane, co2]
+  - [methane, adg]
+  - [methane, muscle]
+  - [methane, rumen]
+  - [methane, weight]
+  - [ch4rmtmbw, mbw]
+  - [ch4rmtmbwco2, mbw]
+  - [ch4rmtmbwco2, co2]

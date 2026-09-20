@@ -89,7 +89,8 @@ stopifnot(set_arg %in% c("validation", "full", "components", "components_trial",
                           "pe_sensitivity", "pe_sensitivity_final",
                           "stage_het", "young_old", "young_old_final", "cg_het",
                           "bi_cg_het_trial", "key_bivariates", "key_bivariates_cg_het",
-                          "key_bivariates_final"))
+                          "key_bivariates_final", "bi_cg_het_scale_trial",
+                          "key_bivariates_cg_het_scale"))
 
 pipeline_root <- normalizePath(
   file.path(dirname(sub("--file=", "", grep("--file=", commandArgs(), value = TRUE))), ".."),
@@ -1063,6 +1064,101 @@ gen_bivariate_cg_het <- function(code1, code2) {
   )
 }
 
+# ---- CG-heterogeneous-SCALE bivariate prototype (2026-09-20 follow-up) --
+#
+# bi_methane_ch4mbw_cg_het_trial (sat(cg_mean_cl).us(Trait).units, above)
+# failed outright on HPC 2026-09-20: "Variance structure does not match
+# data". Diagnosed against the real staged phenotype file -- NOT a
+# missingness mismatch between the two traits (every cg_mean_cl class has
+# identical non-missing counts for both, since ch4mbw is derived from
+# ch4 itself) -- the real cause is several classes having as few as 4
+# records (classes 28/29), nowhere near enough to identify a full
+# 3-parameter 2x2 US covariance matrix per class. sat() is not a normal
+# direct-product variance function (ASReml-4.2-Functional-Specification.pdf
+# Section 7.2/7.3.2): it fits a COMPLETELY SEPARATE structure per level,
+# which is why the trial had 208 variance parameters, not the ~123 a
+# naive per-class-US count would suggest.
+#
+# Fix: idh(cg_mean_cl).us(Trait).units instead. idh() IS a genuine
+# direct-product variance-model function (Table 7.1: "independent with
+# separate variances", one scale parameter per level) -- combined with
+# .us(Trait) in a direct product (Section 7.2's worked example,
+# idv(column).ar1(row)), this gives each class its own residual SCALE
+# while SHARING one us(Trait) correlation/covariance structure across
+# every class (41 scale parameters + 3 shared covariance parameters = 44
+# total, not 208). This is exactly the "more parsimonious heterogeneous-
+# scale/common-correlation structure" the original trial's own comment
+# named as the fallback if the full per-class US proved unstable.
+gen_bivariate_cg_het_scale_trial <- function() {
+  t1 <- trait_by_code[["methane"]]
+  t2 <- trait_by_code[["ch4mbw"]]
+  if (is.null(t1) || is.null(t2)) {
+    stop("methane/ch4mbw trait definitions missing from config/models.yaml")
+  }
+  pe <- choose_pe_term(t1, t2)
+  note <- paste(
+    "Reviewer-1 CG-heterogeneous-SCALE prototype (2026-09-20 follow-up,",
+    "after sat(cg_mean_cl).us(Trait).units failed with 'Variance structure",
+    "does not match data' -- several classes have as few as 4 records,",
+    "too few for a full per-class covariance matrix):",
+    "CH4 x CH4/MBW with idh(cg_mean_cl).us(Trait).units --",
+    "per-class residual SCALE, one SHARED trait correlation across all",
+    "classes; discovery-only; do not generalise to key_bivariates_cg_het_scale",
+    "unless this fit is stable and scientifically useful."
+  )
+  gen_bivariate(
+    t1, t2,
+    pe_term = pe$term,
+    discovery_only = TRUE,
+    filename_suffix = "_cg_het_scale_trial",
+    note = note,
+    genetic_term = "us(Trait).ped(ANI_ID)",
+    genetic_term_reason = cg_het_genetic_term_reason,
+    residual_term = "idh(cg_mean_cl).us(Trait).units",
+    ignore_legacy_structure = TRUE
+  )
+}
+
+# ---- CG-heterogeneous-SCALE bivariate matrix, generalized (2026-09-20) --
+#
+# Generates key_bivariates_cg_het_scale (config/models.yaml): a NARROWER
+# list than key_bivariates_cg_het's 18 pairs -- per user instruction,
+# drops any pair whose non-"matters" partner trait is one of the 4
+# already confirmed NON-estimable under univariate cg_het (ch4adg,
+# ch4muscle, ch4rumen, ch4rmtadg) -- pairing them bivariately is very
+# unlikely to succeed either, for the same underlying reason (their own
+# univariate cg_het models hit the identical AI-matrix-singularity
+# pattern). 13 pairs, not 18. Same "do not submit before the trial
+# confirms stability" gate as key_bivariates_cg_het.
+gen_bivariate_cg_het_scale <- function(code1, code2) {
+  t1 <- trait_by_code[[code1]]
+  t2 <- trait_by_code[[code2]]
+  if (is.null(t1) || is.null(t2)) {
+    stop("Unknown trait code in key_bivariates_cg_het_scale pair: ", code1, ",", code2)
+  }
+  pe <- choose_pe_term(t1, t2)
+  note <- paste(
+    "Reviewer-1 CG-heterogeneous-SCALE follow-up (2026-09-20, generalized",
+    "from the bi_methane_ch4mbw_cg_het_scale_trial prototype):",
+    sprintf("%s x %s", t1$code, t2$code),
+    "with idh(cg_mean_cl).us(Trait).units (per-class scale, shared",
+    "correlation); discovery-only; DO NOT submit before the scale trial",
+    "prototype has confirmed this structure is stable -- see",
+    "config/models.yaml's key_bivariates_cg_het_scale comment."
+  )
+  gen_bivariate(
+    t1, t2,
+    pe_term = pe$term,
+    discovery_only = TRUE,
+    filename_suffix = "_cg_het_scale",
+    note = note,
+    genetic_term = "us(Trait).ped(ANI_ID)",
+    genetic_term_reason = cg_het_genetic_term_reason,
+    residual_term = "idh(cg_mean_cl).us(Trait).units",
+    ignore_legacy_structure = TRUE
+  )
+}
+
 # ---- young(<660d)-vs-mature CH4 bivariate genetic correlation ----
 #
 # Treats ch4_young/ch4_old (scripts/00_prepare_asreml_phenotype.R --
@@ -1245,6 +1341,30 @@ if (set_arg == "key_bivariates_final") {
     gen_key_bivariates_final(code_pair)
   }
   cat("\nDone.\n")
+  quit(save = "no", status = 0)
+}
+
+if (set_arg == "bi_cg_het_scale_trial") {
+  cat("Generating 'bi_cg_het_scale_trial' set: 1 bivariate discovery model\n")
+  gen_bivariate_cg_het_scale_trial()
+  cat("  wrote bi_methane_ch4mbw_cg_het_scale_trial.as (discovery-only)\n")
+  cat("\nDone. Models written to:", models_dir, "\n")
+  quit(save = "no", status = 0)
+}
+
+if (set_arg == "key_bivariates_cg_het_scale") {
+  pairs <- cfg$key_bivariates_cg_het_scale
+  if (is.null(pairs) || length(pairs) == 0) {
+    stop("config/models.yaml has no key_bivariates_cg_het_scale list.")
+  }
+  cat(sprintf("Generating 'key_bivariates_cg_het_scale' set: %d bivariate models\n", length(pairs)))
+  cat("NOTE: generation only -- do not submit to HPC before bi_methane_ch4mbw_cg_het_scale_trial\n")
+  cat("      (--set=bi_cg_het_scale_trial) has CONVERGED and been checked for a stable fit.\n")
+  for (pair in pairs) {
+    gen_bivariate_cg_het_scale(pair[[1]], pair[[2]])
+    cat("  wrote bi_", pair[[1]], "_", pair[[2]], "_cg_het_scale.as (discovery-only)\n", sep = "")
+  }
+  cat("\nDone. Models written to:", models_dir, "\n")
   quit(save = "no", status = 0)
 }
 
