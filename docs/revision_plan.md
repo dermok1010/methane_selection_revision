@@ -1070,19 +1070,22 @@ heterogeneity on the real methane/co2 covariance speaks directly to
 whether the component-derived `ch4_ratio` h2 is similarly sensitive,
 not just the already-tested direct-fit univariate model.
 
-New `gen_bivariate_stage_het_trial()` in `01_generate_models.R`
-(`--set=bi_stage_het_trial`) generated
-`models/bi_methane_co2_stage_het_trial.as`/`.pin` -- independent
-(trait-specific) PE via `choose_pe_term()` (methane/co2 both have
-CONVERGED univariate `ide(ANI_ID)` estimates), functional
-`us(Trait).ped(ANI_ID)` genetic term (consistent with every other
-heterogeneous-residual prototype in this pipeline), discovery-only
-VPREDICT since the parameter ordering for this residual structure is
-new and unconfirmed. **Generated only -- not submitted to HPC.** Needs
-explicit user confirmation before dispatch (per standing VM-wide rule
-on expensive HPC jobs); if it converges, read the real `.pvc`
-parameter numbering before writing any indexed VPREDICT block, same
-discipline as every other prototype here.
+New `gen_bivariate_stage_het_trial(code1, code2)` in
+`01_generate_models.R` (`--set=bi_stage_het_trial`) generated two
+pairs: `models/bi_methane_co2_stage_het_trial.as`/`.pin` and, per the
+user's same-session follow-up request,
+`models/bi_methane_ch4mbw_stage_het_trial.as`/`.pin` -- reviving the
+original abandoned cg_het bivariate trial pair (Section 4C) under the
+new stage_660 grouping instead. Both use independent (trait-specific)
+PE via `choose_pe_term()` (all three traits have CONVERGED univariate
+`ide(ANI_ID)` estimates), functional `us(Trait).ped(ANI_ID)` genetic
+term (consistent with every other heterogeneous-residual prototype in
+this pipeline), discovery-only VPREDICT since the parameter ordering
+for this residual structure is new and unconfirmed. **Generated only
+-- not submitted to HPC** until the user confirms dispatch (per
+standing VM-wide rule on expensive HPC jobs). If either converges,
+read the real `.pvc` parameter numbering before writing any indexed
+VPREDICT block, same discipline as every other prototype here.
 
 ---
 
