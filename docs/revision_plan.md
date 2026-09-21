@@ -1034,6 +1034,56 @@ paper's discussion of that discrepancy, not just the general
 heteroscedasticity response -- **flagged for the user, not yet decided
 how to phrase in the manuscript.**
 
+**Follow-up, same session -- generated (not run) a stage-heterogeneous
+bivariate prototype, CH4 x CO2 rather than CH4 x CH4/MBW.** User asked
+whether the abandoned bivariate CG-heterogeneous idea (Section 4C)
+should be revived for "traits with lots of records", and specifically
+proposed CH4 x CO2 given the component-derivation connection to
+`ch4_ratio`. Two points worth recording:
+
+1. **The two Section-4C failures were not a trait-selection problem.**
+   `cg_mean_cl`'s 41 classes range from 4 to 1,763 records regardless of
+   which trait pair is fit -- the original trial (methane x ch4mbw)
+   already used the two fullest-record traits available (both full
+   N=15,869) and still failed structurally. Re-running the same
+   `cg_mean_cl` structure on a different full-N pair (e.g. methane x
+   co2) would hit the identical wall.
+2. **`stage_660` is a structurally different, much more tractable
+   grouping for a bivariate residual**: only 2 well-populated classes
+   (~7,600 / ~8,269 records) instead of 41 unbalanced ones, so
+   `sat(stage_660).us(Trait).units` needs only 2 separate 2x2 residual
+   US matrices (6 parameters) -- comparable to the CONVERGED univariate
+   `sat(stage_660).idv(units)` model's own 2-parameter residual, nothing
+   like the cg_mean_cl attempts' scale. This combination (stage-based
+   grouping, on a bivariate pair) had not been tried before -- only
+   `stage_het` (univariate, single trait) and `young_old` (bivariate,
+   but one trait split into two pseudo-traits, not two real component
+   traits) existed.
+
+Per the user's own redirection: the trial pair is **methane x co2**,
+not methane x ch4mbw -- co2 is the literal component trait behind
+`ch4_ratio`'s component-derived heritability
+(`scripts/04_derive_ratio_from_components.R`), and `ch4_ratio` is
+exactly the trait the same-day `cg_het` per-class extraction (above)
+found most sensitive to residual heterogeneity. Testing stage
+heterogeneity on the real methane/co2 covariance speaks directly to
+whether the component-derived `ch4_ratio` h2 is similarly sensitive,
+not just the already-tested direct-fit univariate model.
+
+New `gen_bivariate_stage_het_trial()` in `01_generate_models.R`
+(`--set=bi_stage_het_trial`) generated
+`models/bi_methane_co2_stage_het_trial.as`/`.pin` -- independent
+(trait-specific) PE via `choose_pe_term()` (methane/co2 both have
+CONVERGED univariate `ide(ANI_ID)` estimates), functional
+`us(Trait).ped(ANI_ID)` genetic term (consistent with every other
+heterogeneous-residual prototype in this pipeline), discovery-only
+VPREDICT since the parameter ordering for this residual structure is
+new and unconfirmed. **Generated only -- not submitted to HPC.** Needs
+explicit user confirmation before dispatch (per standing VM-wide rule
+on expensive HPC jobs); if it converges, read the real `.pvc`
+parameter numbering before writing any indexed VPREDICT block, same
+discipline as every other prototype here.
+
 ---
 
 ## 5. Proposed order for introducing pipelines and rebuilding

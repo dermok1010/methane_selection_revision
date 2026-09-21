@@ -117,7 +117,8 @@ stopifnot(set_arg %in% c("validation", "full", "components", "components_trial",
                           "stage_het", "young_old", "young_old_final", "cg_het",
                           "bi_cg_het_trial", "key_bivariates", "key_bivariates_cg_het",
                           "key_bivariates_final", "bi_cg_het_scale_trial",
-                          "key_bivariates_cg_het_scale", "mol_ratio"))
+                          "key_bivariates_cg_het_scale", "mol_ratio",
+                          "bi_stage_het_trial"))
 
 pipeline_root <- normalizePath(
   file.path(dirname(sub("--file=", "", grep("--file=", commandArgs(), value = TRUE))), ".."),
@@ -1186,6 +1187,67 @@ gen_bivariate_cg_het_scale <- function(code1, code2) {
   )
 }
 
+# ---- Stage-heterogeneous bivariate prototype (2026-09-21 follow-up) -----
+#
+# The two abandoned cg_het bivariate attempts (docs/revision_plan.md
+# Section 4C) failed for a reason specific to cg_mean_cl: its 41 classes
+# range from 4 to 1763 records, far too unbalanced for a per-class
+# bivariate covariance structure regardless of trait pair -- the trial
+# pair (methane x ch4mbw) already used the two fullest-record traits
+# available, so it wasn't a trait-selection problem. stage_660 (already
+# used at the univariate level by --set=stage_het) is structurally very
+# different: only 2 classes, both well-populated (~7,600 young /
+# ~8,269 mature records), so sat(stage_660).us(Trait).units gives just
+# 2 separate 2x2 residual US matrices (6 parameters total) -- nowhere
+# near the cg_mean_cl attempts' scale, and much closer to the CONVERGED
+# univariate sat(stage_660).idv(units) model's own 2-parameter residual.
+#
+# Trait pair: methane x co2, NOT methane x ch4mbw -- deliberately, per
+# user instruction (2026-09-21). methane/co2 is the literal component
+# pair behind ch4_ratio's component-derived heritability
+# (scripts/04_derive_ratio_from_components.R), and the cg_het per-class
+# extraction earlier the same day (docs/revision_plan.md Section 4B
+# follow-up) found ch4_ratio was the one trait where CG-mean
+# heterogeneity moved h2/t sharply in the OPPOSITE direction from the
+# other four traits (permanent-environment variance recovering from a
+# near-zero homogeneous-model estimate). Testing stage-heterogeneity on
+# the actual methane/co2 covariance -- not a proxy pair -- speaks
+# directly to whether that component-derived ch4_ratio h2 is similarly
+# sensitive, not just the direct-fit univariate ch4ratio model.
+gen_bivariate_stage_het_trial <- function() {
+  t1 <- trait_by_code[["methane"]]
+  t2 <- trait_by_code[["co2"]]
+  if (is.null(t1) || is.null(t2)) {
+    stop("methane/co2 trait definitions missing from config/models.yaml")
+  }
+  pe <- choose_pe_term(t1, t2)
+  note <- paste(
+    "Reviewer-1/component-derivation stage-heterogeneity prototype",
+    "(2026-09-21, user-directed pair choice): CH4 x CO2 -- the actual",
+    "component pair behind ch4_ratio's component-derived heritability --",
+    "with class-specific residual US matrices by stage_660",
+    "(growing/mature); discovery-only; do not generalise to other pairs",
+    "unless the fit is stable and scientifically useful."
+  )
+  gen_bivariate(
+    t1, t2,
+    pe_term = pe$term,
+    discovery_only = TRUE,
+    filename_suffix = "_stage_het_trial",
+    note = note,
+    genetic_term = "us(Trait).ped(ANI_ID)",
+    genetic_term_reason = c(
+      "# Trait.ped(ANI_ID) -- functional syntax used deliberately for the",
+      "# improved auto-initialisation, consistent with every other",
+      "# heterogeneous-residual prototype in this pipeline. This is NOT a",
+      "# claim that the classic bare form was tried and failed for this",
+      "# specific pair (untested)."
+    ),
+    residual_term = "sat(stage_660).us(Trait).units",
+    ignore_legacy_structure = TRUE
+  )
+}
+
 # ---- young(<660d)-vs-mature CH4 bivariate genetic correlation ----
 #
 # Treats ch4_young/ch4_old (scripts/00_prepare_asreml_phenotype.R --
@@ -1328,6 +1390,14 @@ if (set_arg == "bi_cg_het_trial") {
   cat("Generating 'bi_cg_het_trial' set: 1 bivariate discovery model\n")
   gen_bivariate_cg_het_trial()
   cat("  wrote bi_methane_ch4mbw_cg_het_trial.as (discovery-only)\n")
+  cat("\nDone. Models written to:", models_dir, "\n")
+  quit(save = "no", status = 0)
+}
+
+if (set_arg == "bi_stage_het_trial") {
+  cat("Generating 'bi_stage_het_trial' set: 1 bivariate discovery model\n")
+  gen_bivariate_stage_het_trial()
+  cat("  wrote bi_methane_co2_stage_het_trial.as (discovery-only)\n")
   cat("\nDone. Models written to:", models_dir, "\n")
   quit(save = "no", status = 0)
 }
