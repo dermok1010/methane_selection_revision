@@ -204,3 +204,22 @@ the same way (independent PE, picked up automatically now that
 `ch4ratiomol` has a real CONVERGED row in `results/univariate_summary.csv`).
 Regenerated discovery-only; not yet run on HPC. Full detail:
 `docs/revision_plan.md` Section 4D.
+
+**2026-09-21, later still -- CG-mean-class (`cg_het`) per-class h2/t
+extracted for real, closing the outstanding item from the 20 Sep scope
+decision.** The 5 CONVERGED `--set=cg_het` jobs' `.pvc`/`.asr` were
+still on HPC; pulled back and parsed by new
+`analysis/revision/asreml_pipeline/scripts/05_parse_cg_het_classes.R`.
+Four of the five traits (`methane`, `ch4mbw`, `ch4rmtmbw`,
+`ch4rmtmbwco2`) show lower weighted-average h2/t under CG-mean
+heterogeneity than the homogeneous model. **`ch4ratio` -- the
+reviewers' own headline low-heritability trait -- goes the other way:
+h2 0.10->0.19, t 0.10->0.32**, because the homogeneous model's `ide`
+(PE) estimate for that trait is essentially collapsed to zero and
+recovers to a real value once the residual is allowed to vary by
+contemporary-group-mean class -- the same PE-starvation mechanism
+already seen for the `methane_weight`/`methane_co2` bivariate pair
+(17 Sep), here in a univariate residual-heterogeneity context. This is
+directly relevant to the Jonker et al. discrepancy discussion and is
+flagged for the user, not yet decided how it changes the manuscript
+text. Full detail: `docs/revision_plan.md` Section 4B follow-up.

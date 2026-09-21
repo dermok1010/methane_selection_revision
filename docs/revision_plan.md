@@ -982,6 +982,58 @@ and does not replace, the existing `stage_660` residual-heterogeneity
 result and `--set=cg_het`/`young_old` work already in the main
 pipeline.
 
+**Follow-up, same session -- closes Section 4B point 2's "not yet done"
+item: per-class `cg_het` h2/t extracted for real.** User confirmed the
+5 CONVERGED `--set=cg_het` jobs' `.pvc`/`.asr` were still present on
+HPC (`run/a_uni_<trait>_cg_het/`, dated 18 Sep) and rsynced them back
+(`~/hpc_incoming/methane_selection_revision_cg_het_2026-09-21/`). New
+`analysis/revision/asreml_pipeline/scripts/05_parse_cg_het_classes.R`
+reads the real `.pvc` parameter numbering (param 1 = `ped`, param 2 =
+`ide`, params 3-43 = one `sat(cg_mean_cl,NN).idv(units)` residual
+variance per class -- confirmed by inspection, not assumed) and derives
+per-class h2/t = VA / (VA+PE+resid_class), records-weighted into one
+aggregate figure per trait for comparison against the homogeneous
+model (qualitative comparison only, matching the 2026-09-20 decision
+rule -- no VPREDICT SE, no new HPC job). Output:
+`results/cg_het_class_summary.csv` (205 rows, trait x class) and
+`results/cg_het_summary.csv` (5 rows, per-trait aggregate).
+
+| trait | homog. h2 (SE) | cg_het weighted h2 | homog. t (SE) | cg_het weighted t | residual max/min |
+|---|---|---|---|---|---|
+| methane | 0.2474 (0.0205) | 0.191 | 0.3223 (0.0127) | 0.224 | 29x |
+| ch4mbw | 0.1877 (0.0192) | 0.156 | 0.2865 (0.0126) | 0.204 | 174x |
+| **ch4ratio** | **0.1016 (0.0125)** | **0.186** | **0.1023 (0.0079)** | **0.320** | 43x |
+| ch4rmtmbw | 0.1803 (0.0193) | 0.158 | 0.2935 (0.0125) | 0.235 | 34x |
+| ch4rmtmbwco2 | 0.1836 (0.0195) | 0.169 | 0.356 (0.0119) | 0.281 | 77x |
+
+Per-class h2 ranges enormously within every trait (e.g. methane
+0.060-0.587, ch4mbw 0.012-0.560) -- direct, granular confirmation that
+CG-level variance heterogeneity is real and large, not an artifact of
+the aggregate VA/PE shift alone.
+
+**Headline finding: `ch4ratio` behaves oppositely to the other four
+traits.** For methane/ch4mbw/ch4rmtmbw/ch4rmtmbwco2, heterogeneity
+*lowers* the weighted-average h2/t relative to the homogeneous model
+(consistent with the already-documented methane VA drop, 3.92->2.15).
+For `ch4ratio` -- the reviewers' own headline low-heritability trait,
+the one they contrast against Jonker et al. -- heterogeneity *raises*
+both h2 (0.10->0.19, ~83% relative) and t (0.10->0.32, ~3x) instead.
+Mechanism, read directly off the homogeneous vs. cg_het `.pvc`/summary
+values: the homogeneous model's `ide` (PE) estimate for `ch4ratio` is
+essentially collapsed to zero (1.35e-8, `results/univariate_summary.csv`)
+against a residual of 1.72e-5; once the residual is allowed to vary by
+`cg_mean_cl` class instead of being forced into one pooled value, `ide`
+recovers to a real, non-trivial estimate (1.92e-6, ~142x larger) --
+the same "single misspecified variance term starves a neighbouring
+one" pattern already seen and documented for the
+`methane_weight`/`methane_co2` bivariate PE-collapse issue (17 Sep
+entry, Section 4A), just here in a univariate residual-heterogeneity
+context rather than a bivariate PE context. This is squarely relevant
+to the reviewers' Jonker et al. discrepancy and belongs in the revised
+paper's discussion of that discrepancy, not just the general
+heteroscedasticity response -- **flagged for the user, not yet decided
+how to phrase in the manuscript.**
+
 ---
 
 ## 5. Proposed order for introducing pipelines and rebuilding
