@@ -838,6 +838,58 @@ information changing this decision.
 
 ---
 
+## 4D. New analysis -- 21 Sep 2026: CH4 ratio on a molar basis (user request)
+
+Reviewer 1 flags that `ch4_ratio`'s units are never stated in the
+manuscript at all -- one of the secondary symptoms feeding their
+headline "is this analysis actually wrong" concern about this trait's
+low h2/t (0.08/0.09) vs. Jonker et al. (2018)'s 0.17-0.25/0.27-0.43. User
+asked whether the ratio's heritability is sensitive to expressing it on
+a molar basis (mol CH4/(mol CH4+mol CO2)) instead of the manuscript's
+mass basis (g CH4/(g CH4+g CO2)), and whether a mol-based measurement
+already exists among the phenotypic columns.
+
+**No column is literally named "mol", but a molar ratio is exactly
+recoverable with no new assumptions or external constants.**
+`ch4_l_day_1v3`/`co2_l_day_1v3` (already in the raw PAC phenotype file,
+alongside the `ch4_g_day2_1v3`/`co2_g_day2_1v3` mass columns
+`ch4_ratio` is built from) are CH4's and CO2's own volumetric flow rates
+from the same chamber airstream at the same time as each record's mass
+values. By the ideal gas law (n = PV/RT), two gases at identical
+pressure and temperature have a mole ratio equal to their volume ratio
+exactly -- P and T cancel, regardless of the gases' different molar
+masses (16.04 g/mol CH4 vs. 44.01 g/mol CO2). No molar-mass conversion
+of the gram columns is needed or more correct than this. Verified this
+is a real physical relationship in this data, not just a textbook
+assumption: the implied g/L density for both gases varies record-to-
+record in exactly the way ideal-gas density predicts from the file's own
+`temp`/`press` columns (CH4 density range 0.62-0.71 g/L over the data's
+1.5-41 degC / 971-1031 hPa range, matching PM/RT) -- i.e. the existing
+gram columns are themselves already a per-record ideal-gas conversion of
+the litre columns, confirming the same conversion applies to the ratio.
+
+Implemented as a new derived trait, `ch4_ratio_mol`, in
+`scripts/00_prepare_asreml_phenotype.R` (`ch4_l_day_1v3 /
+(ch4_l_day_1v3 + co2_l_day_1v3)`, same NA/zero-denominator guard as the
+existing `ch4_ratio`), added to `config/models.yaml` as a new
+non-Table-2 trait (`ch4ratiomol`) and a new `mol_ratio_set` (own
+univariate model, plus a bivariate against `ch4_ratio` for their genetic
+correlation), and a new `--set=mol_ratio` in `01_generate_models.R`.
+Same 15,869/15,869 records as the existing mass-basis trait (no extra
+missingness). As expected, the molar ratio is systematically larger than
+the mass ratio (mean 0.0423 vs. 0.0159, ratio ~2.66, close to the
+CO2/CH4 molar-mass ratio of 2.74) since mass-weighting under-represents
+CH4's molar share of the gas mixture; the two are highly but not
+perfectly correlated across records (r=0.996, since the mass-to-mole
+transform is a ratio-of-a-ratio, not linear). Both `.as` files generated
+(VM-side only, `results/univariate_summary.csv` has no CONVERGED
+`ch4ratiomol` entry yet so the bivariate pair falls back to shared PE
+with a NOTE in the file, same discipline as any other never-before-fit
+pair) -- **not yet run on HPC**, per this VM's standing rule that HPC
+submission needs explicit user confirmation of the batch.
+
+---
+
 ## 5. Proposed order for introducing pipelines and rebuilding
 
 This follows the user's own instinct (PAC pipeline first, then genetics,

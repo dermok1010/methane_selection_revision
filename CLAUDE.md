@@ -179,3 +179,16 @@ evidence, and report the bivariate attempt as a transparent limitation
 in the revised paper rather than force a third guess at the syntax.
 `key_bivariates_cg_het`/`key_bivariates_cg_het_scale` stay generated
 for reference but should not be submitted without new information.
+
+**2026-09-21 -- CH4 ratio on a molar basis, per user request (full
+detail: `docs/revision_plan.md` Section 4D).** New derived trait
+`ch4_ratio_mol` (mol CH4/(mol CH4+mol CO2)) recovered exactly from the
+existing `ch4_l_day_1v3`/`co2_l_day_1v3` volumetric columns via the
+ideal gas law -- mole ratio equals volume ratio for two gases at the
+same pressure/temperature, no molar-mass conversion needed. Checks
+whether the manuscript's mass-basis `ch4_ratio` heritability (h2=0.08,
+the reviewers' headline discrepancy vs. Jonker et al.) is sensitive to
+the unit basis Reviewer 1 flags as never stated. New `--set=mol_ratio`
+generates its own univariate model plus a bivariate against `ch4_ratio`
+(genetic correlation between the two bases). Generated VM-side only --
+not yet run on HPC.

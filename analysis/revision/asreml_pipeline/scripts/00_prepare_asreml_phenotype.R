@@ -161,6 +161,38 @@ cat("\ncg_mean_cl class sizes (n contemporary groups, n records):\n")
 print(cg_means %>% count(cg_mean_cl, name = "n_cg"))
 stopifnot(!anyNA(asreml_data$cg_mean_cl))
 
+# ---- CH4 ratio on a molar basis (2026-09-21, per user request) --------
+#
+# The manuscript's CH4-ratio trait (ch4_ratio, above) is
+# g_CH4/(g_CH4+g_CO2) -- a mass fraction. Reviewer 1 flags that this
+# trait's units are never stated in the manuscript at all. This adds a
+# molar-basis alternative, mol_CH4/(mol_CH4+mol_CO2), to check whether
+# the low heritability/repeatability reported for the ratio trait
+# (h2=0.08, t=0.09 -- the reviewers' headline discrepancy vs. Jonker et
+# al. 2018's h2=0.17-0.25) is sensitive to which basis the ratio is
+# expressed on.
+#
+# No molar-mass conversion (16.04 g/mol CH4, 44.01 g/mol CO2) is needed:
+# ch4_l_day_1v3/co2_l_day_1v3 (already in the raw phenotype file) are
+# CH4's and CO2's own volumetric flow rates from the SAME PAC chamber
+# airstream at the SAME time as each record's ch4_g_day2_1v3/
+# co2_g_day2_1v3. By the ideal gas law, n = PV/(RT): for two gases at
+# identical P and T, the mole ratio equals the volume ratio exactly --
+# P and T cancel, regardless of the two gases' different molar masses.
+# (Sanity-checked against this file's own data: the implied g/L density
+# for both ch4_g_day2_1v3/ch4_l_day_1v3 and co2_g_day2_1v3/
+# co2_l_day_1v3 varies record-to-record in exactly the way ideal-gas
+# density varies with the file's own temp/press columns -- i.e. the g
+# columns are themselves already a per-record ideal-gas conversion of
+# the l columns, not a fixed-density rescaling -- so this is a real
+# molar quantity, not an approximation.)
+asreml_data$ch4_ratio_mol <- ifelse(
+  !is.na(data$ch4_l_day_1v3) & !is.na(data$co2_l_day_1v3) &
+    (data$ch4_l_day_1v3 + data$co2_l_day_1v3) > 0,
+  data$ch4_l_day_1v3 / (data$ch4_l_day_1v3 + data$co2_l_day_1v3),
+  NA_real_
+)
+
 cat("\nFinal column list (", ncol(asreml_data), " columns):\n", sep = "")
 print(colnames(asreml_data))
 

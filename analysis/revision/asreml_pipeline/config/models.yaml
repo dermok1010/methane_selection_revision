@@ -69,6 +69,7 @@ phenotype_columns:
   - {name: ch4_young, type: "1"}   # CH4, missing unless stage_660=="young"
   - {name: ch4_old, type: "1"}     # CH4, missing unless stage_660=="mature"
   - {name: cg_mean_cl, type: "A"}  # contemporary-group-mean tertile class, see scripts/00_prepare_asreml_phenotype.R
+  - {name: ch4_ratio_mol, type: "1"}  # CH4 ratio, molar basis -- see scripts/00_prepare_asreml_phenotype.R
 
 workspace_mb: 5000
 maxit: 300
@@ -163,6 +164,10 @@ traits:
     variable: methane_per_lw
     label: "CH4/LW (not in Table 2 -- selection-index input, see docs/asreml_legacy_map.md Section 1)"
     table2: false
+  - code: ch4ratiomol
+    variable: ch4_ratio_mol
+    label: "CH4 ratio, molar basis (mol CH4/(mol CH4+mol CO2)) -- not in Table 2, a 2026-09-21 robustness check on the mass-basis ch4_ratio trait, see scripts/00_prepare_asreml_phenotype.R"
+    table2: false
 
 # The small set to run and validate FIRST, against known legacy results
 # (docs/asreml_legacy_map.md Section 6/7): CH4 and CH4 ratio univariate
@@ -173,6 +178,24 @@ validation_set:
   univariate: [methane, ch4ratio]
   bivariate:
     - [methane, ch4ratio]
+
+# ---- CH4 ratio on a molar basis (2026-09-21, per user request) --------
+#
+# ch4_ratio_mol (mol CH4/(mol CH4+mol CO2), see
+# scripts/00_prepare_asreml_phenotype.R) is a robustness check on
+# whether the manuscript's mass-basis ch4_ratio heritability/
+# repeatability is sensitive to the unit basis Reviewer 1 flags as never
+# stated. Univariate model gets ch4_ratio_mol's own h2/t; the bivariate
+# pair against the existing ch4_ratio gets their genetic correlation
+# (are the two bases measuring the same genetic signal just rescaled, or
+# something different?). Uses independent PE if ch4ratiomol already has
+# a CONVERGED univariate estimate on file (via choose_pe_term() in
+# 01_generate_models.R), else falls back to shared PE with a note --
+# same discipline as --set=full/components, not a new mechanism.
+mol_ratio_set:
+  univariate: [ch4ratiomol]
+  bivariate:
+    - [ch4ratio, ch4ratiomol]
 
 # Once the validation set matches legacy results, generate_all_pairs
 # produces the full submitted-style sweep: all 10 univariate models, plus

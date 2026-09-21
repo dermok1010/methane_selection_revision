@@ -46,6 +46,14 @@
 #                                                   # confirms the structure
 #                                                   # is stable (see config
 #                                                   # comment)
+#   Rscript 01_generate_models.R --set=mol_ratio   # 2026-09-21: CH4 ratio
+#                                                   # on a molar basis
+#                                                   # (ch4_ratio_mol) --
+#                                                   # its own univariate
+#                                                   # model plus a bivariate
+#                                                   # vs. the mass-basis
+#                                                   # ch4_ratio, see config's
+#                                                   # mol_ratio_set comment
 #
 # Writes into <pipeline_root>/models/ (git-tracked). Does not run ASReml,
 # does not touch run/. See README.md for the full VM -> HPC workflow.
@@ -90,7 +98,7 @@ stopifnot(set_arg %in% c("validation", "full", "components", "components_trial",
                           "stage_het", "young_old", "young_old_final", "cg_het",
                           "bi_cg_het_trial", "key_bivariates", "key_bivariates_cg_het",
                           "key_bivariates_final", "bi_cg_het_scale_trial",
-                          "key_bivariates_cg_het_scale"))
+                          "key_bivariates_cg_het_scale", "mol_ratio"))
 
 pipeline_root <- normalizePath(
   file.path(dirname(sub("--file=", "", grep("--file=", commandArgs(), value = TRUE))), ".."),
@@ -1229,6 +1237,12 @@ if (set_arg == "validation") {
   # !INIT values), just the 2 discovery-only bivariate pairs.
   uni_codes <- character(0)
   bi_pairs <- lapply(pe_sensitivity_pairs, function(p) strsplit(p, "_")[[1]])
+} else if (set_arg == "mol_ratio") {
+  # CH4 ratio on a molar basis (2026-09-21) -- see config/models.yaml's
+  # mol_ratio_set comment and scripts/00_prepare_asreml_phenotype.R for
+  # the trait's derivation.
+  uni_codes <- cfg$mol_ratio_set$univariate
+  bi_pairs <- cfg$mol_ratio_set$bivariate
 } else {
   uni_codes <- sapply(cfg$traits, `[[`, "code")
   if (isTRUE(cfg$full_sweep$generate_all_pairs)) {
@@ -1417,12 +1431,15 @@ for (pair in bi_pairs) {
   if (set_arg == "pe_sensitivity") {
     gen_bivariate_pe_sensitivity(t1, t2)
     cat("  wrote bi_", t1$code, "_", t2$code, "_petrait.as (discovery-only)\n", sep = "")
-  } else if (set_arg %in% c("full", "components", "components_trial")) {
+  } else if (set_arg %in% c("full", "components", "components_trial", "mol_ratio")) {
     # 2026-09-18: independent (trait-specific) PE where possible, per
     # choose_pe_term()'s header comment -- generalizes the 2026-09-17
     # PE-sensitivity pilot (methane_weight/methane_co2 only) to every pair
-    # in these 3 sets, closing the "open question" left in
+    # in these sets, closing the "open question" left in
     # docs/revision_plan.md's 2026-09-17 decision log for the other pairs.
+    # mol_ratio's ch4ratio_ch4ratiomol pair falls back to shared PE for
+    # now (ch4ratiomol has no CONVERGED univariate estimate yet), same
+    # discipline as any other pair without one.
     pe <- choose_pe_term(t1, t2)
     gen_bivariate(t1, t2, pe_term = pe$term, discovery_only = pe$independent,
                   filename_suffix = "", note = pe$note)
