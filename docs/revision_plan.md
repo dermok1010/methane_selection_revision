@@ -949,6 +949,41 @@ header for next time. **Not yet resubmitted.**
 
 ---
 
+## 4E. Diagnostic -- 21 Sep 2026: is contemporary group itself confounded with stage?
+
+User question (voice, remote control): are PAC contemporary groups
+(`ch4_GroupNumber`) populated with a mix of young and old animals, i.e.
+is CG membership confounded with physiological stage? This is distinct
+from the already-answered A3 stage-heterogeneity question (whether the
+*residual variance* differs by stage, section above / `docs/revision_plan.md`
+17 Sep entries) -- this asks about *group composition* itself.
+
+Computed by new `analysis/diagnostics/reviewer_a2_a3/04_cg_stage_confounding.R`
+(full output: `cg_stage_confounding_summary.txt`; written up in that
+README's A3 section). Using the manuscript's own growing(<660d)/mature
+`stage_660` split: 85.3% of the 1,435 contemporary groups are
+stage-pure, but **211 groups (14.7%), holding 15.1% of all records, mix
+young and mature animals within the same measured group** (median
+minority-stage share 27% -- a real minority, not one stray animal). The
+`age_in_years` within-CG/total variance ratio is 0.328, i.e. roughly
+two-thirds of total age variance sits *between* CGs and one-third
+*within* them -- comparable in severity to the CL breed-proportion
+confounding (0.209) already flagged, less severe than CV/LY (0.043/
+0.152). A handful of groups span the full 0-7 year age range within one
+7-12-animal measured group.
+
+**Answer: partially confounded, not fully.** Most CGs are age-homogeneous
+by construction (animals tend to be measured as co-reared cohorts), so
+CG and stage are far from perfectly aliased, but a non-trivial minority
+of groups genuinely pool ages -- additional quantitative support for
+Reviewer 1's "different aged animals was combined" comment. This is a
+read-only diagnostic (no scientific result changed); it complements,
+and does not replace, the existing `stage_660` residual-heterogeneity
+result and `--set=cg_het`/`young_old` work already in the main
+pipeline.
+
+---
+
 ## 5. Proposed order for introducing pipelines and rebuilding
 
 This follows the user's own instinct (PAC pipeline first, then genetics,

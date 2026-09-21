@@ -1,0 +1,40 @@
+n records: 15869 
+n contemporary groups (ch4_GroupNumber): 1435 
+
+=== stage_660 (growing <660d / mature) mixing within contemporary group ===
+CGs entirely 'young':   594 
+CGs entirely 'mature':  630 
+CGs MIXED (both stages): 211 
+Total CGs with stage_660 known: 1435 
+% of CGs that are mixed: 14.7%
+% of records that sit in a mixed CG: 15.1% (2389 / 15869)
+
+Among MIXED CGs, distribution of the minority-stage fraction (how 'balanced' the mixing is):
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+0.08333 0.16667 0.27273 0.27887 0.41667 0.50000 
+
+=== age_in_years within-CG vs total variance ratio ===
+(1.0 = age not related to CG at all; near 0 = age almost fully determined by which CG an animal is in)
+within/total variance ratio: 0.328
+
+=== Per-CG age range (age_in_years), all CGs ===
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  0.000   0.000   3.000   2.364   4.000   7.000 
+
+CGs spanning >1 year of age within the same group: 778 / 1435 (54.2%)
+CGs spanning >5 years of age within the same group: 78 / 1435 (5.4%)
+
+Worst 10 CGs by age range (id, n, min, max, range):
+# A tibble: 10 × 5
+   ch4_GroupNumber     n min_age max_age range_age
+             <dbl> <int>   <dbl>   <dbl>     <dbl>
+ 1             685     7       0       7         7
+ 2             697    12       0       7         7
+ 3             711    12       0       7         7
+ 4            1013    12       0       7         7
+ 5            1092    12       0       7         7
+ 6            1095    11       0       7         7
+ 7            1132    10       0       7         7
+ 8             158    12       1       7         6
+ 9             269    12       1       7         6
+10             278    12       1       7         6

@@ -187,6 +187,43 @@ univariate reruns of other component traits, or a young-vs-mature
 bivariate genetic analysis) is a scope decision for the user, not made
 here -- flagged in `docs/revision_plan.md`'s decision log.
 
+### Is contemporary group itself confounded with stage? (2026-09-21)
+
+A distinct question from the stage-heterogeneity result above: not
+"does the residual variance differ by stage" but "are individual
+`ch4_GroupNumber` contemporary groups themselves mixtures of young and
+mature animals, or is stage effectively nested within CG?" Computed by
+`04_cg_stage_confounding.R`; full output in
+`cg_stage_confounding_summary.txt`.
+
+Using the manuscript's own growing(<660d)/mature `stage_660` split:
+**85.3% of the 1,435 contemporary groups are stage-pure** (594 entirely
+young + 630 entirely mature), but **211 groups (14.7%), holding 15.1%
+of all records, mix young and mature animals in the same measured
+group** -- median minority-stage share within those mixed groups is
+27%, i.e. typically a real minority of the group, not one stray animal.
+The `age_in_years` within-CG/total variance ratio is **0.328** (same
+method as the breed-proportion check above) -- meaning roughly
+two-thirds of the total variance in age sits *between* contemporary
+groups and one-third *within* them, so CG absorbs a substantial share
+of stage variation but far from all of it (worse separation than
+TX/SU/BR (0.40-0.68), similar order to CL (0.209), better than the
+CV/LY breed nesting (0.043/0.152)). At the extreme, a handful of groups
+(e.g. `ch4_GroupNumber` 685/697/711/1013/1092/1095/1132) literally span
+the full 0-7 year age range within one measured group of 7-12 animals;
+54.2% of all CGs span >1 year of age.
+
+**Answer to "is CG confounded by stage": partially, not fully.** Most
+contemporary groups are age-homogeneous by construction (animals
+measured together tend to be co-reared cohorts), so CG and stage are
+far from perfectly aliased -- but a non-trivial ~15% of groups
+genuinely pool young and mature animals, and even among stage-pure
+groups CG only explains ~67% of age variance. This is additional
+quantitative support for Reviewer 1's "different aged animals was
+combined" comment, complementing (not superseding) the stage_660
+residual-heterogeneity result above and the `--set=cg_het`/`young_old`
+work in the main pipeline.
+
 ## Status
 
 All of A2 and A3's descriptive/diagnostic deliverables are done (model
