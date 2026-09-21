@@ -928,6 +928,25 @@ independent-PE structure changes ASReml's parameter numbering, so the
 real h2/rg VPREDICT block still needs writing from the actual `.pvc`
 once this converges) -- **not yet run on HPC.**
 
+**2026-09-21, later still -- second bivariate attempt also failed, but
+for a process reason, not a modelling one.** Resubmitting the
+independent-PE `bi_ch4ratio_ch4ratiomol.as` under the SAME job name as
+the failed shared-PE attempt aborted again ("Iteration aborted because
+of singularities in AI matrix"), but the `.asr` shows why: it restarted
+from `bi_ch4ratio_ch4ratiomol.rsv`, a checkpoint left behind by the
+*first* (shared-PE) attempt -- a structurally different model with a
+different parameter count/order. Reusing it produced obviously invalid
+starting values (residual `US_V` of 52 and -87, on a trait scale of
+~1e-5) that never recovered. Every other structural revision in this
+pipeline (`_petrait`, `_cg_het`, `_cg_het_trial`, etc.) avoids this by
+using a new suffixed job name instead of overwriting the original in
+place -- this pair broke that convention since `--set=mol_ratio`
+regenerates it under the same name both times. Not evidence the model
+itself is inestimable; fix is procedural (`rm -rf
+run/bi_ch4ratio_ch4ratiomol` before re-staging so there is no stale
+`.rsv` to restart from). Caution note added to `01_generate_models.R`'s
+header for next time. **Not yet resubmitted.**
+
 ---
 
 ## 5. Proposed order for introducing pipelines and rebuilding

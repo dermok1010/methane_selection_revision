@@ -59,6 +59,25 @@
 # does not touch run/. See README.md for the full VM -> HPC workflow.
 #
 # ---------------------------------------------------------------------
+# CAUTION on regenerating an already-run job under the SAME name with a
+# DIFFERENT model structure (2026-09-21, bi_ch4ratio_ch4ratiomol): every
+# generated .as carries !CONTINUE, which makes ASReml resume from any
+# <jobname>.rsv already sitting in run/<jobname>/. If that .rsv was
+# written by a PREVIOUS run of a structurally different model (e.g.
+# switching from a shared ide(ANI_ID) PE term to independent
+# diag(Trait).ide(ANI_ID), as choose_pe_term() does automatically once a
+# trait's univariate estimate lands in results/univariate_summary.csv),
+# the parameter count/order no longer matches and ASReml silently
+# restarts from garbage values -- observed here as a residual variance
+# of 52 and -87 (real scale: ~1e-5) and "Iteration aborted because of
+# singularities in AI matrix". This is why every other structural
+# revision in this pipeline (_petrait, _cg_het, _cg_het_trial, etc.)
+# uses a NEW suffixed job name rather than overwriting the original --
+# that sidesteps this entirely by giving it a fresh run/ directory. If a
+# job's .as must be regenerated in place with a changed structure, `rm
+# -rf run/<jobname>` before re-staging so there is nothing stale to
+# restart from.
+# ---------------------------------------------------------------------
 # On VPREDICT index provenance (read before changing the bivariate
 # template): the numeric indices in each bivariate VPREDICT block below
 # are NOT guessed. They were decoded by hand from a real, converged
