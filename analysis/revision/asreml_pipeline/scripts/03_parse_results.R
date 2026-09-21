@@ -18,6 +18,18 @@
 # the number is used anywhere.
 #
 # Usage: Rscript 03_parse_results.R
+#
+# CAUTION (2026-09-21): this OVERWRITES both results/*.csv wholesale from
+# whatever job directories currently exist under run/ -- it is not
+# additive. On the VM, run/ is normally empty or holds only whatever was
+# most recently staged there (it's gitignored, not the real HPC results
+# history); running this script there after manually recreating just one
+# or two job directories (e.g. to parse a pasted .asr for review) will
+# silently DROP every other trait's row from the tracked summary CSVs.
+# Only run this against a run/ that genuinely mirrors the full HPC run
+# directory (i.e. on HPC itself, or a full rsync of it) -- never against
+# a partial reconstruction. If in doubt, `git diff --stat results/` right
+# after running it, before committing anything.
 
 suppressPackageStartupMessages(library(yaml))
 

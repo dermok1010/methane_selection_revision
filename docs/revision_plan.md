@@ -888,6 +888,46 @@ with a NOTE in the file, same discipline as any other never-before-fit
 pair) -- **not yet run on HPC**, per this VM's standing rule that HPC
 submission needs explicit user confirmation of the batch.
 
+**2026-09-21, later -- univariate CONVERGED; bivariate failed, root
+cause diagnosed, fixed.** `a_uni_ch4ratiomol` ran on HPC and
+CONVERGED cleanly (`LogL Converged`, no boundary/singular flags on any
+variance component): h2=0.1261 (SE 0.0141), t=0.1389 (SE 0.0091) --
+noticeably higher than the mass-basis `ch4ratio`'s already-established
+h2=0.1016 (SE 0.0125)/t=0.1023 (SE 0.0079), though the two ratios'
+CH4-mass-derived variance components differ by only a modest ~7x
+(σ2ped 1.425e-05 vs. 1.949e-06), not the >1000x mismatch that broke the
+CO2 pairs on 2026-09-17. Row added to `results/univariate_summary.csv`
+(cross-checked by hand: independently recomputed h2/t from the raw
+sigmas match the VPREDICT output to 4 decimal places, same discipline
+`03_parse_results.R` applies automatically, done manually here since
+this repo's own `run/` mirror on the VM only has this one job's output
+pasted in, not the full HPC `run/` tree -- see the caution note added to
+`03_parse_results.R`'s header about not running it against a partial
+`run/`).
+
+`bi_ch4ratio_ch4ratiomol` (generated with the old shared `ide(ANI_ID)`
+term, since `ch4ratiomol` had no CONVERGED univariate estimate on file
+yet when it was first generated) failed on HPC with `PROGRAM failed in
+AIDGGI` after 1 iteration -- an outright numerical fault, not a graceful
+non-convergence. Root cause read directly from the `.asr`: "Warning:
+Variance of Trait 1 adjusted for other traits is 0.267e-06 ...
+Standard multivariate analysis may fail", and the shared
+`ide(ANI_ID)` term was driven to the boundary (`Sigma/SE=0.00`, flagged
+`B`) before the AI update failed -- the same "one shared PE scalar can't
+represent two traits' different scales" mechanism already diagnosed for
+`bi_methane_weight`/`bi_methane_co2` on 2026-09-17, not a new failure
+mode. Fix is the same one already built into the pipeline for exactly
+this situation: regenerating via `--set=mol_ratio` after adding
+`ch4ratiomol`'s real result above now has `choose_pe_term()` pick up
+independent PE automatically (`diag(Trait !INIT 0.000001
+0.00000144927).ide(ANI_ID)` -- ch4ratio's own univariate ide sigma,
+1.35206e-08, is below the diag !INIT floor of 1e-6 so is clamped there,
+same as every other trait with a near-zero PE). Regenerated
+discovery-only (no legacy starting values for this pair, and the
+independent-PE structure changes ASReml's parameter numbering, so the
+real h2/rg VPREDICT block still needs writing from the actual `.pvc`
+once this converges) -- **not yet run on HPC.**
+
 ---
 
 ## 5. Proposed order for introducing pipelines and rebuilding

@@ -192,3 +192,15 @@ the unit basis Reviewer 1 flags as never stated. New `--set=mol_ratio`
 generates its own univariate model plus a bivariate against `ch4_ratio`
 (genetic correlation between the two bases). Generated VM-side only --
 not yet run on HPC.
+
+**2026-09-21, later.** `a_uni_ch4ratiomol` CONVERGED on HPC: h2=0.1261
+(SE 0.0141), t=0.1389 (SE 0.0091) -- higher than mass-basis `ch4ratio`'s
+0.1016 (SE 0.0125)/0.1023 (SE 0.0079), a real but modest sensitivity to
+unit basis, not a resolution of the Jonker et al. discrepancy on its
+own. `bi_ch4ratio_ch4ratiomol` failed on HPC (`PROGRAM failed in
+AIDGGI`) under the old shared-PE spec -- same root cause as the
+2026-09-17 `methane_weight`/`methane_co2` PE-collapse issue, now fixed
+the same way (independent PE, picked up automatically now that
+`ch4ratiomol` has a real CONVERGED row in `results/univariate_summary.csv`).
+Regenerated discovery-only; not yet run on HPC. Full detail:
+`docs/revision_plan.md` Section 4D.
