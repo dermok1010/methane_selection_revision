@@ -1087,6 +1087,50 @@ standing VM-wide rule on expensive HPC jobs). If either converges,
 read the real `.pvc` parameter numbering before writing any indexed
 VPREDICT block, same discipline as every other prototype here.
 
+**2026-09-22 -- both stage-heterogeneous bivariate trials ran on HPC;
+neither produced a usable result, and both failures are process
+artifacts, not evidence against the modelling idea.** `.asr` output
+read directly from the compute node (not yet pulled back to the VM's
+`run/` mirror):
+
+- `bi_methane_co2_stage_het_trial`: never reached a first `LogL=`
+  iteration line -- only a repeating `NPD matrix in structure 5
+  begins` trace with the reported values escalating each report
+  (~0.0019 to ~0.32, roughly geometric), then nothing: no `Finished:`
+  line, no error footer, and no job left in `squeue`. ASReml normally
+  prints an explicit error message before terminating; an abrupt
+  cutoff with no footer during pre-iteration PD-repair is the
+  signature of an external kill (OOM or walltime), not a diagnosed
+  numerical fault. The sibling job below reports using "at least 4.5
+  of the 4.9 Gbyte" available on the same node/structure, and CO2's
+  much larger raw scale (mean 1190, SD 534) vs. methane (mean 17.9,
+  SD 7.6) feeding the same `sat(stage_660).us(Trait).units` term is a
+  plausible reason this pair needs more memory than the ch4mbw pair.
+  Not yet confirmed against `sacct`/the job's `.err` -- root cause is
+  inferred, not verified.
+- `bi_methane_ch4mbw_stage_het_trial`: completed 20 iterations but
+  ended with `Warning: LogL not converged`, and shows the exact
+  stale-`.rsv` trap already diagnosed on 2026-09-21 for
+  `bi_ch4ratio_ch4ratiomol` (Section 4D, commit `fd77b48`): the log
+  reports `Notice: Parameter constraint difference in .rsv file: P
+  ==> F`, and `diag(Trait).ide(ANI_ID)` for Trait 2
+  (`methane_per_mbw`) comes out fixed at exactly `0.00000` (code `F`,
+  "fixed by user") -- not something the current `.as`/`.pin` ask for,
+  but inherited from a leftover `.rsv` checkpoint already present in
+  `run/bi_methane_ch4mbw_stage_het_trial/` before this submission
+  (US structures were also forced PD 16 times, and 1448 records were
+  flagged as possible outliers). This is a process artifact from
+  reusing a run directory across attempts, not a diagnosed structural
+  failure of the stage-heterogeneous bivariate idea itself.
+
+Recommended next step, same procedural fix already established for
+this exact trap: `rm -rf run/bi_methane_co2_stage_het_trial
+run/bi_methane_ch4mbw_stage_het_trial`, re-stage fresh via
+`02_stage_run_dir.R` so there is no stale `.rsv` to restart from,
+raise the memory request for the co2 pair, then resubmit. **Not yet
+resubmitted** -- pending user confirmation per the standing
+HPC-dispatch rule.
+
 ---
 
 ## 5. Proposed order for introducing pipelines and rebuilding

@@ -223,3 +223,15 @@ already seen for the `methane_weight`/`methane_co2` bivariate pair
 directly relevant to the Jonker et al. discrepancy discussion and is
 flagged for the user, not yet decided how it changes the manuscript
 text. Full detail: `docs/revision_plan.md` Section 4B follow-up.
+
+**2026-09-22 -- both stage-heterogeneous bivariate trials
+(`bi_methane_co2_stage_het_trial`, `bi_methane_ch4mbw_stage_het_trial`)
+ran on HPC; neither is usable yet.** The co2 pair appears to have been
+killed (OOM/walltime suspected, not confirmed) before a first `LogL`
+iteration. The ch4mbw pair completed 20 iterations but did not
+converge, and hit the same stale-`.rsv` trap already documented for
+`bi_ch4ratio_ch4ratiomol` (21 Sep): its run directory had a leftover
+`.rsv` from a prior attempt, fixing Trait 2's PE variance at zero.
+Recommended fix is procedural (`rm -rf` the two run dirs, re-stage
+fresh, raise co2's memory request) -- not yet resubmitted, pending
+confirmation. Full detail: `docs/revision_plan.md` Section 4E.
