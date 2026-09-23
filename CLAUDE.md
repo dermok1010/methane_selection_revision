@@ -263,3 +263,31 @@ the `ch4mbw` ratio is); new `--set=bi_stage_het_scale_trial` generates
 trait correlation) instead of the failed `sat()` form. Four models
 total, all generated VM-side only. Full detail: `docs/revision_plan.md`
 Section 4E.
+
+**2026-09-23, final -- bivariate stage-heterogeneous RESIDUAL structures
+abandoned for structural ASReml reasons (not lack of signal); resolved
+instead with a stage-split bivariate check. `methane`-`ch4mbw` rg is
+essentially unchanged by stage (0.8478 full data / 0.8506 young / 0.8540
+mature), closing the "would bivariate rg shift like univariate h2 did"
+concern.** `sat(stage_660).us(Trait).units` silently collapses to one
+residual section instead of two in a bivariate (Trait-sectioned) model
+-- confirmed by grepping every printed Sigma value in the `.asr`,
+`sat(stage_660,2)` never gets a fitted value despite `LogL Converged`.
+`idh(stage_660).us(Trait).units` is invalid regardless of data: `idh()`
+and `us()` are both variance-type functions, and
+ASReml-4.2-Functional-Specification.pdf Section 7.2 requires exactly one
+variance function per compound term -- same failure mode already seen
+for `idh(cg_mean_cl)` on 20 Sep, now confirmed general rather than
+`cg_mean_cl`-specific. New `scripts/06_prepare_stage_split_phenotype.R`
++ `gen_bivariate_stage_split()` fit two ordinary bivariate models
+instead (young/mature subsets, same already-working homogeneous
+structure) -- both CONVERGED, every parameter code `P`, no boundaries.
+Combined with the univariate VA-stability check (genetic variance itself
+moves only +5.9%/+2.6% while h2 swings much more) and `young_old`
+(rg=0.9908), three independent lines of evidence now agree: residual
+heterogeneity by stage moves h2, not the genetic correlation. **Decision:
+homogeneous residual variance is the primary, reported bivariate rg for
+every pair; stage heterogeneity is reported as a sensitivity finding via
+the univariate `stage_het` results plus these bivariate checks, not a
+bivariate heterogeneous-residual model.** Full detail:
+`docs/revision_plan.md` Section 4E.

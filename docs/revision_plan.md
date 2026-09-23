@@ -1243,6 +1243,94 @@ HPC), `scripts/01_generate_models.R`:*
 **Generated only -- none of these four models has been submitted to
 HPC.** Pending user confirmation per the standing HPC-dispatch rule.
 
+**2026-09-23, later still -- resolution: bivariate stage-heterogeneous
+RESIDUAL structures abandoned for structural reasons; the underlying
+question (does the genetic correlation change by stage) answered
+instead by a stage-split bivariate check. Closes this section.**
+
+All four generated models above were run or diagnosed on HPC:
+
+1. `bi_methane_mbw_stage_het_trial` (full `sat(stage_660).us(Trait).units`)
+   reported `LogL Converged`, but grepping every `US_V`/`US_C`/`DIAG_V`
+   value in its `.asr` shows `sat(stage_660,2)` is initialized (parameters
+   44-47) but **never receives a fitted value anywhere in the file** --
+   only `sat(stage_660,1)`'s block prints real numbers. Combined with
+   `Warning: Fewer sections of data than expected` in the log, this
+   confirms `sat()` silently collapses to ONE residual section instead of
+   two in a bivariate (Trait-sectioned) model, rather than genuinely
+   fitting stage-specific residual covariances. This is not specific to
+   `mbw` -- the original `ch4mbw` attempt shows the identical single-block
+   pattern. **Both `sat()` bivariate stage_het trials are therefore
+   invalid fits, not usable evidence, despite reporting convergence.**
+2. Both `bi_*_stage_het_scale_trial` jobs (`idh(stage_660).us(Trait).units`)
+   failed outright: `Error: There are 31738 data records but RESIDUAL
+   model implies 2 data records`, `!SECTION confusion`. Read against
+   `ASReml-4.2-Functional-Specification.pdf` Section 7.2: "a variance
+   function must be specified for one, but only one, component in a
+   compound model term... due to identifiability issues." `idh()` and
+   `us()` are BOTH variance-type functions (Table 7.1) -- chaining them
+   violates this rule outright, regardless of data or factor
+   declaration. This is the same failure signature already seen for
+   `idh(cg_mean_cl).us(Trait).units` on 20 Sep (Section 4C item 2,
+   "RESIDUAL model implies 41 data records") -- confirms that was a
+   general syntax-validity problem, not something specific to
+   `cg_mean_cl`'s small classes.
+
+**Given neither bivariate route is fixable without abandoning the
+question, the underlying scientific question was answered a different
+way: split the DATA by stage and fit two ordinary (already-working,
+homogeneous-residual) `methane` x `ch4mbw` bivariate models instead of
+trying to model heterogeneity within one fit.**
+`scripts/06_prepare_stage_split_phenotype.R` filters
+`phenotype_asreml.csv` into `phenotype_asreml_young.csv` (7,718 records)
+/ `_mature.csv` (8,151 records); `gen_bivariate_stage_split()` (new in
+`01_generate_models.R`, plus a `phenotype_file` override parameter on
+`gen_bivariate()` and a matching per-job-phenotype-filename fix in
+`02_stage_run_dir.R`, which previously assumed one global phenotype
+filename for every job) generates `bi_methane_ch4mbw_young.as` /
+`_mature.as` with the same structure as the already-CONVERGED
+`bi_methane_ch4mbw.as`. Both CONVERGED cleanly on HPC, every parameter
+code `P` (no boundary/fixed flags, including `ch4mbw`'s PE in both
+stages):
+
+| | n | rg | h2 (methane) | h2 (ch4mbw) |
+|---|---|---|---|---|
+| Full data (`bi_methane_ch4mbw.as`) | 15,869 | 0.8478 (SE 0.0152) | 0.284 | 0.222 |
+| Mature only | 8,151 | 0.8540 | 0.230 | 0.198 |
+| Young only | 7,718 | 0.8506 | 0.270 | 0.288 |
+
+`rg` is essentially unmoved across the full data and both stage subsets
+(spread of 0.006, well inside the full-data SE), while h2 shifts more by
+stage in the same direction and magnitude already seen in the univariate
+`stage_het` check below -- consistent with h2's denominator directly
+containing the residual variance that differs by stage, while `rg`
+(a pure function of the genetic covariance matrix) does not.
+
+**This closes the "if univariate h2 shifted so much, surely bivariate rg
+would too" concern (user, same session) with three independent, mutually
+consistent lines of evidence, not just the theoretical
+rg-is-more-robust-than-h2 argument:**
+1. Univariate genetic variance itself barely moves between the
+   homogeneous and `stage_het` fits (`methane` VA +5.9%, `ch4mbw` VA
+   +2.6%) while h2 swings much more (`methane` 0.20-0.36 by stage) --
+   the swing is a residual-reallocation effect, not a genetic one.
+2. `young_old`'s CH4-vs-itself bivariate rg=0.9908 (SE 0.0892).
+3. This stage-split `methane`-vs-`ch4mbw` bivariate check, directly on
+   the cross-trait correlation itself: rg=0.8478/0.8506/0.8540.
+
+**Decision: homogeneous residual variance is the primary, reported
+bivariate genetic correlation for every pair.** Stage heterogeneity is
+reported as a sensitivity/robustness finding using the *univariate*
+`stage_het` results (real, CONVERGED, no sectioning conflict) plus the
+`young_old` and stage-split bivariate checks above -- not by forcing a
+bivariate heterogeneous-residual fit, which is not achievable in this
+ASReml/pipeline combination for structural reasons. Same resolution
+pattern, and same underlying cause (a bivariate model's implicit
+`Trait`-sectioning conflicting with a second grouping-factor residual
+structure), as the `cg_het` bivariate abandonment on 20 Sep (Section
+4C) -- now confirmed to generalize beyond `cg_mean_cl` to `stage_660`
+too, and beyond `sat()` to `idh()` as well.
+
 ---
 
 ## 5. Proposed order for introducing pipelines and rebuilding
