@@ -132,7 +132,8 @@ stopifnot(set_arg %in% c("validation", "full", "components", "components_trial",
                           "bi_cg_het_trial", "key_bivariates", "key_bivariates_cg_het",
                           "key_bivariates_final", "bi_cg_het_scale_trial",
                           "key_bivariates_cg_het_scale", "mol_ratio",
-                          "bi_stage_het_trial", "bi_stage_het_scale_trial"))
+                          "bi_stage_het_trial", "bi_stage_het_scale_trial",
+                          "bi_stage_split"))
 
 pipeline_root <- normalizePath(
   file.path(dirname(sub("--file=", "", grep("--file=", commandArgs(), value = TRUE))), ".."),
@@ -721,7 +722,13 @@ gen_bivariate <- function(trait1, trait2, pe_term = "ide(ANI_ID)",
                            note = NULL, genetic_term = NULL,
                            genetic_term_reason = NULL,
                            residual_term = NULL,
-                           ignore_legacy_structure = FALSE) {
+                           ignore_legacy_structure = FALSE,
+                           phenotype_file = NULL) {
+  # phenotype_file overrides cfg$phenotype_file for this job only -- used
+  # by gen_bivariate_stage_split() (2026-09-23) to point a job at a
+  # stage-660-filtered phenotype file instead of the full dataset. NULL
+  # (the default) means every other caller is unaffected.
+  if (is.null(phenotype_file)) phenotype_file <- cfg$phenotype_file
   code_pair <- sprintf("%s_%s", trait1$code, trait2$code)
   reverse_pair <- sprintf("%s_%s", trait2$code, trait1$code)
 
@@ -887,7 +894,7 @@ gen_bivariate <- function(trait1, trait2, pe_term = "ide(ANI_ID)",
     # values in the data are not accommodated in the model specified."
     sprintf(
       "%s !SKIP 1 !MVINCLUDE%s",
-      cfg$phenotype_file, if (!is.null(residual_term)) " !ASUV" else ""
+      phenotype_file, if (!is.null(residual_term)) " !ASUV" else ""
     ),
     "",
     sprintf(
@@ -1338,6 +1345,66 @@ gen_bivariate_stage_het_scale_trial <- function(code1, code2) {
   )
 }
 
+# ---- Stage-SPLIT bivariate check (2026-09-23) ----
+#
+# Both attempts at modelling stage_660 residual heterogeneity WITHIN one
+# bivariate fit are abandoned for structural ASReml reasons (see the two
+# prototypes above): sat(stage_660).us(Trait).units silently collapses to
+# one residual section instead of two in a Trait-sectioned (bivariate)
+# model ("Warning: Fewer sections of data than expected", confirmed by
+# grepping the .asr for every printed Sigma value -- sat(stage_660,2)
+# never receives one); idh(stage_660).us(Trait).units is structurally
+# invalid regardless of data (two variance-type functions, idh() and
+# us(), in one compound term -- Functional-Specification.pdf Section 7.2
+# explicitly requires exactly one).
+#
+# This sidesteps the whole problem by splitting the DATA instead of the
+# residual structure: fit two ORDINARY (homogeneous-residual, no
+# residual_term override -- the same structure as the already-CONVERGED
+# bi_methane_ch4mbw.as) bivariate models, one on young-stage records
+# only, one on mature-stage records only
+# (scripts/06_prepare_stage_split_phenotype.R). Comparing rg_young vs
+# rg_mature directly answers the reviewer-facing question this whole
+# line of work is for -- does the CROSS-TRAIT genetic correlation itself
+# differ by stage -- which the univariate stage_het VA-stability check
+# (each trait's OWN genetic variance, not the cross-trait covariance)
+# and the young_old check (CH4 vs itself across stages, not CH4 vs
+# ch4mbw) don't quite cover on their own.
+#
+# Same genetic/PE term choice as the already-confirmed homogeneous
+# bi_methane_ch4mbw.as (classic Trait.ped(ANI_ID), independent PE via
+# choose_pe_term()) so 03_parse_results.R's by-NAME Model_Term parsing
+# (not a hand-indexed VPREDICT block) applies exactly as it already does
+# for that pair -- no new structure to discover here, just a smaller,
+# stage-restricted sample.
+gen_bivariate_stage_split <- function(code1, code2, stage) {
+  stopifnot(stage %in% c("young", "mature"))
+  t1 <- trait_by_code[[code1]]
+  t2 <- trait_by_code[[code2]]
+  if (is.null(t1) || is.null(t2)) {
+    stop(code1, "/", code2, " trait definitions missing from config/models.yaml")
+  }
+  pe <- choose_pe_term(t1, t2)
+  note <- sprintf(paste(
+    "Stage-split bivariate check (2026-09-23): %s x %s fit on %s-stage",
+    "records only (stage_660), ordinary homogeneous residual -- see",
+    "scripts/06_prepare_stage_split_phenotype.R and this file's",
+    "gen_bivariate_stage_split() header comment for why (bivariate",
+    "stage-heterogeneous RESIDUAL structures are abandoned for structural",
+    "ASReml reasons; this tests the same question by splitting the data",
+    "instead). Compare rg from this fit against the other stage and",
+    "against the full-data bi_methane_ch4mbw.as rg=0.8478 (SE 0.0152)."
+  ), t1$code, t2$code, stage)
+  gen_bivariate(
+    t1, t2,
+    pe_term = pe$term,
+    discovery_only = pe$independent,
+    filename_suffix = sprintf("_%s", stage),
+    note = note,
+    phenotype_file = sprintf("phenotype_asreml_%s.csv", stage)
+  )
+}
+
 # ---- young(<660d)-vs-mature CH4 bivariate genetic correlation ----
 #
 # Treats ch4_young/ch4_old (scripts/00_prepare_asreml_phenotype.R --
@@ -1514,6 +1581,18 @@ if (set_arg == "bi_stage_het_scale_trial") {
   cat("  wrote bi_methane_ch4mbw_stage_het_scale_trial.as (discovery-only)\n")
   gen_bivariate_stage_het_scale_trial("methane", "mbw")
   cat("  wrote bi_methane_mbw_stage_het_scale_trial.as (discovery-only)\n")
+  cat("\nDone. Models written to:", models_dir, "\n")
+  quit(save = "no", status = 0)
+}
+
+if (set_arg == "bi_stage_split") {
+  cat("Generating 'bi_stage_split' set: 2 bivariate models (young/mature)\n")
+  cat("NOTE: requires data/phenotype_asreml_young.csv and _mature.csv --\n")
+  cat("      run scripts/06_prepare_stage_split_phenotype.R first if missing.\n")
+  gen_bivariate_stage_split("methane", "ch4mbw", "young")
+  cat("  wrote bi_methane_ch4mbw_young.as\n")
+  gen_bivariate_stage_split("methane", "ch4mbw", "mature")
+  cat("  wrote bi_methane_ch4mbw_mature.as\n")
   cat("\nDone. Models written to:", models_dir, "\n")
   quit(save = "no", status = 0)
 }

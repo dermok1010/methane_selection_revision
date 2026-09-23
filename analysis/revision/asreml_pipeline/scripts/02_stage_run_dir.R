@@ -82,10 +82,41 @@ for (as_path in as_files) {
   if (file.exists(pin_path)) {
     file.copy(pin_path, file.path(job_dir, basename(pin_path)), overwrite = TRUE)
   }
-  file.copy(phenotype_src, file.path(job_dir, models_cfg$phenotype_file), overwrite = TRUE)
+
+  # Each job's .as file names its own phenotype data file on the line
+  # immediately following the pedigree file -- normally
+  # models_cfg$phenotype_file for every job, but gen_bivariate()'s
+  # phenotype_file override (2026-09-23, stage-split bivariate check)
+  # can point a specific job at a different, smaller file (e.g. a
+  # stage_660-filtered subset) living alongside it in data/. Read it
+  # back from the .as file itself rather than assuming the global name,
+  # so this generalises to any future per-job override too.
+  as_lines <- readLines(as_path, warn = FALSE)
+  pheno_line <- grep("!SKIP 1 !MVINCLUDE", as_lines, value = TRUE)
+  job_phenotype_file <- if (length(pheno_line) == 1) {
+    sub("\\s.*$", "", trimws(pheno_line))
+  } else {
+    models_cfg$phenotype_file
+  }
+  job_phenotype_src <- file.path(pipeline_root, "data", job_phenotype_file)
+  if (!file.exists(job_phenotype_src)) {
+    stop(
+      jobname, "'s .as file references phenotype data ", job_phenotype_file,
+      " but ", job_phenotype_src, " does not exist -- generate it before staging."
+    )
+  }
+  file.copy(job_phenotype_src, file.path(job_dir, job_phenotype_file), overwrite = TRUE)
   file.copy(pedigree_src, file.path(job_dir, models_cfg$pedigree_file), overwrite = TRUE)
 
-  cat("Staged", jobname, "->", job_dir, "\n")
+  cat(
+    "Staged ", jobname, " -> ", job_dir,
+    if (job_phenotype_file != models_cfg$phenotype_file) {
+      sprintf(" (phenotype: %s)", job_phenotype_file)
+    } else {
+      ""
+    },
+    "\n", sep = ""
+  )
 }
 
 cat("\n", length(as_files), " job director", if (length(as_files) == 1) "y" else "ies",
