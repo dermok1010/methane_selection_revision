@@ -54,6 +54,20 @@
 #                                                   # vs. the mass-basis
 #                                                   # ch4_ratio, see config's
 #                                                   # mol_ratio_set comment
+#   Rscript 01_generate_models.R --set=bi_stage_het_scale_trial
+#                                                   # 2026-09-23: after
+#                                                   # sat(stage_660).us(Trait)
+#                                                   # hit MAX_ATTEMPTS_EXCEEDED
+#                                                   # for methane x ch4mbw
+#                                                   # (Trait 2 PE pinned at a
+#                                                   # zero boundary), retry
+#                                                   # with idh(stage_660)
+#                                                   # .us(Trait).units --
+#                                                   # per-stage residual
+#                                                   # scale, one shared trait
+#                                                   # correlation -- for
+#                                                   # methane x ch4mbw AND
+#                                                   # methane x mbw
 #
 # Writes into <pipeline_root>/models/ (git-tracked). Does not run ASReml,
 # does not touch run/. See README.md for the full VM -> HPC workflow.
@@ -118,7 +132,7 @@ stopifnot(set_arg %in% c("validation", "full", "components", "components_trial",
                           "bi_cg_het_trial", "key_bivariates", "key_bivariates_cg_het",
                           "key_bivariates_final", "bi_cg_het_scale_trial",
                           "key_bivariates_cg_het_scale", "mol_ratio",
-                          "bi_stage_het_trial"))
+                          "bi_stage_het_trial", "bi_stage_het_scale_trial"))
 
 pipeline_root <- normalizePath(
   file.path(dirname(sub("--file=", "", grep("--file=", commandArgs(), value = TRUE))), ".."),
@@ -1250,6 +1264,80 @@ gen_bivariate_stage_het_trial <- function(code1, code2) {
   )
 }
 
+# ---- Stage-heterogeneous-SCALE bivariate prototype (2026-09-23 follow-up) --
+#
+# bi_methane_ch4mbw_stage_het_trial (sat(stage_660).us(Trait).units, above)
+# hit MAX_ATTEMPTS_EXCEEDED on HPC without converging: Trait 2's
+# (methane_per_mbw) diag(Trait).ide(ANI_ID) came out pinned at exactly
+# 0.00000 (code F) across the pipeline's own automatic !CONTINUE retries
+# (docs/revision_plan.md Section 4E, 23 Sep correction -- this is NOT the
+# stale-.rsv trap, .rsv reuse across retries is by design). Under the
+# homogeneous-residual bivariate model that same PE component is small
+# (0.00158, ~6% of Trait 2's total variance) but genuinely estimated, not
+# zero, so it's a real but marginal signal, not numerically absent.
+#
+# stage_660's two classes are well-populated (~7,600/~8,269 records),
+# unlike cg_mean_cl's 4-1763-record spread, so this isn't the original
+# cg_het small-class problem sat() couldn't handle. The likely issue is
+# parameter richness instead: sat(stage_660).us(Trait).units estimates a
+# SEPARATE trait residual correlation per stage (2 fully-independent 2x2
+# US matrices), and methane/ch4mbw's occasion-level residual correlation
+# is expected to be very high regardless of stage (ch4mbw is literally
+# ch4/MBW computed from the same record) -- re-estimating that
+# near-degenerate correlation twice, independently, is one more thing
+# competing with Trait 2's already-marginal PE for identification.
+#
+# Same idh() substitution already used for the cg_mean_cl case (above):
+# idh(stage_660).us(Trait).units gives each stage its own residual SCALE
+# but shares ONE us(Trait) trait-correlation/covariance structure across
+# both stages (5 residual parameters: 2 scale + 3 shared, vs sat()'s 6
+# fully-independent ones). This keeps heterogeneous residual variance by
+# stage -- the part Reviewer 1 actually asked about -- while removing the
+# one redundant, near-degenerate parameter.
+#
+# Two pairs (2026-09-23, user-directed): methane x ch4mbw (retry of the
+# failed trial under this more parsimonious structure) and methane x mbw
+# (the raw metabolic-bodyweight component trait feeding the ch4mbw
+# ratio -- not derived from the same record as methane, and its own
+# univariate ide(ANI_ID) CONVERGED with a real, non-collapsed PE estimate
+# of 1.91896, results/univariate_summary.csv -- a cleaner diagnostic for
+# whether the residual-heterogeneity idea itself is estimable here, run
+# in parallel with the ch4mbw retry rather than instead of it).
+gen_bivariate_stage_het_scale_trial <- function(code1, code2) {
+  t1 <- trait_by_code[[code1]]
+  t2 <- trait_by_code[[code2]]
+  if (is.null(t1) || is.null(t2)) {
+    stop(code1, "/", code2, " trait definitions missing from config/models.yaml")
+  }
+  pe <- choose_pe_term(t1, t2)
+  note <- sprintf(paste(
+    "Stage-heterogeneous-SCALE bivariate prototype (2026-09-23, after",
+    "sat(stage_660).us(Trait).units hit MAX_ATTEMPTS_EXCEEDED for methane",
+    "x ch4mbw with Trait 2's PE pinned at a zero boundary): %s x %s --",
+    "idh(stage_660).us(Trait).units, per-stage residual SCALE with one",
+    "SHARED trait correlation across stages; discovery-only; do not",
+    "generalise beyond this trial pair unless the fit is stable and",
+    "scientifically useful."
+  ), t1$code, t2$code)
+  gen_bivariate(
+    t1, t2,
+    pe_term = pe$term,
+    discovery_only = TRUE,
+    filename_suffix = "_stage_het_scale_trial",
+    note = note,
+    genetic_term = "us(Trait).ped(ANI_ID)",
+    genetic_term_reason = c(
+      "# Trait.ped(ANI_ID) -- functional syntax used deliberately for the",
+      "# improved auto-initialisation, consistent with every other",
+      "# heterogeneous-residual prototype in this pipeline. This is NOT a",
+      "# claim that the classic bare form was tried and failed for this",
+      "# specific pair (untested)."
+    ),
+    residual_term = "idh(stage_660).us(Trait).units",
+    ignore_legacy_structure = TRUE
+  )
+}
+
 # ---- young(<660d)-vs-mature CH4 bivariate genetic correlation ----
 #
 # Treats ch4_young/ch4_old (scripts/00_prepare_asreml_phenotype.R --
@@ -1397,11 +1485,35 @@ if (set_arg == "bi_cg_het_trial") {
 }
 
 if (set_arg == "bi_stage_het_trial") {
-  cat("Generating 'bi_stage_het_trial' set: 2 bivariate discovery models\n")
+  cat("Generating 'bi_stage_het_trial' set: 3 bivariate discovery models\n")
   gen_bivariate_stage_het_trial("methane", "co2")
   cat("  wrote bi_methane_co2_stage_het_trial.as (discovery-only)\n")
   gen_bivariate_stage_het_trial("methane", "ch4mbw")
   cat("  wrote bi_methane_ch4mbw_stage_het_trial.as (discovery-only)\n")
+  # 2026-09-23: methane x mbw added as a cleaner diagnostic than
+  # methane x ch4mbw for whether the stage-heterogeneous residual
+  # structure itself is estimable. ch4mbw (methane_per_mbw) is a
+  # ratio-derived trait whose PE variance got driven to a hard zero
+  # boundary in that trial (docs/revision_plan.md Section 4E, 23 Sep
+  # correction). mbw is the raw component trait feeding that ratio and
+  # has a real, non-collapsed CONVERGED univariate ide(ANI_ID) estimate
+  # (1.91896, results/univariate_summary.csv) -- if this pair also
+  # fails to converge under the same stage_660 residual structure, that
+  # points at the residual-heterogeneity parameterisation itself being
+  # too rich for the data rather than something specific to ch4mbw's PE
+  # fragility.
+  gen_bivariate_stage_het_trial("methane", "mbw")
+  cat("  wrote bi_methane_mbw_stage_het_trial.as (discovery-only)\n")
+  cat("\nDone. Models written to:", models_dir, "\n")
+  quit(save = "no", status = 0)
+}
+
+if (set_arg == "bi_stage_het_scale_trial") {
+  cat("Generating 'bi_stage_het_scale_trial' set: 2 bivariate discovery models\n")
+  gen_bivariate_stage_het_scale_trial("methane", "ch4mbw")
+  cat("  wrote bi_methane_ch4mbw_stage_het_scale_trial.as (discovery-only)\n")
+  gen_bivariate_stage_het_scale_trial("methane", "mbw")
+  cat("  wrote bi_methane_mbw_stage_het_scale_trial.as (discovery-only)\n")
   cat("\nDone. Models written to:", models_dir, "\n")
   quit(save = "no", status = 0)
 }

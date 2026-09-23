@@ -245,3 +245,21 @@ genuine convergence pathology -- the same PE-starvation pattern seen
 elsewhere in this plan -- so `rm -rf` + restage is likely a no-op here.
 The co2 pair's OOM/walltime diagnosis is unaffected. Full detail:
 `docs/revision_plan.md` Section 4E.
+
+**2026-09-23, later -- `MAX_ATTEMPTS_EXCEEDED` confirmed; homogeneous
+`methane_ch4mbw` comparison CONVERGED with a small but real (not
+boundary-zero) `ch4mbw` PE; two new discovery-only model sets
+generated, not yet run on HPC.** The homogeneous bivariate pair shows
+the small PE isn't numerically absent -- the stage-heterogeneous
+model's exact-zero result looks like a parameter-richness problem
+(`sat(stage_660).us(Trait).units` re-estimates an independent trait
+residual correlation per stage, competing with an already-marginal PE
+for identification), not evidence against the pair itself. New:
+`--set=bi_stage_het_trial` gained a third pair, `methane` x `mbw` (the
+raw bodyweight component, not mechanically tied to `methane` the way
+the `ch4mbw` ratio is); new `--set=bi_stage_het_scale_trial` generates
+`methane` x `ch4mbw` and `methane` x `mbw` with
+`idh(stage_660).us(Trait).units` (per-stage residual scale, one shared
+trait correlation) instead of the failed `sat()` form. Four models
+total, all generated VM-side only. Full detail: `docs/revision_plan.md`
+Section 4E.

@@ -1179,6 +1179,70 @@ open items before resubmitting anything:**
 - The `bi_methane_co2_stage_het_trial` OOM/walltime diagnosis above is
   unaffected by this correction and still stands.
 
+**2026-09-23, later -- confirmed `MAX_ATTEMPTS_EXCEEDED`; homogeneous
+comparison run; two new discovery models generated.** User confirmed
+`run/state/bi_methane_ch4mbw_stage_het_trial.status` shows
+`MAX_ATTEMPTS_EXCEEDED` -- the PE-boundary read above is real, not a
+mid-sequence snapshot.
+
+*Homogeneous-residual comparison.* The plain (non-stage-heterogeneous)
+`methane_ch4mbw` bivariate pair (`results/bivariate_summary.csv`,
+current post-18-Sep independent-PE version, commit `92ee626` and later)
+is `CONVERGED`: h2=0.2842/0.2218 (SE 0.015/0.014), rg=0.8478 (SE
+0.0152), re=0.9437, rp=0.8737. Trait 2's (`methane_per_mbw`) PE variance
+is 0.00157833 -- small (~6% of Trait 2's total variance) but genuinely
+estimated, not fixed at a boundary. This confirms the stage-
+heterogeneous failure is not evidence the PE signal doesn't exist; it's
+that `sat(stage_660).us(Trait).units` (a separately-estimated 2x2
+residual US matrix per stage -- i.e. an independent trait residual
+correlation per stage, on top of independent variances) is too rich
+relative to how little independent information the data carries for
+that already-small PE component, given `ch4mbw`'s occasion-level
+residual correlation with `ch4` is mechanically close to 1 (it's
+literally `ch4/MBW` computed from the same record) regardless of stage.
+
+*User question, same session:* since `ch4mbw` is derived from the exact
+same record as `methane`, does that shared-record structure explain the
+PE problem, or should PE still be free to differ by trait? Answer,
+recorded here since it shapes the modelling choice below: yes to both.
+The shared-record link explains why the *residual* correlation between
+the two traits should be very high (expected, not a problem) -- but PE
+is legitimately allowed to be genuinely smaller for `ch4mbw` than for
+`methane`, because dividing by MBW is specifically designed to remove
+the body-size-driven part of `methane`'s own permanent-environment
+variance, leaving only whatever repeatable "efficiency" signal remains.
+The homogeneous-model estimate above (small, non-zero, SE-bearing) is
+consistent with that being real. The stage-heterogeneous model's exact
+zero is therefore read as a parameter-richness/estimability artifact
+compounding an already-marginal signal, not a restatement of the
+mechanical link itself.
+
+*Two new discovery-only model sets generated (VM-side, not submitted to
+HPC), `scripts/01_generate_models.R`:*
+1. `--set=bi_stage_het_trial` extended with a third pair, `methane` x
+   `mbw` (the raw metabolic-bodyweight component trait behind the
+   `ch4mbw` ratio, not derived from the same record as `methane`, own
+   univariate `ide(ANI_ID)` CONVERGED with a real, non-collapsed PE
+   estimate of 1.91896) -> `bi_methane_mbw_stage_het_trial.as`. Tests
+   whether the full `sat(stage_660).us(Trait).units` structure is
+   estimable at all on this data once the mechanically-linked,
+   marginal-PE `ch4mbw` pair is taken out of the picture.
+2. New `--set=bi_stage_het_scale_trial`
+   (`gen_bivariate_stage_het_scale_trial()`), generated for both
+   `methane` x `ch4mbw` and `methane` x `mbw` ->
+   `bi_methane_ch4mbw_stage_het_scale_trial.as` /
+   `bi_methane_mbw_stage_het_scale_trial.as`. Same `idh(<group>).us(Trait).units`
+   substitution already used for the `cg_mean_cl` case (Section above),
+   applied here to `stage_660`: one residual SCALE per stage but a
+   SINGLE shared `us(Trait)` trait-correlation structure across both
+   stages (5 residual parameters vs `sat()`'s 6 fully-independent ones)
+   -- removes exactly the redundant, near-degenerate second trait
+   correlation while keeping heterogeneous residual variance by stage,
+   the part Reviewer 1 actually asked about.
+
+**Generated only -- none of these four models has been submitted to
+HPC.** Pending user confirmation per the standing HPC-dispatch rule.
+
 ---
 
 ## 5. Proposed order for introducing pipelines and rebuilding
