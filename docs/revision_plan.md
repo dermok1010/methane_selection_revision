@@ -1131,6 +1131,54 @@ raise the memory request for the co2 pair, then resubmit. **Not yet
 resubmitted** -- pending user confirmation per the standing
 HPC-dispatch rule.
 
+**2026-09-23 -- correction to the `ch4mbw_stage_het_trial` diagnosis
+above: the `.rsv` reuse is not the `ch4ratiomol`-style staleness bug.**
+User (voice, remote control) pointed out that the pipeline's retry loop
+(`slurm/run_one_model.sh`) is *designed* to reuse a job's own `.rsv`:
+every generated `.as` carries `!CONTINUE`
+(`scripts/01_generate_models.R` line ~64), and `lib_classify_convergence.R`
+classifies `"LogL not converged"` as `NOT_CONVERGED` -- explicitly the
+expected/recoverable branch that makes `run_one_model.sh` simply
+re-invoke `asreml jobname.as` again (up to `MAX_ATTEMPTS=5`), which
+naturally restarts from that same job's own previous-attempt `.rsv`.
+Confirmed by reading both scripts. This is a genuinely different
+mechanism from the 21 Sep `ch4ratiomol` bug (Section 4D, commit
+`fd77b48`), where a job *name* was reused across a structural model
+change and the `.rsv` came from a differently-shaped model entirely --
+`bi_methane_ch4mbw_stage_het_trial` was a freshly-suffixed job name
+(Section 4B, 20 Sep) that had not previously run under a different
+structure, so there is no cross-structure mismatch to inherit.
+
+So the real signal in the log is not file corruption: `diag(Trait).ide(ANI_ID)`
+for Trait 2 (`methane_per_mbw`) being pinned at exactly `0.00000` (code
+`F`) is a genuine convergence property -- the model's own optimizer is
+driving that PE variance to a boundary and ASReml is fixing it there
+(`P ==> F`) across retries, not something injected by a stale restart
+file. This is the same PE-starvation pattern already documented
+elsewhere in this plan for the `methane_weight`/`methane_co2` bivariate
+pair and the univariate `ch4ratio` `cg_het` case -- additional evidence
+that `methane_per_mbw`'s PE component is unstable under residual
+heterogeneity, not a process artifact.
+
+**Consequence for the recommended fix above: `rm -rf` + restage is very
+likely a no-op for this pair.** It correctly addresses genuine
+cross-structure `.rsv` staleness (as it did for `ch4ratiomol`), but a
+fresh run of `bi_methane_ch4mbw_stage_het_trial` starting from its own
+default initial values would plausibly walk toward the same PE boundary
+again, since nothing about the model or data changes. **Not resolved --
+open items before resubmitting anything:**
+- Check `run/state/bi_methane_ch4mbw_stage_het_trial.status` on HPC to
+  see whether `MAX_ATTEMPTS_EXCEEDED` was actually reached, or whether
+  the pasted log is a mid-sequence attempt.
+- If the PE-boundary pattern is confirmed to be real for
+  `methane_per_mbw` here too, decide (with the user) whether this pair
+  should follow the same path as the abandoned `cg_het` bivariate
+  attempt (Section 4C) -- reported as a transparent limitation rather
+  than forced to converge -- rather than continuing to retry as if it
+  were a fixable I/O problem.
+- The `bi_methane_co2_stage_het_trial` OOM/walltime diagnosis above is
+  unaffected by this correction and still stands.
+
 ---
 
 ## 5. Proposed order for introducing pipelines and rebuilding

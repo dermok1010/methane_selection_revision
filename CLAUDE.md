@@ -234,4 +234,14 @@ converge, and hit the same stale-`.rsv` trap already documented for
 `.rsv` from a prior attempt, fixing Trait 2's PE variance at zero.
 Recommended fix is procedural (`rm -rf` the two run dirs, re-stage
 fresh, raise co2's memory request) -- not yet resubmitted, pending
-confirmation. Full detail: `docs/revision_plan.md` Section 4E.
+confirmation. **Correction, 2026-09-23: this diagnosis was wrong for
+the ch4mbw pair.** The `.rsv` reuse is the pipeline's own by-design
+retry mechanism (`run_one_model.sh` re-invokes `!CONTINUE` up to
+`MAX_ATTEMPTS=5` on a `NOT_CONVERGED` result, restarting from that same
+job's own prior-attempt `.rsv`), not the cross-structure staleness bug
+`ch4ratiomol` actually had. `diag(Trait).ide(ANI_ID)` for
+`methane_per_mbw` being pinned at `0.00000` (code `F`) looks like a
+genuine convergence pathology -- the same PE-starvation pattern seen
+elsewhere in this plan -- so `rm -rf` + restage is likely a no-op here.
+The co2 pair's OOM/walltime diagnosis is unaffected. Full detail:
+`docs/revision_plan.md` Section 4E.
