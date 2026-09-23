@@ -76,7 +76,7 @@ Additional phenotypic measurements were available for animals with methane recor
 
 ### Methane trait definitions
 
-A suite of methane traits was constructed to represent alternative approaches to quantifying emissions, consisting of absolute traits, ratio-based traits, and residual traits (Table 1).
+A suite of methane traits was constructed to represent alternative approaches to quantifying emissions (i.e., alternative to absolute, daily methane production), consisting of absolute traits, ratio-based traits, and residual traits (Table 1).
 
 **Absolute methane production.** Methane production (CH4) measured in g day⁻¹ represented the total mass of methane emitted per animal per day based on PAC measurement.
 
@@ -92,7 +92,7 @@ Variance components for all alternative methane traits were estimated using pedi
 
 where y was the phenotypic observation for the methane trait under analysis; μ was the overall mean; sex was the fixed class effect of sex (male or female); the fixed effects for breed proportion corresponding to Belclare (BR), Charolais (CL), Cheviot (CV), Lleyn (LY), Suffolk (SU), and Texel (TX) were included as covariates; het was the heterosis coefficient; rec was the recombination loss coefficient; age was the age at measurement (weeks of age); BTg was the fixed class effect of birth litter size of the growing animal itself (single, twin, triplet or quadruplet); RTg was the fixed class effect of rearing litter size of the growing animal itself (single, twin or triplet); BTe was the fixed class effect of birth litter size recorded for the ewe in the year of measurement (single, twin, triplet or quadruplet); RTe was the fixed class effect of rearing litter size recorded for the ewe in the year of measurement (single, twin or triplet); DP was the fixed class effect of dam parity for growing animals; CG was the contemporary group fixed class effect of flock-date-lot of measurement; a was the random animal additive genetic effect; pe was the non-additive random animal permanent environmental effect; and e was the residual random error term, where A was the numerator relationship matrix, I was the identity matrix, σ²ₐ was the direct additive genetic variance, σ²ₚₑ was the animal permanent environmental variance, and σ²ₑ was the residual variance.
 
-This model described above was used for both univariate and bivariate analyses. Bivariate models were fitted to estimate the phenotypic and genetic correlations between (i) methane traits according to their definition/construction, and (ii) between methane traits and production traits (metabolic body weight, live weight, average daily gain, muscle mass, and rumen volume). When CH4/MM and CH4/rumen were the dependent variables the repeated animal effect was omitted from the model due to small numbers of repeated records.
+This model described above was used for both univariate and bivariate analyses. Bivariate models were fitted to estimate the phenotypic and genetic correlations between (i) methane traits according to their definition/construction, and (ii) between methane traits and production traits (metabolic body weight, live weight, average daily gain, muscle mass, and rumen volume). When CH4/MM and CH4/rumen were the dependent variables the repeated animal effect was omitted from the model due to small numbers of repeated records. Fixed-effect significance (Wald F-tests) and diagnostics of pedigree completeness, connectedness, and contemporary-group confounding are reported in Supplementary Material S1.
 
 ### Selection index methodology
 
@@ -117,7 +117,7 @@ The mean MBW was 22.10 (SD = 4.92) kg, mean live weight was 62.72 (SD = 18.18) k
 | Trait group | Trait | No. records | No. animals | μ (SD) | Range |
 |---|---|---|---|---|---|
 | Absolute | CH4 | 15,869 | 8,185 | 17.90 (7.56) | 4.01 – 40.31 |
-| Ratio | MI | 15,638 | 8,002 | 0.81 (0.29) | 0.14 – 2.38 |
+| Ratio | CH4/MBW | 15,638 | 8,002 | 0.81 (0.29) | 0.14 – 2.38 |
 | | CH4 ratio | 15,869 | 8,185 | 0.02 (0.01) | 0.00 – 0.19 |
 | | CH4/ADG | 4,316 | 2,658 | 137.89 (189.27) | 12.03 – 2058.33 |
 | | CH4/MM | 766 | 751 | 1.44 (0.48) | 0.33 – 3.08 |
@@ -126,7 +126,7 @@ The mean MBW was 22.10 (SD = 4.92) kg, mean live weight was 62.72 (SD = 18.18) k
 | | RMTMBW+CO2 | 15,638 | 8,002 | 0.00 (5.32) | -23.38 – 24.15 |
 | | RMTADG | 4,316 | 2,658 | 0.00 (4.75) | -10.23 – 25.82 |
 
-*CH₄ is daily methane output in grams per day; MI is methane intensity, expressed as CH₄ per kg of metabolic body weight; CH₄ ratio is the ratio of methane to methane and carbon dioxide production; CH₄/ADG is methane per kg of average daily gain; CH₄/MM is methane per kg muscle mass derived from computed tomography; CH₄/rumen is methane per litre rumen volume derived from computed tomography; RMTMBW, RMTMBW+CO2, RMTADG are residual methane traits derived from regression of CH₄ on metabolic body weight, metabolic body weight and carbon dioxide, and average daily gain, respectively.*
+*CH₄ is daily methane output in grams per day; CH₄/MBW is methane intensity, expressed as CH₄ per kg of metabolic body weight; CH₄ ratio is the ratio of methane to methane and carbon dioxide production; CH₄/ADG is methane per kg of average daily gain; CH₄/MM is methane per kg muscle mass derived from computed tomography; CH₄/rumen is methane per litre rumen volume derived from computed tomography; RMTMBW, RMTMBW+CO2, RMTADG are residual methane traits derived from regression of CH₄ on metabolic body weight, metabolic body weight and carbon dioxide, and average daily gain, respectively.*
 
 ### Genetic parameters
 
@@ -139,7 +139,7 @@ Heritability estimates ranged from 0.08 ± 0.02 for CH₄ ratio to 0.34 ± 0.12 
 | Trait group | Trait | σa | σpe | h² (SE) | t | CVa |
 |---|---|---|---|---|---|---|
 | Absolute | CH4 | 1.62 (0.13) | 1.46 (0.14) | 0.17 (0.03) | 0.31 (0.01) | 9.05% |
-| Ratio | MI | 0.06 (0.01) | 0.06 (0.01) | 0.15 (0.02) | 0.28 (0.01) | 7.41% |
+| Ratio | CH4/MBW | 0.06 (0.01) | 0.06 (0.01) | 0.15 (0.02) | 0.28 (0.01) | 7.41% |
 | | CH4 ratio | 1.24×10⁻³ (1.23×10⁻⁴) | 5.05×10⁻⁴ (2.90×10⁻⁴) | 0.08 (0.02) | 0.09 (0.01) | 0.24% |
 | | CH4/ADG | 43.50 (7.81) | 36.30 (9.08) | 0.17 (0.05) | 0.29 (0.02) | 31.55% |
 | | CH4/MM | 0.17 (0.03) | – | 0.34 (0.12) | – | 11.81% |
@@ -158,10 +158,10 @@ Methane production (CH₄) showed strong positive genetic correlations with meth
 
 **Table 3. Genetic (above diagonal) and phenotypic (below diagonal) correlations among alternative methane trait definitions.**
 
-| | CH4 | MI | CH4 ratio | CH4/ADG | CH4/MM | CH4/rumen | RMTMBW | RMTMBW+CO2 | RMTADG |
+| | CH4 | CH4/MBW | CH4 ratio | CH4/ADG | CH4/MM | CH4/rumen | RMTMBW | RMTMBW+CO2 | RMTADG |
 |---|---|---|---|---|---|---|---|---|---|
 | CH4 | | 0.87 (0.02) | 0.73 (0.05) | 0.23 (0.06) | 0.85 (0.07) | 0.65 (0.11) | 0.55 (0.06) | 0.40 (0.07) | 0.26 (0.48) |
-| MI | 0.87 | | 0.85 (0.04) | 0.18 (0.06) | 0.86 (0.04) | 0.51 (0.14) | 0.55 (0.06) | 0.86 (0.02) | 0.81 (0.03) |
+| CH4/MBW | 0.87 | | 0.85 (0.04) | 0.18 (0.06) | 0.86 (0.04) | 0.51 (0.14) | 0.55 (0.06) | 0.86 (0.02) | 0.81 (0.03) |
 | CH4 ratio | 0.46 | 0.53 | | – | 0.44 (0.19) | 0.27 (0.20) | 0.82 (0.04) | – | 0.71 (0.07) |
 | CH4/ADG | 0.30 | 0.24 | – | | 0.57 (0.17) | 0.40 (0.17) | 0.30 (0.06) | 0.24 (0.06) | 0.04 (0.06) |
 | CH4/MM | 0.87 | 0.85 | 0.69 | 0.48 | | 0.49 (0.18) | 0.82 (0.04) | 0.79 (0.07) | 0.99 (0.08) |
@@ -181,7 +181,7 @@ Phenotypic and genetic correlations between methane traits and production traits
 | Trait group | Trait | Metabolic body weight | Live Weight | Average daily gain | Muscle mass | Rumen volume |
 |---|---|---|---|---|---|---|
 | Absolute | CH₄ | 0.08 (0.02) | 0.26 (0.02) | 0.19 (0.02) | 0.07 (0.05) | 0.20 (0.05) |
-| Ratio | MI | -0.10 (0.01) | -0.10 (0.01) | -0.11 (0.02) | -0.04 (0.04) | 0.13 (0.04) |
+| Ratio | CH4/MBW | -0.10 (0.01) | -0.10 (0.01) | -0.11 (0.02) | -0.04 (0.04) | 0.13 (0.04) |
 | | CH₄ ratio | -0.06 (0.01) | – | -0.01 (0.02) | -0.06 (0.04) | 0.19 (0.04) |
 | | CH₄/ADG | -0.00 (0.02) | -0.02 (0.02) | – | 0.26 (0.05) | 0.20 (0.05) |
 | | CH₄/MM | -0.09 (0.05) | -0.06 (0.05) | 0.01 (0.05) | -0.24 (0.04) | 0.13 (0.04) |
@@ -199,7 +199,7 @@ Genetically, CH₄ showed a near-zero correlation with metabolic body weight (MB
 | Trait group | Trait | Metabolic body weight | Live weight | Average daily gain | Muscle mass | Rumen volume |
 |---|---|---|---|---|---|---|
 | Absolute | CH4 | -0.03 (0.08) | 0.50 (0.03) | 0.41 (0.05) | – | 0.68 (0.29) |
-| Ratio | MI | -0.27 (0.04) | -0.27 (0.03) | -0.31 (0.08) | -0.10 (0.16) | -0.31 (0.22) |
+| Ratio | CH4/MBW | -0.27 (0.04) | -0.27 (0.03) | -0.31 (0.08) | -0.10 (0.16) | -0.31 (0.22) |
 | | CH4 ratio | -0.21 (0.04) | – | -0.04 (0.06) | -0.23 (0.19) | 0.13 (0.30) |
 | | CH4/ADG | -0.12 (0.07) | -0.19 (0.08) | – | -0.02 (0.21) | 0.06 (0.22) |
 | | CH4/MM | -0.26 (0.14) | -0.21 (0.12) | -0.04 (0.13) | -0.39 (0.19) | 0.22 (0.30) |
@@ -273,6 +273,10 @@ Funding from the Irish Department of Agriculture, Food, and Marine MethanePredic
 ### Acknowledgements
 
 The authors gratefully acknowledge the participating farmers and industry partners.
+
+## Supplementary Material
+
+**S1. Fixed-effect significance and connectedness diagnostics.** [PENDING — not yet drafted.] Wald F-statistic table for the 7 univariate genetic-analysis models (breed-proportion covariates significant at p<0.001 for every trait; Lleyn never significant), plus pedigree completeness/connectedness diagnostics (100% of phenotyped animals in the pedigree, 88.5% both parents known, 1,025 unique sires, mean pedigree depth 17.6 generations, 73.1% of sires linking 2+ contemporary groups) and the Cheviot/Lleyn breed-proportion/contemporary-group confounding result. Source analysis: `analysis/diagnostics/reviewer_a2_a3/` in the methane_selection_revision repo.
 
 ## References
 
