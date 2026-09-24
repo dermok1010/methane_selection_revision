@@ -392,6 +392,38 @@ manuscript editing, no data received, no analysis started.
   any indexed `h2`/`rg`/repeatability VPREDICT block (same discipline as
   the original PE-sensitivity pilot's discovery -> final two-step flow).
 
+- **2026-09-24 -- GENETIC PARAMETERS FROZEN.** Tables 2-5 in
+  `manuscript/draft.md` are now treated as final for this revision, after
+  clearing a four-item checklist:
+  1. **CH4-ratio headline h2:** keep the homogeneous-residual estimate
+     (0.10) in Table 2 for methodological consistency (same model for all
+     nine definitions); its method-sensitivity (rises to ~0.19 under both
+     CG-mean-class residual heterogeneity and an independent
+     component-based derivation, into Jonker et al.'s 0.17-0.25 range) is
+     stated in Results and reserved for the Discussion, not folded into
+     the table.
+  2. **CH4-ratio CVa:** dropped (shown "-"), not back-calculated -- a
+     dimensionless proportion with a near-zero genetic SD has no
+     comparable CVa.
+  3. **sigma_a/sigma_pe SEs:** added to Table 2 via delta method
+     (SE(sigma)=SE(variance)/(2*sigma)) from the univariate `.pvc`
+     variance-component SEs pulled from HPC. Near-/at-boundary PE
+     (CH4 ratio, CH4/MM, CH4/rumen, RMTADG) footnoted.
+  4. **Table 3 off-diagonal:** the 28 among-definition (non-CH4) pairs,
+     never re-estimated and immaterial to the argument, were removed
+     rather than left as a mixed old/new matrix; Table 3 restructured to
+     a compact "CH4 vs each definition" table (all rebuilt values).
+  Two bivariate pairs that had failed to report a correlation
+  (methane-ch4ratio, methane-ch4rmtadg) were recovered by re-processing
+  their already-converged, PD fits with the correct indexed `.pin`
+  (rg 0.71/1.00); ch4ratio-co2 and ch4muscle-muscle remain not estimable
+  and are reported as such. Selection-index content was removed from the
+  draft entirely (deferred). Remaining manuscript work is prose, not
+  parameters: the Discussion/Conclusions rewrite around the corrected
+  CH4-MBW genetic correlation, the CH4-ratio/Jonker two-methods argument,
+  the residual-trait genetic-independence point, CO2's physiological
+  interpretation, and the literature-comparison table.
+
 ---
 
 ## 1. Reviewers' main substantive concerns (interpretation)
