@@ -12,6 +12,12 @@ listed in that file's project table). GitHub: `dermok1010/methane_selection_revi
 
 ## Working principles
 
+- **Always highlight applied changes for downstream Word export.** Any edit
+  made to `manuscript/revised/` in response to a reviewer comment or user
+  instruction must be visually marked as changed (e.g. `<mark>`/highlight in
+  the working draft, tracked-changes or equivalent once exported to Word) so
+  the change survives into the Word-exported version, not just this
+  session's view of the text.
 - **The submitted manuscript is an immutable baseline.** Everything under
   `manuscript/submitted/` is frozen exactly as received. Never edit, rename,
   or overwrite it. All manuscript revisions go in `manuscript/revised/` as
