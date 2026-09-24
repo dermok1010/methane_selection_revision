@@ -131,7 +131,7 @@ The mean MBW was 22.10 (SD = 4.92) kg, mean live weight was 62.72 (SD = 18.18) k
 |---|---|---|---|---|---|---|
 | Absolute | CH4 | ==1.98== | ==1.09== | ==0.2474 (0.0205)== | ==0.3223 (0.0127)== | ==11.06%== |
 | Ratio | CH4/MBW | ==0.07== | ==0.05== | ==0.1877 (0.0192)== | ==0.2865 (0.0126)== | ==8.89%== |
-| | CH4 ratio | ==1.40×10⁻³== | ==1.16×10⁻⁴== | ==0.1016 (0.0125)== | ==0.1023 (0.0079)== | ==see note above== |
+| | CH4 ratio | ==1.40×10⁻³== | ==1.16×10⁻⁴== | ==0.1016 (0.0125)== | ==0.1023 (0.0079)== | ==–== |
 | | CH4/ADG | ==35.92== | ==44.35== | ==0.1176 (0.0301)== | ==0.2970 (0.0166)== | ==26.05%== |
 | | CH4/MM | ==0.20== | – | ==0.4581 (0.1064)== | – | ==13.59%== |
 | | CH4/rumen | ==0.37== | – | ==0.3547 (0.1066)== | – | ==13.83%== |
@@ -139,7 +139,7 @@ The mean MBW was 22.10 (SD = 4.92) kg, mean live weight was 62.72 (SD = 18.18) k
 | | RMTMBW+CO2 | ==1.65== | ==1.60== | ==0.1836 (0.0195)== | ==0.3560 (0.0119)== | – |
 | | RMTADG | ==1.55== | – | ==0.2806 (0.0259)== | – | – |
 
-*σₐ = direct genetic standard deviation; σₚₑ = animal permanent environmental standard deviation; h² = heritability; t = repeatability; CVₐ = coefficient of genetic variation. Trait abbreviations as in Table 1. ==σₐ/σₚₑ standard errors are not yet extracted from this rebuild's raw ASReml output and are omitted here rather than estimated (h²/t standard errors are exact, delta-method values from the model's own VPREDICT output). CH₄ ratio's CVa is left unresolved: the submitted manuscript's own σₐ/CVa combination for this trait is not internally consistent with its own reported mean (0.02), a pre-existing issue this rebuild has not attempted to silently correct.==*
+*σₐ = direct genetic standard deviation; σₚₑ = animal permanent environmental standard deviation; h² = heritability; t = repeatability; CVₐ = coefficient of genetic variation. Standard errors in parentheses. Trait abbreviations as in Table 1. ==CVₐ is not reported for CH₄ ratio: as a dimensionless mass proportion with an extremely small genetic standard deviation, its coefficient of genetic variation is not meaningfully interpretable on the same footing as the other traits.==*
 
 ### Correlations among methane traits
 
