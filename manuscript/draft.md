@@ -129,17 +129,17 @@ The mean MBW was 22.10 (SD = 4.92) kg, mean live weight was 62.72 (SD = 18.18) k
 
 | Trait group | Trait | σa | σpe | h² (SE) | t (SE) | CVa |
 |---|---|---|---|---|---|---|
-| Absolute | CH4 | ==1.98== | ==1.09== | ==0.2474 (0.0205)== | ==0.3223 (0.0127)== | ==11.06%== |
-| Ratio | CH4/MBW | ==0.07== | ==0.05== | ==0.1877 (0.0192)== | ==0.2865 (0.0126)== | ==8.89%== |
-| | CH4 ratio | ==1.40×10⁻³== | ==1.16×10⁻⁴== | ==0.1016 (0.0125)== | ==0.1023 (0.0079)== | ==–== |
-| | CH4/ADG | ==35.92== | ==44.35== | ==0.1176 (0.0301)== | ==0.2970 (0.0166)== | ==26.05%== |
-| | CH4/MM | ==0.20== | – | ==0.4581 (0.1064)== | – | ==13.59%== |
-| | CH4/rumen | ==0.37== | – | ==0.3547 (0.1066)== | – | ==13.83%== |
-| Residual | RMTMBW | ==1.59== | ==1.26== | ==0.1803 (0.0193)== | ==0.2935 (0.0125)== | – |
-| | RMTMBW+CO2 | ==1.65== | ==1.60== | ==0.1836 (0.0195)== | ==0.3560 (0.0119)== | – |
-| | RMTADG | ==1.55== | – | ==0.2806 (0.0259)== | – | – |
+| Absolute | CH4 | ==1.98 (0.09)== | ==1.09 (0.13)== | ==0.2474 (0.0205)== | ==0.3223 (0.0127)== | ==11.06%== |
+| Ratio | CH4/MBW | ==0.072 (0.004)== | ==0.052 (0.005)== | ==0.1877 (0.0192)== | ==0.2865 (0.0126)== | ==8.89%== |
+| | CH4 ratio | ==1.40×10⁻³ (0.09×10⁻³)== | ==1.16×10⁻⁴ (0.83×10⁻³)== | ==0.1016 (0.0125)== | ==0.1023 (0.0079)== | ==–== |
+| | CH4/ADG | ==35.92 (4.73)== | ==44.35 (3.68)== | ==0.1176 (0.0301)== | ==0.2970 (0.0166)== | ==26.05%== |
+| | CH4/MM | ==0.20 (0.03)== | – | ==0.4581 (0.1064)== | – | ==13.59%== |
+| | CH4/rumen | ==0.37 (0.06)== | – | ==0.3547 (0.1066)== | – | ==13.83%== |
+| Residual | RMTMBW | ==1.59 (0.09)== | ==1.26 (0.10)== | ==0.1803 (0.0193)== | ==0.2935 (0.0125)== | – |
+| | RMTMBW+CO2 | ==1.65 (0.09)== | ==1.60 (0.09)== | ==0.1836 (0.0195)== | ==0.3560 (0.0119)== | – |
+| | RMTADG | ==1.55 (0.08)== | – | ==0.2806 (0.0259)== | – | – |
 
-*σₐ = direct genetic standard deviation; σₚₑ = animal permanent environmental standard deviation; h² = heritability; t = repeatability; CVₐ = coefficient of genetic variation. Standard errors in parentheses. Trait abbreviations as in Table 1. ==CVₐ is not reported for CH₄ ratio: as a dimensionless mass proportion with an extremely small genetic standard deviation, its coefficient of genetic variation is not meaningfully interpretable on the same footing as the other traits.==*
+*σₐ = direct genetic standard deviation; σₚₑ = animal permanent environmental standard deviation; h² = heritability; t = repeatability; CVₐ = coefficient of genetic variation. Standard errors in parentheses. Trait abbreviations as in Table 1. ==CVₐ is not reported for CH₄ ratio: as a dimensionless mass proportion with an extremely small genetic standard deviation, its coefficient of genetic variation is not meaningfully interpretable on the same footing as the other traits. A permanent environmental effect could not be estimated for CH₄/MM, CH₄/rumen or RMTADG (permanent environmental variance at the zero boundary; no repeatability reported), and for CH₄ ratio the permanent environmental variance is likewise near-zero (standard error exceeding the estimate).==*
 
 ### Correlations among methane traits
 
