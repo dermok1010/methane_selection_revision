@@ -154,63 +154,67 @@ The mean MBW was 22.10 (SD = 4.92) kg, mean live weight was 62.72 (SD = 18.18) k
 
 ### Correlations among methane traits
 
-Phenotypic and genetic correlations among methane trait definitions are presented in Table 3. Phenotypic correlations were generally strong and positive among size-adjusted traits, with methane intensity showing the strongest phenotypic correlation with methane production (0.87 ± 0.003), and weaker phenotypic correlations observed between methane production and both CH₄/ADG (0.30 ± 0.02) and CH₄ ratio (0.46 ± 0.007).
+==Phenotypic and genetic correlations among methane trait definitions are presented in Table 3. This revision's rebuilt, independent-PE bivariate analysis (Methods) provides fresh correlation estimates for CH4 against 6 of the other 8 trait definitions; pairs not covered by that analysis (all pairs not involving CH4 itself, plus CH4 vs CH4 ratio and CH4 vs RMTADG, see the flagged note below) retain the submitted manuscript's original values.== Phenotypic correlations were generally strong and positive among size-adjusted traits, with methane intensity showing the strongest phenotypic correlation with methane production (0.87 ± 0.003), and weaker phenotypic correlations observed between methane production and both CH₄/ADG (==0.31 ± 0.02==) and CH₄ ratio (0.46 ± 0.007).
 
-Methane production (CH₄) showed strong positive genetic correlations with methane intensity (0.87 ± 0.02) and CH₄/MM (0.85 ± 0.07). In contrast, CH₄ showed only a weak genetic correlation with CH₄/ADG (0.23 ± 0.06). A strong positive genetic correlation was observed between methane intensity and CH₄/MM (0.86 ± 0.04), but only a weak genetic correlation between methane intensity and CH₄/ADG (0.18 ± 0.06). Methane per litre of rumen volume (CH₄/rumen) showed a moderate genetic correlation with methane intensity (0.51 ± 0.18). Methane as a proportion of total gas production (CH₄ ratio) exhibited moderate to strong genetic correlations with several size-adjusted methane definitions, including methane intensity (0.85 ± 0.04), and CH₄ (0.73 ± 0.05). Residual methane traits showed weak to moderate genetic correlations with absolute methane production (0.26–0.55); the genetic correlation between the residual traits ranged from 0.55 ± 0.07 between RMTMBW+CO2 and RMTADG to 0.77 ± 0.03 between RMTADG and RMTMBW.
+==Methane production (CH₄) showed strong positive genetic correlations with methane intensity (0.85 ± 0.02) and CH₄/MM (0.85 ± 0.04). CH₄'s genetic correlation with CH₄/ADG, while still the weakest among the pairs re-estimated in this revision, was materially higher than previously reported (0.38 ± 0.08, vs. the submitted manuscript's 0.23 ± 0.06). CH₄ showed a moderate-to-strong genetic correlation with CH₄/rumen (0.78 ± 0.10, up from 0.65 ± 0.11). Most notably, CH₄'s genetic correlations with the residual methane traits increased substantially under the corrected independent permanent-environmental-variance model: RMTMBW rose from 0.55 ± 0.06 to 0.86 ± 0.01, and RMTMBW+CO2 rose from 0.40 ± 0.07 to 0.78 ± 0.02. This is consistent with the same permanent-environmental-variance-collapse mechanism already documented elsewhere in this pipeline's rebuild (a shared, single permanent-environmental term cannot represent two traits on very different scales, and the variance that cannot go into that term leaks into the genetic covariance estimate instead) -- it is a correction of the submitted analysis, not new biology.== A strong positive genetic correlation was observed between methane intensity and CH₄/MM (0.86 ± 0.04), but only a weak genetic correlation between methane intensity and CH₄/ADG (0.18 ± 0.06). Methane per litre of rumen volume (CH₄/rumen) showed a moderate genetic correlation with methane intensity (0.51 ± 0.18). Methane as a proportion of total gas production (CH₄ ratio) exhibited moderate to strong genetic correlations with several size-adjusted methane definitions, including methane intensity (0.85 ± 0.04) ==and, unchanged pending resolution of the VPREDICT issue below, CH₄ (0.73 ± 0.05, not yet re-estimated this round)==. Residual methane traits showed weak to moderate genetic correlations with absolute methane production ==(now 0.78–0.86 for RMTMBW and RMTMBW+CO2 against CH₄ directly; the submitted manuscript's 0.26–0.55 range for "residual traits vs. absolute methane production" is superseded for these two pairs but unchanged for RMTADG vs. CH₄, not yet re-estimated)==; the genetic correlation between the residual traits ranged from 0.55 ± 0.07 between RMTMBW+CO2 and RMTADG to 0.77 ± 0.03 between RMTADG and RMTMBW.
+
+==**Flagged, not yet resolved:** two of the eight CH4-vs-other-definition pairs in this revision's rebuild -- CH4 vs. CH4 ratio, and CH4 vs. RMTADG -- CONVERGED but ASReml's VPREDICT did not report a genetic or phenotypic correlation for either. Both involve a trait whose own univariate permanent-environmental variance is essentially zero (CH4 ratio: 1.35×10⁻⁸; RMTADG: 1.6×10⁻⁸), consistent with the same near-boundary-parameter pattern already seen elsewhere in this rebuild, but not yet root-caused for this specific case. Table 3's CH4-CH4 ratio (0.73) and CH4-RMTADG (0.26, SE 0.48 -- already a very large SE in the submitted manuscript) cells are therefore left at their original submitted values below, not blanked or guessed at.==
 
 **Table 3. Genetic (above diagonal) and phenotypic (below diagonal) correlations among alternative methane trait definitions.**
 
 | | CH4 | CH4/MBW | CH4 ratio | CH4/ADG | CH4/MM | CH4/rumen | RMTMBW | RMTMBW+CO2 | RMTADG |
 |---|---|---|---|---|---|---|---|---|---|
-| CH4 | | 0.87 (0.02) | 0.73 (0.05) | 0.23 (0.06) | 0.85 (0.07) | 0.65 (0.11) | 0.55 (0.06) | 0.40 (0.07) | 0.26 (0.48) |
-| CH4/MBW | 0.87 | | 0.85 (0.04) | 0.18 (0.06) | 0.86 (0.04) | 0.51 (0.14) | 0.55 (0.06) | 0.86 (0.02) | 0.81 (0.03) |
+| CH4 | | ==0.85 (0.02)== | 0.73 (0.05) | ==0.38 (0.08)== | ==0.85 (0.04)== | ==0.78 (0.10)== | ==0.86 (0.01)== | ==0.78 (0.02)== | 0.26 (0.48) |
+| CH4/MBW | ==0.87== | | 0.85 (0.04) | 0.18 (0.06) | 0.86 (0.04) | 0.51 (0.14) | 0.55 (0.06) | 0.86 (0.02) | 0.81 (0.03) |
 | CH4 ratio | 0.46 | 0.53 | | – | 0.44 (0.19) | 0.27 (0.20) | 0.82 (0.04) | – | 0.71 (0.07) |
-| CH4/ADG | 0.30 | 0.24 | – | | 0.57 (0.17) | 0.40 (0.17) | 0.30 (0.06) | 0.24 (0.06) | 0.04 (0.06) |
-| CH4/MM | 0.87 | 0.85 | 0.69 | 0.48 | | 0.49 (0.18) | 0.82 (0.04) | 0.79 (0.07) | 0.99 (0.08) |
-| CH4/rumen | 0.67 | 0.63 | 0.49 | 0.38 | 0.62 | | 0.79 (0.09) | 0.62 (0.11) | 0.37 (0.28) |
-| RMTMBW | 0.78 | 0.78 | 0.50 | 0.32 | 0.91 | 0.70 | | 0.62 (0.05) | 0.77 (0.03) |
-| RMTMBW+CO2 | 0.66 | 0.82 | – | 0.26 | 0.83 | 0.60 | 0.71 | | 0.55 (0.07) |
+| CH4/ADG | ==0.31== | 0.24 | – | | 0.57 (0.17) | 0.40 (0.17) | 0.30 (0.06) | 0.24 (0.06) | 0.04 (0.06) |
+| CH4/MM | ==0.87== | 0.85 | 0.69 | 0.48 | | 0.49 (0.18) | 0.82 (0.04) | 0.79 (0.07) | 0.99 (0.08) |
+| CH4/rumen | ==0.71== | 0.63 | 0.49 | 0.38 | 0.62 | | 0.79 (0.09) | 0.62 (0.11) | 0.37 (0.28) |
+| RMTMBW | ==0.90== | 0.78 | 0.50 | 0.32 | 0.91 | 0.70 | | 0.62 (0.05) | 0.77 (0.03) |
+| RMTMBW+CO2 | ==0.79== | 0.82 | – | 0.26 | 0.83 | 0.60 | 0.71 | | 0.55 (0.07) |
 | RMTADG | 0.66 | 0.89 | 0.32 | 0.23 | 0.85 | 0.58 | 0.82 | 0.72 | |
 
-*Standard error of all phenotypic correlations ≤0.07. Trait abbreviations as in Table 1.*
+*Standard error of all phenotypic correlations ≤0.07 except where shown otherwise. Trait abbreviations as in Table 1. ==Highlighted cells are this revision's rebuilt, independent-PE values (see flagged note above for the two CH4-row cells not yet obtainable). All other cells retain the submitted manuscript's original values -- this revision deliberately did not attempt an indiscriminate full pairwise sweep (see Methods/CLAUDE.md decision log).==*
 
 ### Correlations between methane and production traits
 
-Phenotypic and genetic correlations between methane traits and production traits are presented in Tables 4 and 5, respectively. Phenotypically, CH₄ showed weak to moderate positive correlations with the production traits examined, including metabolic body weight (MBW; 0.08 ± 0.02), live weight (LW; 0.26 ± 0.02), ADG (0.19 ± 0.02), rumen volume (0.20 ± 0.05), and muscle mass (0.07 ± 0.05). As expected, several ratio-based methane traits showed negative phenotypic correlations with the denominator production traits, including methane intensity (CH₄/MBW) with MBW (−0.10 ± 0.01), CH₄/MM with muscle mass (−0.24 ± 0.04), and CH₄/rumen with rumen volume (−0.46 ± 0.03). Residual methane traits showed contrasting patterns, with RMTMBW negatively phenotypically correlated with MBW (−0.24 ± 0.01), whereas RMTADG showed a positive phenotypic correlation with MBW (0.17 ± 0.03).
+Phenotypic and genetic correlations between methane traits and production traits are presented in Tables 4 and 5, respectively. ==This revision's rebuilt bivariate analysis (Methods) provides fresh estimates for CH4 against all five production traits, plus each ratio/residual trait against its own denominator/adjustment trait (CH4/ADG-ADG, RMTMBW-MBW, RMTMBW+CO2-MBW, RMTADG-ADG, CH4/rumen-rumen); CH4/MM-muscle mass was attempted but did not converge (flagged below) and other cells retain the submitted manuscript's original values.== Phenotypically, CH₄ showed weak to moderate positive correlations with the production traits examined, including metabolic body weight (MBW; ==0.36 ± 0.01==), live weight (LW; ==0.35 ± 0.01==), ADG (0.17 ± 0.02), rumen volume (==0.31 ± 0.04==), and muscle mass (==0.26 ± 0.04==). As expected, several ratio-based methane traits showed negative phenotypic correlations with the denominator production traits, including methane intensity (CH₄/MBW) with MBW (−0.10 ± 0.01), CH₄/MM with muscle mass (−0.24 ± 0.04, not re-estimated this round -- see flagged note below), and CH₄/rumen with rumen volume (==−0.45 ± 0.03==). ==CH4/ADG showed a real, moderate negative phenotypic correlation with ADG itself (−0.25 ± 0.02), not reported in the submitted manuscript's Table 4 (shown there as "–").== Residual methane traits showed contrasting patterns, with RMTMBW negatively phenotypically correlated with MBW (==−0.08 ± 0.01, materially smaller in magnitude than the submitted −0.24 ± 0.01==), whereas RMTADG showed a positive phenotypic correlation with ==ADG (0.12 ± 0.02, its own adjustment trait -- the submitted manuscript's 0.17 ± 0.03 figure was against MBW, not ADG, and that pair was not re-estimated this round)==.
 
 **Table 4. Phenotypic correlations between methane traits and production traits (standard errors in parentheses).**
 
 | Trait group | Trait | Metabolic body weight | Live Weight | Average daily gain | Muscle mass | Rumen volume |
 |---|---|---|---|---|---|---|
-| Absolute | CH₄ | 0.08 (0.02) | 0.26 (0.02) | 0.19 (0.02) | 0.07 (0.05) | 0.20 (0.05) |
+| Absolute | CH₄ | ==0.36 (0.01)== | ==0.35 (0.01)== | 0.19 (0.02) | ==0.26 (0.04)== | ==0.31 (0.04)== |
 | Ratio | CH4/MBW | -0.10 (0.01) | -0.10 (0.01) | -0.11 (0.02) | -0.04 (0.04) | 0.13 (0.04) |
 | | CH₄ ratio | -0.06 (0.01) | – | -0.01 (0.02) | -0.06 (0.04) | 0.19 (0.04) |
-| | CH₄/ADG | -0.00 (0.02) | -0.02 (0.02) | – | 0.26 (0.05) | 0.20 (0.05) |
+| | CH₄/ADG | -0.00 (0.02) | -0.02 (0.02) | ==-0.25 (0.02)== | 0.26 (0.05) | 0.20 (0.05) |
 | | CH₄/MM | -0.09 (0.05) | -0.06 (0.05) | 0.01 (0.05) | -0.24 (0.04) | 0.13 (0.04) |
-| | CH₄/rumen | – | 0.04 (0.05) | 0.00 (0.05) | -0.03 (0.04) | -0.46 (0.03) |
-| Residual | RMTMBW | -0.24 (0.01) | -0.16 (0.01) | 0.02 (0.02) | -0.13 (0.05) | 0.07 (0.05) |
-| | RMTMBW+CO2 | -0.21 (0.02) | -0.12 (0.01) | 0.02 (0.02) | – | – |
-| | RMTADG | 0.17 (0.03) | 0.47 (0.02) | 0.02 (0.01) | 0.21 (0.08) | 0.21 (0.08) |
+| | CH₄/rumen | – | 0.04 (0.05) | 0.00 (0.05) | -0.03 (0.04) | ==-0.45 (0.03)== |
+| Residual | RMTMBW | ==-0.08 (0.01)== | -0.16 (0.01) | 0.02 (0.02) | -0.13 (0.05) | 0.07 (0.05) |
+| | RMTMBW+CO2 | ==-0.02 (0.01)== | -0.12 (0.01) | 0.02 (0.02) | – | – |
+| | RMTADG | 0.17 (0.03) | 0.47 (0.02) | ==0.12 (0.02)== | 0.21 (0.08) | 0.21 (0.08) |
 
-*Trait abbreviations as in Table 1.*
+*Trait abbreviations as in Table 1. ==Highlighted cells are this revision's rebuilt values (CH4 vs. each production trait; each ratio/residual trait vs. its own denominator/adjustment trait only -- see flagged note above). CH4/MM vs. muscle mass did not converge this round and is not highlighted. All other cells retain the submitted manuscript's original values.==*
 
-Genetically, CH₄ showed a near-zero correlation with metabolic body weight (MBW; −0.03 ± 0.08), but moderate positive genetic correlations with ADG (0.41 ± 0.05), live weight (0.50 ± 0.03), and rumen volume (0.68 ± 0.29). Ratio-based methane traits were generally negatively genetically correlated with the denominator production traits, including methane intensity (CH₄/MBW) with MBW (−0.27 ± 0.04), CH₄/MM with muscle mass (−0.39 ± 0.19), and CH₄/rumen with rumen volume (−0.35 ± 0.26). Methane ratio showed weak to moderate negative genetic correlations with MBW (−0.21 ± 0.04), ADG (−0.04 ± 0.06), and muscle mass (−0.23 ± 0.19). Among the residual methane traits, RMTMBW showed a strong negative genetic correlation with MBW (−0.69 ± 0.06) and a near-zero genetic correlation with ADG (0.01 ± 0.05), whereas RMTADG showed a moderate positive genetic correlation with MBW (0.31 ± 0.11).
+==Genetically, CH₄ showed a moderate-to-strong positive genetic correlation with metabolic body weight (MBW; 0.72 ± 0.03) -- a substantial reversal from the submitted manuscript's near-zero estimate (−0.03 ± 0.08). This is consistent with the same permanent-environmental-variance-collapse mechanism flagged for the CH4-RMTMBW/RMTMBW+CO2 pairs above (a shared PE term cannot represent CH4 and a much larger-scale trait like MBW, and the unrepresented variance leaks into the genetic covariance): a correction of the submitted analysis, not new biology, but one with real interpretive consequences (see flagged note below). CH₄ also showed moderate-to-strong positive genetic correlations with ADG (0.51 ± 0.07, up from 0.41 ± 0.05), live weight (0.71 ± 0.03, up from 0.50 ± 0.03), muscle mass (0.42 ± 0.12, not previously reported), and rumen volume (0.68 ± 0.15, materially tighter than the submitted 0.68 ± 0.29 though the point estimate is essentially unchanged).== Ratio-based methane traits were generally negatively genetically correlated with the denominator production traits, including methane intensity (CH₄/MBW) with MBW (−0.27 ± 0.04), CH₄/MM with muscle mass (−0.39 ± 0.19, not re-estimated this round), and CH₄/rumen with rumen volume (==−0.14 ± 0.30, essentially unresolved given the size of its own SE, consistent with the submitted manuscript's already-large uncertainty on this pair==). ==CH4/ADG showed a strong negative genetic correlation with ADG itself (−0.81 ± 0.08), not reported in the submitted manuscript's Table 5 (shown there as "–").== Methane ratio showed weak to moderate negative genetic correlations with MBW (−0.21 ± 0.04), ADG (−0.04 ± 0.06), and muscle mass (−0.23 ± 0.19). Among the residual methane traits, ==RMTMBW's genetic correlation with MBW was materially weaker than previously reported (−0.28 ± 0.04, vs. the submitted −0.69 ± 0.06), and RMTMBW+CO2's likewise (−0.11 ± 0.04, vs. −0.61 ± 0.02)==, whereas RMTADG showed a moderate positive genetic correlation with ==ADG (0.42 ± 0.07, its own adjustment trait -- the submitted manuscript's 0.31 ± 0.11 figure was against MBW, not ADG, and that pair was not re-estimated this round)==.
+
+==**Flagged for the Discussion, not yet resolved there:** the CH4-MBW genetic correlation reversal (−0.03 to +0.72) and the substantially strengthened CH4-RMTMBW/RMTMBW+CO2 correlations are real, substantive corrections that change the paper's own interpretive story -- the submitted manuscript's Discussion argues residual/ratio methane definitions successfully decouple methane from body-size genetics partly on the strength of CH4's near-zero genetic correlation with MBW; that argument needs revisiting given the corrected value. Not yet decided how this changes the Discussion text.==
 
 **Table 5. Genetic correlations between methane traits and production traits (standard errors in parentheses).**
 
 | Trait group | Trait | Metabolic body weight | Live weight | Average daily gain | Muscle mass | Rumen volume |
 |---|---|---|---|---|---|---|
-| Absolute | CH4 | -0.03 (0.08) | 0.50 (0.03) | 0.41 (0.05) | – | 0.68 (0.29) |
+| Absolute | CH4 | ==0.72 (0.03)== | ==0.71 (0.03)== | ==0.51 (0.07)== | ==0.42 (0.12)== | ==0.68 (0.15)== |
 | Ratio | CH4/MBW | -0.27 (0.04) | -0.27 (0.03) | -0.31 (0.08) | -0.10 (0.16) | -0.31 (0.22) |
 | | CH4 ratio | -0.21 (0.04) | – | -0.04 (0.06) | -0.23 (0.19) | 0.13 (0.30) |
-| | CH4/ADG | -0.12 (0.07) | -0.19 (0.08) | – | -0.02 (0.21) | 0.06 (0.22) |
+| | CH4/ADG | -0.12 (0.07) | -0.19 (0.08) | ==-0.81 (0.08)== | -0.02 (0.21) | 0.06 (0.22) |
 | | CH4/MM | -0.26 (0.14) | -0.21 (0.12) | -0.04 (0.13) | -0.39 (0.19) | 0.22 (0.30) |
-| | CH4/rumen | – | 0.12 (0.12) | -0.04 (0.12) | 0.16 (0.22) | -0.35 (0.26) |
-| Residual | RMTMBW | -0.69 (0.06) | -0.44 (0.06) | 0.01 (0.05) | -0.52 (0.48) | 0.39 (0.42) |
-| | RMTMBW+CO2 | -0.61 (0.02) | -0.36 (0.05) | 0.02 (0.05) | – | – |
-| | RMTADG | 0.31 (0.11) | 0.94 (0.07) | – | 0.37 (0.28) | 0.37 (0.28) |
+| | CH4/rumen | – | 0.12 (0.12) | -0.04 (0.12) | 0.16 (0.22) | ==-0.14 (0.30)== |
+| Residual | RMTMBW | ==-0.28 (0.04)== | -0.44 (0.06) | 0.01 (0.05) | -0.52 (0.48) | 0.39 (0.42) |
+| | RMTMBW+CO2 | ==-0.11 (0.04)== | -0.36 (0.05) | 0.02 (0.05) | – | – |
+| | RMTADG | 0.31 (0.11) | 0.94 (0.07) | ==0.42 (0.07)== | 0.37 (0.28) | 0.37 (0.28) |
 
-*Trait abbreviations as in Table 1.*
+*Trait abbreviations as in Table 1. ==Highlighted cells are this revision's rebuilt values (CH4 vs. each production trait; each ratio/residual trait vs. its own denominator/adjustment trait only -- see flagged note above). CH4/MM vs. muscle mass did not converge this round and is not highlighted. All other cells retain the submitted manuscript's original values.==*
 
 ### Selection index
 
