@@ -488,6 +488,22 @@ manuscript editing, no data received, no analysis started.
   i = 1.7 and per-year columns. Draft: `manuscript/revised/
   selection_index_section_DRAFT_v0.2.md` (v0.1 superseded, kept). Caveats: variance
   component SEs not propagated; citations still [VERIFY]; LW framework not rebuilt.
+- **2026-09-29 (reframing, user instruction)**: Results unchanged; the section is
+  reframed from "compare methane definitions" to "which index constructions can reach
+  the biologically favourable region (dCH4 < 0, dMBW >= 0, dCO2 >= 0) and at what
+  weights". New `04_favourable_region.R` (sources the setup of `02_...`; outputs
+  `tri_region_weights_responses.csv`, `tri_region_beta_scan.csv`,
+  `tri_favourable_region.png`, which has no strategy markers). Findings at i = 1: the
+  region is small (dMBW 0 to +0.64, dCH4 0 to -0.63; 6.5% of the attainable set); the
+  best in-region CH4 cut is -0.63 g/d (MBW held at 0, CO2 +10 g/d), 47% of the
+  unconstrained -1.34; with CH4+MBW information only relative MBW goal weights of
+  0.885-1.11 enter it. The ratio's implied weight is fixed by the means (17.9/22.1 = 0.81)
+  and falls short, as do the genetic (0.83) and phenotypic (0.64) residual coefficients,
+  with or without CO2 in the regression; a free three-trait index reaches the region.
+  The ratio's exclusion depends on the estimated rg (Table Y) and trait means; region
+  boundaries were computed only at the point estimates. Draft:
+  `manuscript/revised/selection_index_section_DRAFT_v0.3.md` (v0.2 superseded for
+  framing, kept as a record). Table X numbers checked against the CSV.
 
 ---
 
