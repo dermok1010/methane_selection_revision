@@ -1,0 +1,12 @@
+"quantity","value"
+"beta_P = Cov_P(CH4,MBW)/Var_P(MBW)",0.636747336642354
+"beta_G = Cov_G(CH4,MBW)/Var_G(MBW)",0.828153885641694
+"h2 of phenotypic residual R = CH4 - beta_P*MBW",0.172374577280223
+"genetic correlation R with MBW",0.216157806711538
+"genetic correlation R with CH4",0.854599926761749
+"genetic correlation R with CO2",0.177084334880416
+"index weight on CH4 in (CH4,MBW) basis",-0.172374577280223
+"index weight on MBW in (CH4,MBW) basis",-0.0016790986585194
+"index weight on R in (R,MBW) basis",-0.172374577280223
+"index weight on MBW in (R,MBW) basis",-0.111438151646553
+"max abs difference in dCH4/dMBW between the two bases",0

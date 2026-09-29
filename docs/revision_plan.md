@@ -461,6 +461,33 @@ manuscript editing, no data received, no analysis started.
   packaged VM-side only; not submitted. Watch for the ~4-order-of-magnitude
   scale gap between CO2 (variances ~10^4) and MBW (~1); if it will not
   converge, rescale CO2 (e.g. /100) rather than loosen the model.
+- **2026-09-29 (later still)**: Trivariate run by the user on HPC and
+  landed. Converged first attempt (13 iterations, LogL 11666.1), all 15
+  variance parameters code P, none at a boundary, G and residual matrices PD,
+  ~3 of 7.8 GB workspace used; `.pvc` names confirm the numbering above.
+  h2 CH4/MBW/CO2 = 0.273/0.582/0.409; rg CH4-MBW 0.692 (SE 0.027), CH4-CO2 0.572,
+  MBW-CO2 0.829; partial rg CH4-CO2 given MBW -0.004. Parsed to
+  `asreml_pipeline/results/trivariate_summary.csv` (`scripts/07_parse_trivariate.R`).
+  **The pairwise assembly had misstated some inputs:** MBW h2 0.479 -> 0.582
+  (PE 1.70 -> 1.24, VA 2.45 -> 3.08), CH4 PE 0.72 -> 1.13, CO2 h2 0.301 -> 0.409;
+  correlations barely moved. `01_selection_index_co2.R` and its outputs are kept
+  unchanged as the superseded record. User decision: no Monte Carlo; rebuild the
+  index from the trivariate and add analysis aimed at the reviewer comments on
+  this section. New `02_selection_index_trivariate.R` (point estimates; legacy
+  reproduction check retained) and `03_frontier_figure.R`; upstream
+  `Methane_Selection_Index_Analysis` still at fb1f0a2. Numerical consequence at
+  i = 1 (pairwise -> trivariate; dCH4/dMBW): ratio -1.14/-0.55 -> -0.79/-0.21;
+  residual -1.27/-0.74 -> -1.10/-0.64; largest CH4 cut with no MBW loss
+  -0.58 -> -0.61. The qualitative reversal of the submitted growth-neutral message
+  stands. New reviewer-driven content: exact restricted index (MBW held at zero);
+  residual with genetic vs phenotypic beta and the genetic correlation of the
+  phenotypic residual with MBW (0.22; Reviewer 2 line 499); (R,MBW) v (CH4,MBW)
+  equivalence check; information-set scenarios (CH4 only / +MBW / +CO2; CO2 adds
+  almost nothing); sensitivity to rg(CH4,MBW), where the ratio's MBW response
+  changes sign at about 0.63 against an estimate of 0.69 (Cuyabano-style caveat);
+  i = 1.7 and per-year columns. Draft: `manuscript/revised/
+  selection_index_section_DRAFT_v0.2.md` (v0.1 superseded, kept). Caveats: variance
+  component SEs not propagated; citations still [VERIFY]; LW framework not rebuilt.
 
 ---
 
