@@ -507,6 +507,30 @@ manuscript editing, no data received, no analysis started.
 
 ---
 
+
+- **2026-09-29**: Draft 4 of the manuscript and draft 2 of the response
+  letter produced (`manuscript/revised/Methane_manuscript_draft4.docx`,
+  `manuscript/revised/Response_to_Reviewers_draft2.docx`; all new/changed
+  text highlighted green; `submitted/` untouched). Decisions from the user:
+  (a) the selection-index section is a **narrow comparison of absolute,
+  ratio and residual methane definitions as the methane trait in an index,
+  not a national breeding index** -- no economic weights, no feed intake,
+  fecundity, longevity or survival; (b) Table 8 (index weights) is left
+  **unscaled**; (c) manuscript retitled "Genetic Parameters and Selection
+  Index Behaviour of Alternative Methane Trait Definitions in Pasture-Based
+  Sheep" (author choice, to be confirmed). Analysis basis: trivariate
+  CH4/MBW/CO2 ASReml model (15,869 records); rg CH4-MBW 0.69 versus -0.033
+  in the submitted index -- the cause of that change is **not established**.
+  Key findings: none of the as-defined goals falls in the stylised favourable
+  region (CH4 down, MBW and CO2 not down); the ratio and genetic-residual
+  goals are implicit MBW weights of 0.81/0.83 against a favourable window of
+  0.86-1.10; CO2 adds almost nothing as an information trait once MBW is
+  recorded; ratio result is sensitive to rg (sign change near 0.63, two-trait
+  information only). Open flags: RMTMBW empirical rg with MBW (-0.28) vs the
+  analytic +0.22; trivariate vs univariate/bivariate h2 differences (CO2
+  0.41 vs 0.28); 15,869 vs 15,638 records; abstract now 463 words (journal
+  limit unchecked); [VERIFY] reference [42] Cuyabano and R version; R2 minor
+  comments at lines 48, 164, 202 ff and the comparison table still to draft.
 ## 1. Reviewers' main substantive concerns (interpretation)
 
 ### Reviewer 1 -- three stated reasons for major revision
