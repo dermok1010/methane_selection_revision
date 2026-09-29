@@ -423,6 +423,31 @@ manuscript editing, no data received, no analysis started.
   CH4-MBW genetic correlation, the CH4-ratio/Jonker two-methods argument,
   the residual-trait genetic-independence point, CO2's physiological
   interpretation, and the literature-comparison table.
+- **2026-09-29**: User decision -- put a small, tempered selection-index
+  demonstration back into the revised manuscript, with **CO2 replacing ADG**
+  as the zero-weight correlated trait (a more defensible intake proxy for
+  the reviewers' realism concern). New script
+  `analysis/revision/selection_index/01_selection_index_co2.R` (seed
+  20260929, 1,000 MC draws; upstream `Methane_Selection_Index_Analysis`
+  read at commit `fb1f0a2cddb82ba322cfd86b4ad3d99830385a44`). It first
+  reproduces the submitted ratio/residual responses exactly from the legacy
+  inputs (rg CH4-MBW -0.033), then reruns them with the rebuilt inputs
+  (G/P from pairwise `methane_mbw`, `methane_co2`, `mbw_co2` fits,
+  trait-specific PE, no PE covariance). **Numerical consequence:** with the
+  rebuilt rg(CH4,MBW) = 0.72 the ratio and residual objectives now reduce
+  MBW and CO2 as well as CH4 (ratio -1.13/-0.55/-38.9; residual
+  -1.27/-0.73/-53.3 for CH4 g/d, MBW kg^0.75, CO2 g/d at i = 1), reversing
+  the submitted paper's growth-neutral message; old index numbers must not
+  be reused. CO2 is largely a body-size proxy (rg CO2-MBW 0.83, partial rg
+  CH4-CO2 | MBW -0.07); the local DMI subset (346 animals) gives raw
+  phenotypic r(CO2, DMI) = 0.34. Limitations: pairwise assembly (three-trait
+  model ran out of memory), only h2/rg/re uncertainty propagated (no `.pvc`
+  on the VM), and the LW framework of the submitted paper cannot be rebuilt
+  without weight-CO2 and CH4-LW models. The user-supplied CO2-as-intake-proxy
+  literature figures are unverified and marked [VERIFY] in
+  `manuscript/revised/selection_index_section_DRAFT_v0.1.md`. A first
+  "best CH4 cut with MBW >= 0 and CO2 <= 0" strategy was dropped: at the
+  point estimate no grid direction satisfies both.
 
 ---
 
