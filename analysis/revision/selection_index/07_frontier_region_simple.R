@@ -26,17 +26,17 @@ poly <- rbind(c(0, 0), c(0, ch4_at_0), as.matrix(lr[lr$mbw > 0, c("mbw", "ch4")]
 poly <- data.frame(mbw = poly[, 1], ch4 = poly[, 2])
 stopifnot(all(lr$co2 >= 0))                                       # CO2 response is non-negative along the whole favourable arc
 
-lims <- range(arc$co2); lims_pad <- lims + c(-1, 1) * diff(lims) * 0.02
+fr_closed <- rbind(fr, fr[1, ])
+lims <- range(fr$co2); lims_pad <- lims + c(-1, 1) * diff(lims) * 0.02
 pal <- c("#8B0000", "#CC3300", "#FF6644", "#FAEBD7", "#88CC88", "#2E8B2E", "#145214")
 vals <- scales::rescale(c(lims[1], lims[1] * 0.5, lims[1] * 0.1, 0, lims[2] * 0.1, lims[2] * 0.5, lims[2]), from = lims)
 g <- ggplot() +
   geom_polygon(data = poly, aes(mbw, ch4), fill = "#4daf4a", alpha = 0.18, colour = NA) +
-  geom_path(data = arc, aes(mbw, ch4, colour = co2), linewidth = 2.2, lineend = "round") +
+  geom_path(data = fr_closed, aes(mbw, ch4, colour = co2), linewidth = 2.2, lineend = "round", linejoin = "round") +
   scale_colour_gradientn(colours = pal, values = vals, limits = lims, breaks = c(lims[1], 0, lims[2]),
                          labels = sprintf("%.0f", c(lims[1], 0, lims[2])), name = expression("CO"[2]*" correlated response (g day"^{-1}*")")) +
   geom_hline(yintercept = 0, linetype = "dashed", colour = "grey60", linewidth = 0.35) +
   geom_vline(xintercept = 0, linetype = "dashed", colour = "grey60", linewidth = 0.35) +
-  annotate("text", x = 0.17, y = -0.12, label = "Favourable region\nCH4 falls;\nMBW and CO2 do not", colour = "#1f5f1d", fontface = "bold", size = 3.4, hjust = 0.5) +
   labs(x = "Predicted response in metabolic body weight (kg^0.75)", y = expression("Predicted response in CH"[4]*" production (g day"^{-1}*")")) +
   guides(colour = guide_colourbar(barwidth = 18, barheight = 0.9, title.position = "top")) +
   theme_minimal(base_size = 11) +
@@ -44,7 +44,7 @@ g <- ggplot() +
 ggsave(file.path(out, "tri_frontier_co2.png"), g, width = 8, height = 8, dpi = 300, bg = "white")
 cat(sprintf("frontier: dMBW %.3f..%.3f; region corner points CH4 at MBW=0 %.3f, MBW at CH4=0 %.3f; CO2 along favourable arc %.1f..%.1f\n",
             min(arc$mbw), top_mbw, ch4_at_0, lr$mbw[which.max(lr$ch4)], min(lr$co2), max(lr$co2)))
-write.csv(arc, file.path(out, "tri_frontier_co2_arc.csv"), row.names = FALSE)
+write.csv(fr, file.path(out, "tri_frontier_co2_ellipse.csv"), row.names = FALSE)
 
 # ---- constructions: each is a "methane term" R = CH4 - c1*MBW - c2*CO2 (its own fixed coefficients) plus optional weights on MBW and CO2 ----
 bP <- solve(P[2:3, 2:3], P[2:3, 1]); bG <- solve(G[2:3, 2:3], G[2:3, 1])
@@ -71,6 +71,12 @@ rows <- lapply(names(cons), function(nm) {
     index_R = bT[1], index_MBW = bT[2], index_CO2 = bT[3], ref_dCH4 = o0$resp[1], ref_dMBW = o0$resp[2], ref_dCO2 = o0$resp[3])
 })
 tab <- do.call(rbind, rows); rownames(tab) <- NULL
+# paper tables: (1) response per generation only; (2) index weights per phenotypic SD, methane term = -1, in-region reference goal, no ratios
+sdx <- sqrt(diag(P))
+tab$sd_R <- sapply(seq_len(nrow(tab)), function(k) { v <- c(1, -tab$coef_MBW[k], -tab$coef_CO2_per100[k] / 100); sqrt(drop(t(v) %*% P %*% v)) })
+tab$std_R <- -1; tab$std_MBW <- tab$index_MBW * sdx["MBW"] / (-tab$index_R * tab$sd_R); tab$std_CO2 <- tab$index_CO2 * sdx["CO2"] / (-tab$index_R * tab$sd_R)
 write.csv(tab, file.path(out, "tri_frontier_table.csv"), row.names = FALSE)
+write.csv(tab[1:3, c("construction", "std_R", "std_MBW", "std_CO2", "index_R", "index_MBW", "index_CO2", "ref_dCH4", "ref_dMBW", "ref_dCO2")], file.path(out, "tri_frontier_table2_index_weights.csv"), row.names = FALSE)
+write.csv(tab[, c("construction", "asdef_dCH4", "asdef_dMBW", "asdef_dCO2")], file.path(out, "tri_frontier_table1_responses.csv"), row.names = FALSE)
 cat(sprintf("\nreference in-region goal (CH4 = -1): MBW %.4f, CO2 %.5f per g/d (%.3f per 100); MBW window at that CO2 weight %.3f-%.3f\n", a0[2], a0[3], a0[3] * 100, win[1], win[2]))
 print(t(signif(tab[, -1], 4)))
