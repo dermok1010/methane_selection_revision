@@ -5,14 +5,14 @@
 # Slurm copies this script to a spool dir, so the job finds its files via
 # $SLURM_SUBMIT_DIR. Retries via !CONTINUE (restarts from the .rsv) up to 5 times,
 # stops at once on "Convergence failed" or a missing .asr, then runs the .pin
-# (VPREDICT) pass. Resources sized above the bivariates' 20 GB (three traits,
+# (VPREDICT) pass. Memory set to 16 GB (user judgement; three traits,
 # 15 variance parameters); revise if the log shows it is still short.
 #SBATCH --job-name=tri_ch4_mbw_co2
 #SBATCH --output=slurm_logs/%x-%j.out
 #SBATCH --error=slurm_logs/%x-%j.err
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
-#SBATCH --mem=48G
+#SBATCH --mem=16G
 #SBATCH --time=72:00:00
 
 set -uo pipefail

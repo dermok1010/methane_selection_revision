@@ -455,7 +455,7 @@ manuscript editing, no data received, no analysis started.
   `models/tri_methane_mbw_co2.as/.pin` (same fixed effects/pedigree, 3x3 US
   genetic seeded from the pairwise fits, independent per-trait PE, default US
   residual; all 15,869 records have all three traits) and self-contained
-  `slurm/run_trivariate.slurm` (48 GB, 72 h, 5 `!CONTINUE` attempts). Parameter
+  `slurm/run_trivariate.slurm` (16 GB per user, 72 h, 5 `!CONTINUE` attempts; ASReml workspace 8000 MB). Parameter
   numbering (1-6 residual, 7-12 genetic, 13-15 PE) is extrapolated from the
   bivariate pattern and must be checked against the `.pvc` names. Generated and
   packaged VM-side only; not submitted. Watch for the ~4-order-of-magnitude
