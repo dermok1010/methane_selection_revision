@@ -79,6 +79,7 @@ data/
 # ===============================
 !analysis/revision/asreml_pipeline/results/*.csv
 !analysis/diagnostics/reviewer_a2_a3/*.csv
+!analysis/revision/selection_index/results/*.csv
 *.asr
 *.rsv
 *.msv
