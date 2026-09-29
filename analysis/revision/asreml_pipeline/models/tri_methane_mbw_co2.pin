@@ -1,0 +1,18 @@
+P Vp1 13 1 7
+P Vp2 14 3 9
+P Vp3 15 6 12
+P C12 2 8
+P C13 4 10
+P C23 5 11
+H h2_1 7 Vp1
+H h2_2 9 Vp2
+H h2_3 12 Vp3
+R rg12 7 8 9
+R rg13 7 10 12
+R rg23 9 11 12
+R re12 1 2 3
+R re13 1 4 6
+R re23 3 5 6
+R rp12 Vp1 C12 Vp2
+R rp13 Vp1 C13 Vp3
+R rp23 Vp2 C23 Vp3

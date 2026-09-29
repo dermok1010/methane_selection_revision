@@ -25,7 +25,7 @@ intensity of 1 and are also given at i = 1.7 and per year for an assumed 2.8-yea
 
 Genetic and phenotypic matrices were assembled from pairwise bivariate animal models (CH4-MBW, CH4-CO2,
 MBW-CO2) with trait-specific permanent-environment variances and no permanent-environment covariance between
-traits, because a three-trait model could not be fitted with the available memory. Uncertainty was propagated
+traits, because a three-trait model had not been fitted at the time of analysis. Uncertainty was propagated
 by Monte Carlo: genetic and residual correlations were drawn on the Fisher-z scale from their standard errors
 and heritabilities from normal distributions on their standard errors; variance-component uncertainty other than
 heritability was not propagated (the `.pvc` files needed for it are not available). A second parameter set that

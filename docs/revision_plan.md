@@ -440,14 +440,27 @@ manuscript editing, no data received, no analysis started.
   the submitted paper's growth-neutral message; old index numbers must not
   be reused. CO2 is largely a body-size proxy (rg CO2-MBW 0.83, partial rg
   CH4-CO2 | MBW -0.07); the local DMI subset (346 animals) gives raw
-  phenotypic r(CO2, DMI) = 0.34. Limitations: pairwise assembly (three-trait
-  model ran out of memory), only h2/rg/re uncertainty propagated (no `.pvc`
+  phenotypic r(CO2, DMI) = 0.34. Limitations: pairwise assembly (a three-trait
+  model had never been attempted; see the 2026-09-29 trivariate entry below), only h2/rg/re uncertainty propagated (no `.pvc`
   on the VM), and the LW framework of the submitted paper cannot be rebuilt
   without weight-CO2 and CH4-LW models. The user-supplied CO2-as-intake-proxy
   literature figures are unverified and marked [VERIFY] in
   `manuscript/revised/selection_index_section_DRAFT_v0.1.md`. A first
   "best CH4 cut with MBW >= 0 and CO2 <= 0" strategy was dropped: at the
   point estimate no grid direction satisfies both.
+- **2026-09-29 (later)**: An earlier note in this log said the three-trait
+  model "ran out of memory" -- that was wrong; no CH4-MBW-CO2 trivariate was
+  ever run (only the co2 stage-het bivariate was suspected OOM). User chose to
+  attempt the trivariate before anything else. New `--set=trivariate` ->
+  `models/tri_methane_mbw_co2.as/.pin` (same fixed effects/pedigree, 3x3 US
+  genetic seeded from the pairwise fits, independent per-trait PE, default US
+  residual; all 15,869 records have all three traits) and self-contained
+  `slurm/run_trivariate.slurm` (48 GB, 72 h, 5 `!CONTINUE` attempts). Parameter
+  numbering (1-6 residual, 7-12 genetic, 13-15 PE) is extrapolated from the
+  bivariate pattern and must be checked against the `.pvc` names. Generated and
+  packaged VM-side only; not submitted. Watch for the ~4-order-of-magnitude
+  scale gap between CO2 (variances ~10^4) and MBW (~1); if it will not
+  converge, rescale CO2 (e.g. /100) rather than loosen the model.
 
 ---
 
