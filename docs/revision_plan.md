@@ -1658,3 +1658,22 @@ rather than being bolted on at the end.
   Discussion CH4 ratio/Jonker paragraph) and given only in response letter draft 3
   (Reviewer 1 CH4 ratio and age-pooling replies; Reviewer 2 line 304 reply, which is
   now flagged for the authors to confirm which two submitted values it refers to).
+- **2026-09-30 (later)**: Reference favourable index changed, at the author's request,
+  from "CH4 reduced, MBW held at zero" (-0.63 g/d, CO2 +10.0) to "CH4 reduced, MBW and
+  CO2 both held at zero" (-0.610 g/d, 46% of the unconstrained -1.338; r_IH 0.290).
+  Rationale: CO2 is a proxy for intake, and higher intake is a feed cost (Reviewer 1),
+  so CO2 is a safeguard against methane cuts from lower intake, not a trait to increase.
+  New `analysis/revision/selection_index/08_restricted_mbw_co2_weights.R` (07 left
+  unchanged) writes `tri_restricted_mbw_co2_index_weights.csv` and `..._s2.csv`.
+  **Numerical finding:** written around the genetic residual (CH4 on MBW + CO2, genetic
+  betas) the restricted index has zero extra weight on MBW and CO2, i.e. selecting
+  directly on the genetic-residual phenotype IS the restricted index (it is genetically
+  uncorrelated with MBW and CO2 by construction; Kennedy et al. 1993 [33]). The
+  Smith-Hazel index for the genetic residual as a *breeding goal* (Table 7: -0.71/-0.09/+2.0)
+  differs because it also uses phenotypic covariances. Draft 5 wording changed from
+  "selecting on a trait as it stands" to "using a trait alone as the breeding goal"
+  so it is not contradicted by this. Updated: Abstract (350 words), Methods (CO2
+  safeguard), Results (Table 7 reference row, Table 8 weights, S2 row, Figure 1
+  caption, text), Discussion, Conclusions, response letter summary and Reviewer 1
+  feed-intake reply. The CO2-DMI figure (r = 0.34, 346 animals) is a raw phenotypic
+  correlation, not genetic.
