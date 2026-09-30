@@ -1677,3 +1677,11 @@ rather than being bolted on at the end.
   caption, text), Discussion, Conclusions, response letter summary and Reviewer 1
   feed-intake reply. The CO2-DMI figure (r = 0.34, 346 animals) is a raw phenotypic
   correlation, not genetic.
+- **2026-09-30 (later)**: Author asked to add that careful weighting can reduce methane
+  while selecting animals with slightly higher MBW or intake (CO2). Added to draft 5
+  Results ("Reaching the favourable region": MBW goal weight 0.90 example, dCH4 -0.52,
+  dMBW +0.12, dCO2 +20.7; region extends to dMBW about +0.64; source
+  `results/tri_region_tables.md` Table 3, 04_favourable_region.R) and Discussion
+  (region is not a single point; position depends on the value placed on body size,
+  intake and emissions [35, 39, 40]; the MBW = CO2 = 0 reference is the neutral choice).
+  Supervisor deck deliberately not changed.
