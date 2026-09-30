@@ -1685,3 +1685,10 @@ rather than being bolted on at the end.
   (region is not a single point; position depends on the value placed on body size,
   intake and emissions [35, 39, 40]; the MBW = CO2 = 0 reference is the neutral choice).
   Supervisor deck deliberately not changed.
+- **2026-09-30 (later)**: Draft 5 mirrored into a live Claude Doc for joint editing
+  ("Methane manuscript – draft 5", https://claude.ai/code/artifact/2b790254-117c-4bb1-8020-d4b0bb6c444a,
+  doc id 2b790254-117c-4bb1-8020-d4b0bb6c444a; baseline = doc rev 10, identical in text to
+  the committed draft5.docx at that time). The doc has no change highlighting; the
+  .docx stays the formal record. Workflow: edits made in the doc are diffed against
+  its rev-10 baseline and applied to `manuscript/revised/` .docx with blue ("cyan")
+  highlight, then committed.
