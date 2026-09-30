@@ -1696,3 +1696,15 @@ rather than being bolted on at the end.
   working copy of the manuscript. Future versioned drafts (draft 6 onwards) are
   exported from it into `manuscript/revised/` as .docx in the submitted manuscript's
   Word styles, with changes since the previous draft highlighted, and committed.
+- **2026-09-30 (later)**: Audit of the live doc (rev 430) against the analysis. Everything
+  traced back except: (1) new Table 7 (additional goal weights on MBW/CO2 per -1 on the
+  methane term, reaching the MBW = CO2 = 0 reference) had been computed from rounded
+  parameters; corrected from the trivariate G/P to CH4 +1.21/-0.0040, CH4/MBW +0.40/-0.0040,
+  CH4 ratio +1.21/-0.0191, genetic residual +0.37/-0.0040, phenotypic residual
+  +0.78/-0.0078 (and the matching Results sentence); (2) economic-value window corrected
+  0.86-1.11 -> 0.86-1.10 (three-trait information, CO2 goal weight 0); (3) Table 4 CH4-ADG
+  phenotypic correlation corrected 0.19 -> 0.17 (0.02) per `bivariate_summary.csv`
+  methane_adg rp = 0.1652 (this error was already in draft 5; the text already said 0.17).
+  Verified unchanged: relative emphasis -68/+32/-0.3%; CH4 ratio = CH4/(CH4+CO2) goal gives
+  the former CH4/CO2 responses (+0.19/+0.72/+88.3). Literature figures added in the doc
+  from Consensus searches (refs [45] onward) were not checked against their papers.
