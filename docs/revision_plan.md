@@ -1612,3 +1612,14 @@ rather than being bolted on at the end.
   sentence-initial "Because" changed to "As", residual rg range corrected to 0.78-1.00.
   Abstract 350 words. **Response letter draft 2 still cites S3/S4 and the
   removed information-trait/sensitivity results and needs updating.**
+- **2026-09-30 (later)**: Response letter draft 3
+  (`manuscript/revised/Response_to_Reviewers_draft3.docx`) brought in line with
+  manuscript draft 5, changes highlighted blue: summary and the reply to
+  Reviewer 1's second issue reframed around the as-it-stands / favourable-region /
+  weighting storyline (b-window numbers removed); the Smith-Hazel reply no
+  longer cites S3/S4 or the rg-sensitivity result; the Reviewer 2 CO2 reply
+  no longer quotes the information-trait accuracies or the partial rg; the h2/t
+  formula typo and the residual rg range (0.78-1.00) corrected; manuscript
+  location references updated to draft 5. Open items unchanged: the comparison
+  table, the minor comments at lines 48, 164 and 202 ff, the title, and the
+  cause of the rg change.
