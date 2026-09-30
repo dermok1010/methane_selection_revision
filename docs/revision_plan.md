@@ -1569,3 +1569,33 @@ rather than being bolted on at the end.
   (`--set=key_bivariates_cg_het`) is ready the moment it does.
 - Preferred venue/format for the H-matrix comparison if it does end up
   included (main text table, supplementary, or just narrative mention)?
+
+- **2026-09-30**: Draft 5 (`manuscript/revised/Methane_manuscript_draft5.docx`)
+  applies the author's first-pass edits from the title through the start of
+  the selection-index Results; changed text highlighted **blue (Word
+  "turquoise")**, replacing green where it overlaps; draft 4 untouched.
+  Abstract: Background's last two sentences merged without "we"; Results cut
+  and refocused on methane being reducible without undesirable MBW/CO2
+  responses via the three-trait index and residual traits; Conclusions
+  softened (no ranking of definitions). Abstract now 337 words (assumed
+  350-word GSE limit, not confirmed: guidelines page is login-walled). Residual
+  rg with CH4 corrected to 0.78-1.00 (draft 4's 0.78-0.86 omitted RMTADG =
+  1.00). Intro: "narrow exercise" sentence removed (its citations are all
+  cited elsewhere). Methods: h2 and t now display equations; draft 4's
+  sigma2_ae typo corrected to sigma2_pe; "phenotypic variance is the sum..."
+  clause removed. Selection-index methods: "no economic weights..." sentence
+  reworded to the aim; point-estimate/sampling-variance sentence, stylised-
+  criterion/ellipsoid text, the CH4 - b*MBW window sentence, the S3
+  information-trait sentence and the S4 rg-sensitivity sentence removed; the
+  restricted-index (Kempthorne-Nordskog) sentence moved into Results. Results:
+  the trivariate-parameter paragraph is cut to a pointer to Table 6 plus the
+  univariate-vs-trivariate difference note.
+  **Now-dangling downstream text (not yet edited, awaiting the author's
+  next pass):** Table 7 footnote and the b-window paragraph still mention
+  unpropagated sampling variances; the b-window paragraph, the Information
+  traits subsection (S3) and the rg-sensitivity paragraph (S4) no longer have
+  Methods counterparts; Figure 1 caption/Results define "favourable" without
+  the CO2 condition used in Methods; the response letter still cites S2-S4.
+  Open question raised by the author: CO2 has no goal weight in Figure 1 or
+  the b-window analysis. `04_favourable_region.R` already scans CO2 goal
+  weights (`tri_table4_weight_windows.csv`); see session notes.
