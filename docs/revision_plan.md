@@ -1692,3 +1692,7 @@ rather than being bolted on at the end.
   .docx stays the formal record. Workflow: edits made in the doc are diffed against
   its rev-10 baseline and applied to `manuscript/revised/` .docx with blue ("cyan")
   highlight, then committed.
+- **2026-09-30 (later)**: Author decision: the live Claude Doc is now the primary
+  working copy of the manuscript. Future versioned drafts (draft 6 onwards) are
+  exported from it into `manuscript/revised/` as .docx in the submitted manuscript's
+  Word styles, with changes since the previous draft highlighted, and committed.
