@@ -1648,3 +1648,13 @@ rather than being bolted on at the end.
   estimable), and the selection index still uses the trivariate model;
   neither was changed. Response letter draft 3 updated to match (the
   R1 CH4 ratio reply, the R1 pooling reply, and R2 line 304).
+- **2026-09-30 (later)**: User decisions: keep the 41-class contemporary-group-mean
+  heterogeneous-residual model as the reported structure (not the growing/mature
+  stage model); the user will supply SEs for the five heterogeneous estimates
+  (Table 2 currently shows them without SEs). Homogeneous-residual heritabilities for
+  those five traits (CH4 0.25, CH4/MBW 0.19, CH4 ratio 0.10, RMTMBW 0.18,
+  RMTMBW+CO2 0.18) and the molar-basis CH4 ratio estimate (0.13, homogeneous) are
+  removed from the manuscript (Results CH4 ratio paragraph, Table 2 footnote,
+  Discussion CH4 ratio/Jonker paragraph) and given only in response letter draft 3
+  (Reviewer 1 CH4 ratio and age-pooling replies; Reviewer 2 line 304 reply, which is
+  now flagged for the authors to confirm which two submitted values it refers to).
