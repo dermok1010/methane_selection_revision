@@ -1623,3 +1623,28 @@ rather than being bolted on at the end.
   location references updated to draft 5. Open items unchanged: the comparison
   table, the minor comments at lines 48, 164 and 202 ff, the title, and the
   cause of the rg change.
+- **2026-09-30 (later)**: **Reporting rule changed (user decision):**
+  wherever a heterogeneous-residual univariate model converged, its estimate
+  is the one reported, replacing the 2026-09-24 "homogeneous for all nine"
+  rule. The CG-mean-class model (`--set=cg_het`, 41 classes) converged for
+  CH4, CH4/MBW, CH4 ratio, RMTMBW and RMTMBW+CO2 and is used for all five.
+  `stage_het` also converged for the same five, but h2/t were never
+  extracted from it, and cg_het is the primary structure (4B). The four
+  sparse traits failed both and stay homogeneous. Table 2 in draft 5 (h2/t
+  are record-weighted class means from `cg_het_summary.csv`; sigma from
+  sqrt(va), sqrt(pe); CVa = sigma_a / Table 1 mean), old -> new:
+  CH4 h2 0.2474 -> 0.1907, t 0.3223 -> 0.2236, sigma_a 1.98 -> 1.47,
+  CVa 11.06% -> 8.20%; CH4/MBW 0.1877 -> 0.1559, t 0.2865 -> 0.2045,
+  sigma_a 0.072 -> 0.060, CVa 8.89% -> 7.44%; CH4 ratio 0.1016 -> 0.1860,
+  t 0.1023 -> 0.3204; RMTMBW 0.1803 -> 0.1583, t 0.2935 -> 0.2351;
+  RMTMBW+CO2 0.1836 -> 0.1694, t 0.3560 -> 0.2808. **No SEs exist** for the
+  heterogeneous estimates (h2/t, sigma_a, sigma_pe): the parser keeps only
+  point estimates and the `.pvc` files are not on the VM. They are shown
+  without SEs and footnoted, with the homogeneous h2 (SE) given in the
+  footnote for comparison. The methane-definition h2 range becomes
+  0.12-0.46 (CH4/ADG minimum) in the Abstract, Results, Discussion and
+  Conclusions. Genetic and phenotypic correlations (Tables 3-5) remain
+  from homogeneous-residual bivariate models (heterogeneous bivariate not
+  estimable), and the selection index still uses the trivariate model;
+  neither was changed. Response letter draft 3 updated to match (the
+  R1 CH4 ratio reply, the R1 pooling reply, and R2 line 304).
