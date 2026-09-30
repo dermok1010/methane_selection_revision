@@ -1599,3 +1599,16 @@ rather than being bolted on at the end.
   Open question raised by the author: CO2 has no goal weight in Figure 1 or
   the b-window analysis. `04_favourable_region.R` already scans CO2 goal
   weights (`tri_table4_weight_windows.csv`); see session notes.
+- **2026-09-30 (later)**: Draft 5 restructured, at the author's request, around
+  one selection-index storyline carried through Abstract, Methods, Results,
+  Discussion and Conclusions: alternative methane traits are widely proposed;
+  the paper examines how those traits themselves operate in an index;
+  selecting on any trait *as it stands* (absolute or alternative) is not
+  favourable; a favourable region (CH4 down, MBW and CO2 not down) does exist
+  but needs careful weighting of MBW and CO2, including when residual traits
+  are used. Removed: b-window paragraph, Information-traits subsection and S3,
+  rg-sensitivity paragraph and S4. Figure 1 block moved under a new "Reaching
+  the favourable region" subheading. Discussion fixes: "we" removed,
+  sentence-initial "Because" changed to "As", residual rg range corrected to 0.78-1.00.
+  Abstract 350 words. **Response letter draft 2 still cites S3/S4 and the
+  removed information-trait/sensitivity results and needs updating.**
