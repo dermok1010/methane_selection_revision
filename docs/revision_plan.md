@@ -1758,3 +1758,15 @@ rather than being bolted on at the end.
   (legacy text) changed to R 4.5.3, the version all revision analyses now use
   (`R_session_trivariate.txt`, `R_session_monte_carlo.txt`); reference [24] (R Core Team)
   year updated 2024 -> 2026 to match (R 4.5.3 released 2026-03-11). Doc rev 519.
+- **2026-10-02 (end, later)**: Reviewer 2 comment 2.3 (relate findings to other studies;
+  surprises; transferability beyond grass-based systems). Added to the live doc Discussion
+  (rev 520): comparison paragraph, new Table 7 (heritabilities for daily methane, CH4 ratio,
+  methane yield, methane relative to size/product, residual methane in sheep, beef and dairy
+  cattle) and a transferability paragraph; first heritability paragraph now points to Table 7.
+  Literature values taken from the heritability table in the author's Formal Doctoral
+  Progress Report (literature review Table 1; also Table 1.2 of thesis Chapter 1), not
+  re-checked against the papers; Jonker et al. CH4 ratio range (0.17-0.25) is from the
+  reviewer's own quotation of that paper. New references [69] de Haas et al. 2011 and [70]
+  Kamalanathan et al. 2023 (citations from the progress report's reference list). Response
+  letter 2.3 reply drafted (letter doc rev 43), replacing "[STILL TO DRAFT]"; the earlier
+  promise of repeatabilities in the table was dropped.
