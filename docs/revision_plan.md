@@ -1744,3 +1744,13 @@ rather than being bolted on at the end.
   04_ (2e6 points). Key MC results: reference dCH4 -0.61 (95% -0.75 to -0.46); trait-alone
   goals in the favourable region in 0% of draws (CH4, genetic and phenotypic residual),
   12.6% (CH4/MBW) and 5.3% (CH4 ratio). Not yet written into the doc.
+- **2026-10-02 (later still)**: Monte Carlo results written into the live doc (rev 517),
+  per author selection: Methods paragraph after the response-mapping paragraph of the
+  selection-index section; Results "favourable region" paragraph gets 95% intervals for
+  the region share (4.9-7.8%), reference cut 0.61 (0.46-0.75), its share of the largest
+  cut 46% (35-54%), largest cut -1.34 (-1.46 to -1.22), max dMBW 0.64 -> 0.65 (0.52-0.77;
+  exact 0.648, the 0.64 was a sampled-hull underestimate) and max dCO2 76 -> 75 (63-86).
+  Author decision: NOT reported: intervals on the economic window, Table 6 weights, and
+  the share of draws in which each trait-alone goal reaches the region (CH4/MBW 12.6%,
+  CH4 ratio 5.3%, others 0%) -- kept in `tri_monte_carlo_summary.csv` only. Discussion
+  limitation "sampling variances ... were not propagated" removed (no longer true).
