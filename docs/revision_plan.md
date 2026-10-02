@@ -1754,3 +1754,7 @@ rather than being bolted on at the end.
   the share of draws in which each trait-alone goal reaches the region (CH4/MBW 12.6%,
   CH4 ratio 5.3%, others 0%) -- kept in `tri_monte_carlo_summary.csv` only. Discussion
   limitation "sampling variances ... were not propagated" removed (no longer true).
+- **2026-10-02 (end)**: Author decision: the genetic-analysis paragraph's "R version 4.2.3"
+  (legacy text) changed to R 4.5.3, the version all revision analyses now use
+  (`R_session_trivariate.txt`, `R_session_monte_carlo.txt`); reference [24] (R Core Team)
+  year updated 2024 -> 2026 to match (R 4.5.3 released 2026-03-11). Doc rev 519.
