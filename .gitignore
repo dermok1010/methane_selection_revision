@@ -117,3 +117,6 @@ reviews/
 logs/
 .cache/
 Rplots.pdf
+
+# Monte Carlo draws: regenerated exactly by 09_monte_carlo.R (fixed seed); summary CSV is tracked
+analysis/revision/selection_index/results/tri_monte_carlo_draws.csv

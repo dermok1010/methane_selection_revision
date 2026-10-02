@@ -1722,3 +1722,25 @@ rather than being bolted on at the end.
   "as noted below". Open: the genetic-analysis paragraph says R 4.2.3 (legacy text), the
   selection-index runs used R 4.5.3 (`R_session_trivariate.txt`); the R version used for
   the rebuilt genetic-parameter parsing is not recorded.
+- **2026-10-02 (later)**: Author decision: Table 5 CH4/MM-muscle mass genetic correlation
+  removed (cell now "–", Results clause removed, footnote says it could not be estimated).
+  The -0.39 (0.19) was the submitted manuscript's legacy estimate; the revision's
+  re-estimation (`bi_ch4muscle_muscle`) has no converged result (first HPC run 20 Sep was
+  degenerate; the regenerated model's output was never pulled back). Supersedes item (1)
+  of the previous entry. Doc rev 510.
+- **2026-10-02 (later)**: Author decision: Monte Carlo uncertainty restored for the
+  selection-index section (reverses the 2026-09-29 "no Monte Carlo" decision). New
+  `09_monte_carlo.R`: 10,000 joint draws of the 15 trivariate variance parameters from
+  MVN(estimate, V), V = ASReml `.vvp` (parsed to
+  `asreml_pipeline/results/trivariate_sampling_cov.csv`), seed 20261002, 0 draws rejected.
+  Differs from the submitted analysis (independent log-normal / Fisher-z draws) by keeping
+  the sampling covariances between estimates. Genetic and phenotypic residual coefficients
+  recomputed per draw; ratio linearisations held at the means. Output
+  `results/tri_monte_carlo_summary.csv`. The script also recomputes, at the point
+  estimates, values previously computed outside any committed script: Table 6 weights,
+  economic window (0.858-1.104), max dMBW in region (0.648) and max dCO2 in region
+  (75.0 g/d, exact, from the ellipsoid; the doc's "about 76" came from a search on
+  rounded parameters). Region share 6.40% here (2e5 common random points) v 6.5% in
+  04_ (2e6 points). Key MC results: reference dCH4 -0.61 (95% -0.75 to -0.46); trait-alone
+  goals in the favourable region in 0% of draws (CH4, genetic and phenotypic residual),
+  12.6% (CH4/MBW) and 5.3% (CH4 ratio). Not yet written into the doc.
