@@ -1770,3 +1770,8 @@ rather than being bolted on at the end.
   Kamalanathan et al. 2023 (citations from the progress report's reference list). Response
   letter 2.3 reply drafted (letter doc rev 43), replacing "[STILL TO DRAFT]"; the earlier
   promise of repeatabilities in the table was dropped.
+- **2026-10-02 (end, last)**: Author decision: no table in the Discussion. Table 7 (caption,
+  table, footnote) removed; the comparison is now one paragraph quoting the literature values
+  in the text (same sources as above); the opening heritability sentence cites [7, 10, 28-30,
+  69, 70] instead of Table 7. Response letter 2.3 reworded to match (letter doc rev 44).
+  Manuscript doc rev 522.
