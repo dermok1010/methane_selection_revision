@@ -1708,3 +1708,17 @@ rather than being bolted on at the end.
   Verified unchanged: relative emphasis -68/+32/-0.3%; CH4 ratio = CH4/(CH4+CO2) goal gives
   the former CH4/CO2 responses (+0.19/+0.72/+88.3). Literature figures added in the doc
   from Consensus searches (refs [45] onward) were not checked against their papers.
+- **2026-10-02**: Consistency fixes in the live doc (rev 501 -> 508). (1) Table 5 footnote
+  claimed the CH4/MM-muscle mass rg "could not be estimated (model non-convergence)" while
+  the table and Results text give -0.39 (0.19). That value is the submitted manuscript's
+  estimate; it is the *rebuild* (`bi_ch4muscle_muscle`, status UNKNOWN in
+  `bivariate_summary.csv`, unconverged rg_check -0.47) that failed. Footnote sentence
+  removed; the submitted value is retained. (2) Discussion CO2-MBW rg SE 0.03 -> 0.02
+  (bivariate `mbw_co2` rg 0.8268, SE 0.0183; trivariate rg23 0.8289, SE 0.0183).
+  (3) Figure 1 caption now defines the shaded region as CH4 reduced with neither MBW nor
+  CO2 reduced, shown in the CH4-MBW plane (matches `07_frontier_region_simple.R`, which
+  shades CH4 < 0, MBW >= 0 and asserts CO2 >= 0 is attainable throughout). (4) Wording:
+  "have been shown", Lassen and Difford sentence, dangling "For the latter" and
+  "as noted below". Open: the genetic-analysis paragraph says R 4.2.3 (legacy text), the
+  selection-index runs used R 4.5.3 (`R_session_trivariate.txt`); the R version used for
+  the rebuilt genetic-parameter parsing is not recorded.
