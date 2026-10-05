@@ -1916,3 +1916,13 @@ rather than being bolted on at the end.
   (`spans.GREEN`) on top of the yellow reviewer highlights. New references to import: 27
   (Carvalheiro and de Haas 2011 no longer needed). Still unverified: FAO 30%, the beef ranges
   from [7]/[29], Levrault >0.99, and CO2–intake in [48].
+- **2026-10-05 (source checks)**: The author uploaded PDFs of [7] Ryan 2025, [29] Crowley 2026,
+  [48] Robinson 2020 and [50] Levrault 2023. Confirmed:
+  - beef daily methane h² 0.15 (Ryan, spot measure) to 0.42 (Crowley); highest from full-test
+    averages.
+  - methane relative to product 0.21 (Kamalanathan) to 0.66 (Crowley MIL).
+  - residual methane 0.38–0.46 (Crowley's seven residual methane traits).
+  - Levrault repeatability >0.99 against known releases (recovery ~69%).
+  Robinson 2020 does not report CO2–intake (only methane–intake), so the three CO2-as-intake-proxy
+  sentences now cite [47] only (doc rev 716; green in the EndNote export). FAO [1] 30% still to be
+  checked.

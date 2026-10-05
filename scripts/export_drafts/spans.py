@@ -83,6 +83,10 @@ GREEN = {
               "is strongly correlated with feed intake in PAC-measured sheep [47, 61] and in cattle [60, 62]"),
     "g_hetero": ("are biased [52, 64, 65]", "[52, 64, 65]"),
     "g_weight": ("denominator or adjustment trait [33, 53]", "[33, 53]"),
+    # Robinson 2020 [48] reports methane-intake, not CO2-intake (checked against the PDF)
+    "g_co2bg": ("where it cannot be measured directly [47]", "[47]"),
+    "g_co2si": ("serves as a proxy for feed intake [47]", "[47]"),
+    "g_co2disc": ("closely related to feed intake in PAC-measured sheep [47]", "[47]"),
 }
 
 LOCATE = {
