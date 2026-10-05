@@ -1865,3 +1865,8 @@ rather than being bolted on at the end.
   in Additional data notes it; letter (rev 120) L202 response lists UN among the italicised
   terms. Draft 6 and letter draft 4 re-exported under the same names. Only Authors'
   contributions remains open.
+- **2026-10-05 (letter)**: At the author's request, the letter Overview now explains why Table
+  3's 28 among-definition (off-diagonal) correlations were dropped: they were not re-estimated
+  in the rebuilt pipeline and are not needed for the paper's conclusions, and they were removed
+  rather than mix re-estimated and original values (reasoning as recorded in the 2026-09-28
+  Table 3 decision above). Letter doc rev 121; letter draft 4 re-exported.
