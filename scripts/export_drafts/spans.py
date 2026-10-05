@@ -53,7 +53,11 @@ HIGHLIGHT = {
     "d_het": ("Genetic evaluations can assume a common residual variance across contemporary groups.", "across flocks and physiological stages."),
     "d_weight": ("A ratio or residual trait is, in effect, a fixed weighting", "that determines whether methane can be reduced without reducing size."),
     "d_econ": ("The weights in Table 6 are breeding-goal weights, not economic values", "selects one point among the attainable responses in Figure 1."),
-    "d_limits": ("Several limitations bound these results.", "fecundity, longevity and lamb survival were not included."),
+    "d_limits": ("Several limitations bound these results.", "when methane is placed in a full bio-economic breeding objective."),
+    "d_repeat": ("In addition, only 25.4% of animals had more than one methane record", "for the computed-tomography traits and RMTADG."),
+    # Supplementary Material S1 (new)
+    "s1_ped": ("All 8,185 phenotyped animals were represented in the pedigree", "linked 205 contemporary groups."),
+    "s1_conf": ("Confounding between breed proportion and contemporary group was assessed", "contained a single sex."),
 }
 
 # Rows of these tables whose trait cell is CO₂ are highlighted (CO₂ added as a trait).
@@ -69,14 +73,14 @@ LETTER_REFS = [
     ["m_ratio", "m_het", "r_tab2foot", "d_compare"],           # 1 R1 Jonker / CH4 ratio heritability
     [],                                                        # 2 R1 MI -> CH4/MBW (global rename)
     ["m_ratio", "m_co2", "r_co2mean"],                         # 3 R1 units, CO2 descriptive stats
-    ["m_ped", "m_wald"],                                       # 4 R1 fixed effects, connectedness
+    ["m_ped", "m_wald", "s1_ped", "s1_conf"],                   # 4 R1 fixed effects, connectedness
     ["m_eq"],                                                  # 5 R1 + e
     ["m_het", "m_rg", "d_het"],                                # 6 R1 contemporary-group scaling
-    ["m_wald", "d_compare"],                                   # 7 R1 summary
+    ["m_wald", "s1_ped", "s1_conf", "d_compare"],              # 7 R1 summary
     ["m_si_aim", "d_proxy", "r_any", "d_co2", "d_weight", "d_econ", "d_limits"],  # 8 R1 trait definitions / proxies
     ["m_si_i", "m_mc", "m_assume", "r_mc", "d_limits"],        # 9 R1 Smith-Hazel caveats
     ["bg_alt", "d_proxy", "m_co2", "r_co2h2", "r_co2rg", "d_co2"],  # 10 R2 biology, CO2
-    ["bg_pac"],                                                # 11 R2 PAC pros/cons
+    ["bg_pac", "d_repeat"],                                    # 11 R2 PAC pros/cons
     ["d_compare", "d_transfer"],                               # 12 R2 other studies, transferability
     ["m_het", "m_rg", "d_het"],                                # 13 R2 growing vs adult
     ["abs_ratio"],                                             # 14 L47
@@ -87,9 +91,9 @@ LETTER_REFS = [
     ["bg_enteric", "m_enteric"],                               # 19 L84-85
     ["loc_breeds"],                                            # 20 L154
     ["bg_alt", "m_defalt"],                                    # 21 L164
-    ["m_ped"],                                                 # 22 L195
+    ["m_ped", "s1_ped"],                                       # 22 L195
     ["loc_terms"],                                             # 23 L202 ff
-    [],                                                        # 24 L213
+    ["d_repeat"],                                              # 24 L213
     ["m_ratio"],                                               # 25 L297
     ["r_tab2foot"],                                            # 26 L304 two numbers
     ["m_h2t", "m_h2", "m_t"],                                  # 27 L304 formulas

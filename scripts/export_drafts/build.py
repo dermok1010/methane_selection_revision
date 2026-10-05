@@ -401,8 +401,7 @@ def build_letter(md_path, out_path, refs):
     note_old = "Manuscript locations refer to draft 5 of the manuscript;"
     note_new = "Line numbers given with each response refer to the line-numbered draft 6 of the manuscript;"
     text = Path(md_path).read_text()
-    assert note_old in text, "draft note wording changed; update build_letter"
-    lines = text.replace(note_old, note_new).splitlines()
+    lines = text.replace(note_old, note_new).splitlines()  # no-op once the doc's note is updated
     d = fresh_document()
     sect = d.element.body.find(qn("w:sectPr"))
     for ln_el in sect.findall(qn("w:lnNumType")):

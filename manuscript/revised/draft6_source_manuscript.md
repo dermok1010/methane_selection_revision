@@ -288,7 +288,7 @@ This agrees with the observation that direct multi-trait selection can match or 
 
 The weights in Table 6 are breeding-goal weights, not economic values: they are the additional weights on MBW and CO₂ needed to reach a biological target. In practice, the breeding goal would be built from economic values, with methane valued through a carbon price and body size and CO₂ through their effects on output and feed cost \[35, 39, 40\]. The framework applies unchanged to such a goal: each set of economic values selects one point among the attainable responses in Figure 1.
 
-Several limitations bound these results. Genetic parameters were treated as constant across generations, although they change under selection (Cuyabano et al. \[42\]). Responses are per generation at i = 1; with i = 1.7 and a generation interval of 2.8 years they scale by 1.7 and 0.61, respectively (Supplementary Table S2), but realised intensity depends on the breeding programme, the recording of methane on only part of the population, and the use of genomic information, none of which were modelled. The favourable region is a biological rather than an economic criterion; in practice, the weight given to methane in an index depends on how emissions are priced or rewarded \[35, 39, 40\]. Finally, MBW is used here as a descriptor of body size, not as a complete representation of productivity, and fecundity, longevity and lamb survival were not included.
+Several limitations bound these results. Genetic parameters were treated as constant across generations, although they change under selection (Cuyabano et al. \[42\]). Responses are per generation at i = 1; with i = 1.7 and a generation interval of 2.8 years they scale by 1.7 and 0.61, respectively (Supplementary Table S2), but realised intensity depends on the breeding programme, the recording of methane on only part of the population, and the use of genomic information, none of which were modelled. The favourable region is a biological rather than an economic criterion; in practice, the weight given to methane in an index depends on how emissions are priced or rewarded \[35, 39, 40\]. Finally, MBW is used here as a descriptor of body size, not as a complete representation of productivity, and fecundity, longevity and lamb survival were not included. As most of the feed used by a ewe flock supports ewe maintenance and reproduction rather than lamb growth, these traits are likely to be at least as important as body size and growth when methane is placed in a full bio-economic breeding objective. In addition, only 25.4% of animals had more than one methane record, which limits the precision of the permanent environmental variance and prevented its estimation for the computed-tomography traits and RMTADG.
 
 ## Conclusions
 
@@ -328,7 +328,34 @@ The authors gratefully acknowledge the participating farmers and industry partne
 
 ## Supplementary Material
 
-**S1.** Fixed-effect significance and connectedness diagnostics. \[PENDING — not yet drafted.\] Wald F-statistic table for the 7 univariate genetic-analysis models (breed-proportion covariates significant at p<0.001 for every trait; Lleyn never significant), plus pedigree completeness/connectedness diagnostics (100% of phenotyped animals in the pedigree, 88.5% both parents known, 1,025 unique sires, mean pedigree depth 17.6 generations, 73.1% of sires linking 2+ contemporary groups) and the Cheviot/Lleyn breed-proportion/contemporary-group confounding result. Source analysis: analysis/diagnostics/reviewer\_a2\_a3/ in the methane\_selection\_revision repo.
+**S1.** Fixed-effect significance, pedigree completeness, connectedness and confounding diagnostics.
+
+All 8,185 phenotyped animals were represented in the pedigree; 88.5% had both parents known and 5.3% had neither parent known, and the mean traced pedigree depth was 17.6 generations (median 19, maximum 34). The phenotyped animals had 1,025 unique sires and 5,216 unique dams. Of the 1,025 sires, 73.1% had progeny in two or more contemporary groups and 43.8% in five or more, and the most widely used sire linked 205 contemporary groups.
+
+Confounding between breed proportion and contemporary group was assessed as the within-contemporary-group variance of each breed proportion expressed as a fraction of its total variance, where 1 indicates no confounding and 0 indicates that breed proportion is fully determined by contemporary group. This ratio was 0.64–0.68 for Texel and Suffolk, 0.40 for Belclare, 0.28 for other or unknown breeds, 0.21 for Charolais, 0.15 for Lleyn and 0.04 for Cheviot. The Cheviot and Lleyn proportions were therefore largely nested within contemporary group, and their effects cannot be cleanly separated from those of contemporary group. Both sexes occurred across many contemporary groups, although 82.1% of individual contemporary groups contained a single sex.
+
+**Table S1.** Significance of fixed effects (Wald F-tests) in the univariate models of the component traits.
+
+| Fixed effect | CH₄ | CO₂ | MBW | ADG | Muscle mass | Rumen volume | Live weight |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| sex | ns | ns | \*\*\* | \*\*\* | \*\*\* | \* | \*\*\* |
+| BR | ns | ns | ns | ns | \*\*\* | \*\*\* | ns |
+| CL | \*\*\* | ns | \*\*\* | \*\* | \*\*\* | \*\*\* | \*\*\* |
+| CV | ns | ns | \*\* | ns | ns | ns | \* |
+| LY | ns | ns | ns | ns | ns | ns | ns |
+| SU | \* | ns | \*\*\* | ns | \*\*\* | \*\*\* | \*\*\* |
+| TX | \* | \*\*\* | \*\*\* | ns | \*\*\* | ns | \*\*\* |
+| Other or unknown breeds | \*\*\* | \*\*\* | \*\*\* | \*\*\* | \*\*\* | \*\*\* | \*\*\* |
+| het | \* | ns | ns | \*\*\* | \*\*\* | ns | ns |
+| rec | ns | ns | \*\*\* | \*\* | \*\*\* | ns | \*\*\* |
+| age | \* | \*\* | \*\*\* | \*\*\* | \*\*\* | \*\*\* | \*\*\* |
+| BTg | \*\*\* | ns | \*\*\* | \* | ns | ns | \*\*\* |
+| RTg | \*\*\* | \*\*\* | \*\*\* | ns | \*\*\* | ns | \*\*\* |
+| BTe | \*\*\* | \*\*\* | \*\*\* | – | – | – | \*\*\* |
+| RTe | \*\* | ns | \*\*\* | – | – | – | \*\*\* |
+| DP | ns | ns | \* | ns | ns | ns | \*\* |
+
+\* P < 0.05; \*\* P < 0.01; \*\*\* P < 0.001; ns, not significant (P ≥ 0.05); –, term not in the model for that trait. Fixed effects as defined in the model equation (Methods); other or unknown breeds is the proportion of breeds other than the six named, fitted as a covariate. Contemporary group (1,435 levels) was fitted in every model but is not shown, as ASReml omits factors with this many levels from the Wald table by default.
 
 **S2.** Predicted responses at selection intensity 1.7, per generation and per year (generation interval 2.8 years). Responses of the reference favourable index (Table 6) multiplied by 1.7 and by 1.7/2.8 = 0.607, respectively; illustrative values only.
 
@@ -440,7 +467,7 @@ The methane term is CH₄, the genetic residual or the phenotypic residual, resp
 
 &#91;41\] Pešek J., Baker R.J., DESIRED IMPROVEMENT IN RELATION TO SELECTION INDICES, Canadian Journal of Plant Science. 49 (1969) 803-804.
 
-&#91;42\] Cuyabano B.C.D. et al., Trajectories of Genetic Correlations in Populations under Selection, bioRxiv (2025). \[VERIFY author list and DOI\]
+&#91;42\] Cuyabano B.C.D., Motta M.R., Vandenplas J., Garcia N.L., Shokor F., Croiseau P., Boichard D., Aguerre S., Mattalia S., Trajectories of genetic correlations in populations under selection: from theory to a case-study, bioRxiv (2025). https://doi.org/10.1101/2025.03.13.643026
 
 &#91;43\] Kempthorne O., Nordskog A.W., Restricted selection indices, Biometrics. 15 (1959) 10-19.
 

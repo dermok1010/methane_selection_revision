@@ -1841,3 +1841,20 @@ rather than being bolted on at the end.
   reference; Word's own layout may differ by a line or so. Before export, two errors were
   fixed in the doc: the Results text still gave CO2 sigma_a 138.44 / CVa 11.64% (now
   117.18 / 9.85%, matching Table 2), and the "(XX)" placeholder for CH4/ADG in the Discussion.
+- **2026-10-05 (open points closed, drafts re-exported)**: Author decisions: keep the original
+  title; add the missing limitations to the manuscript rather than drop them from the letter;
+  reword the letter to match the current index results; leave Authors' contributions as a
+  placeholder. Manuscript (doc rev 658): Supplementary S1 written (pedigree completeness,
+  connectedness, breed/contemporary-group confounding and Table S1 Wald significance, built
+  from `wald_fixed_effects.csv`); Discussion limitations now say most ewe-flock feed supports
+  maintenance and reproduction (no 70% figure, which was uncited), and that only 25.4% of
+  animals had repeated records; reference [42] Cuyabano et al. completed and checked against
+  bioRxiv (still a preprint, doi 10.1101/2025.03.13.643026). Letter (doc rev 119): retitling
+  sentence removed; trait-alone claims and the Tables 7–8 references reworded to Figure 1 /
+  Table 6; the Editor reply drafted; the draft note updated; the S1 claim for heterogeneity
+  results changed to Methods and Discussion; the stale CH4/CO2 "increases methane" claim
+  replaced; the open "[authors: reason]" note for the submitted rg(CH4,MBW) = -0.03 replaced
+  with a factual statement that it was inconsistent with the submitted CH4-LW rg (0.50) and that
+  both now agree (0.72/0.71). No cause is asserted. The earlier draft 6 / letter draft 4 files were
+  replaced by this export. Still open: Authors' contributions; the `UN` (other/unknown breed)
+  covariate is in the fitted model and in Table S1 but not in the Methods model equation.
