@@ -1930,3 +1930,9 @@ rather than being bolted on at the end.
   confirms the Background figure: enteric fermentation in ruminants "about 30 percent of global
   anthropogenic CH4 emissions" (executive summary, PDF p. 31), with manure about 4.5% and rice
   about 8% given separately. No change needed. All four flagged citation checks are now resolved.
+- **2026-10-05 (sync)**: Both live docs confirmed current (no outside edits since manuscript
+  rev 716 / letter rev 156). The citation edits shifted the manuscript by 1–2 lines from the
+  Abstract onward, so 22 of the letter's line references were recomputed and updated
+  (letter rev 178). `Methane_manuscript_draft7_EndNote.docx` (built from rev 716) sent to the
+  author for EndNote linking. The letter's line numbers match the numeric-citation layout; recheck
+  them after EndNote has formatted the citations and the bibliography.
