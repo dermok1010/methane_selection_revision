@@ -1799,3 +1799,21 @@ rather than being bolted on at the end.
   HPC: pull main, `Rscript scripts/02_stage_run_dir.R --platform=hpc`, then
   `slurm/submit_batch.sh a_uni_co2_cg_het a_uni_co2_stage_het` (do not re-run
   `01_generate_models.R` there).
+- **2026-10-05 (results)**: Both CO2 heterogeneous-residual univariates CONVERGED on HPC,
+  every variance parameter code `P` (rsynced to `~/hpc_incoming/methane_selection_revision_co2_het_2026-10-05/`).
+  `cg_het` converged on the pipeline's own same-job `!CONTINUE` retry (new run dir; `.rsv`
+  from attempt 1). Homogeneous `a_uni_co2`: VA 19,165, PE 17,141, residual 31,227,
+  h2 0.284, t 0.538.
+  - `a_uni_co2_cg_het` (parsed by `05_parse_cg_het_classes.R`, now including co2): VA 13,732,
+    PE 9,460; residual 2,271-97,800 across 41 classes (43x); per-class h2 0.11-0.54,
+    records-weighted h2 0.253, t 0.427. One tiny class (n=4, residual SE 3.3x the estimate)
+    is HILL's. Same direction as 4 of the 5 methane traits (lower weighted h2/t than
+    homogeneous), smaller in size.
+  - `a_uni_co2_stage_het` (read off the `.asr`; level 1 = mature, 8,151 records; level 2 =
+    young, 7,718): VA 18,944, PE 16,501; residual mature 41,869, young 21,298 (1.97x);
+    h2 mature 0.245, young 0.334 (weighted 0.288); t 0.458/0.625 (weighted 0.539).
+  - Fit: AIC 172,934.6 (`cg_het`, 43 params) vs 173,915.8 (`stage_het`, 4 params); BIC
+    173,260 vs 173,946 -- `cg_het` clearly better despite 39 extra parameters. The
+    homogeneous model's `.asr` is not on the VM, so no LRT against it yet.
+  `results/univariate_summary.csv` not regenerated (03_parse_results.R would rebuild it from
+  the partial local `run/` mirror).

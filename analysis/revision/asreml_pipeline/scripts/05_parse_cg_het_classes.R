@@ -28,7 +28,7 @@ script_dir <- dirname(sub("--file=", "", grep("--file=", commandArgs(), value = 
 pipeline_root <- normalizePath(file.path(script_dir, ".."), mustWork = FALSE)
 if (!dir.exists(file.path(pipeline_root, "config"))) pipeline_root <- getwd()
 
-traits <- c("methane", "ch4mbw", "ch4ratio", "ch4rmtmbw", "ch4rmtmbwco2")
+traits <- c("methane", "ch4mbw", "ch4ratio", "ch4rmtmbw", "ch4rmtmbwco2", "co2")
 
 parse_cg_het_pvc <- function(pvc_path) {
   lines <- readLines(pvc_path)
