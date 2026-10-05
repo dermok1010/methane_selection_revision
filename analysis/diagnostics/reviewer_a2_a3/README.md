@@ -245,3 +245,34 @@ accounting for the different cutoff. See
 full detail; not yet run on HPC. This pilot's own files/results are left
 as-is (a real, CONVERGED, independently useful result in their own
 right), not superseded or deleted.
+
+## Sires and maternal grandsires across flocks (2026-10-05)
+
+Computed by `05_sire_mgs_across_flocks.R`; full output in
+`sire_mgs_across_flocks_summary.txt` (with a per-flock breakdown) and
+`sire_mgs_across_flocks.csv`. Sire and dam come from the revision pedigree,
+and MGS is the sire of the dam. Progeny are counted as animals, not records.
+
+Flock = `source`, as confirmed by the user. It has 14 levels, but the
+manuscript reports 132 flocks, which matches `breeder` (133 levels). Both are
+reported until that is settled.
+
+| | Sires (`source`) | MGS (`source`) | Sires (`breeder`) | MGS (`breeder`) |
+|---|---|---|---|---|
+| Flocks | 14 | 14 | 133 | 133 |
+| Animals with ancestor known | 7,400 (90.4%) | 6,087 (74.4%) | same | same |
+| Unique ancestors | 1,025 | 1,129 | 1,025 | 1,129 |
+| Progeny per ancestor, mean (median, max) | 7.2 (3, 59) | 5.4 (3, 54) | 7.2 (3, 59) | 5.4 (3, 54) |
+| Ancestors in 2+ flocks | 184 (18.0%) | 234 (20.7%) | 194 (18.9%) | 216 (19.1%) |
+| Share of progeny from those ancestors | 37.0% | 41.8% | 35.8% | 36.7% |
+| Flocks sharing 1+ ancestor with another flock | 14/14 | 14/14 | 53/133 | 60/133 |
+| Flock pairs directly linked | 52/91 | 68/91 | 134/8,778 | 158/8,778 |
+| Connected flock networks (largest: flocks, % of animals) | 1 (14, 100%) | 1 (14, 100%) | 82 (51, 92.2%) | 76 (56, 94.3%) |
+
+By `source`, every flock is tied into a single network through common sires
+and, separately, through common MGS. By `breeder`, most of the small breeder
+flocks are not linked by a common sire or MGS. However, the largest linked
+network still holds over 92% of the phenotyped animals. Note that 544 animals
+were measured in more than one `source` but no animal has more than one
+`breeder`, which is consistent with `breeder` being flock of birth and `source`
+being the measurement flock or project.

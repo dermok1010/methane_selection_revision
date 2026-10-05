@@ -1,0 +1,93 @@
+Analysed records: 15869; animals: 8185
+Animals with sire known: 7400 (90.4%); with MGS known: 6087 (74.4%)
+Animals recorded in >1 source: 544; in >1 breeder code: 0
+
+=== Sires across flocks (flock = source, 14 flocks) ===
+Unique sires with phenotyped (grand)progeny: 1025
+Phenotyped (grand)progeny per sire: mean 7.2, median 3, range 1-59
+Records per sire: mean 13.5, median 4, range 1-364
+Flocks per sire: mean 1.3, median 1, range 1-7
+  in 1 flock(s): 841 sires (82.0%), 4664 progeny
+  in 2 flock(s): 122 sires (11.9%), 1397 progeny
+  in 3-4 flock(s): 45 sires (4.4%), 885 progeny
+  in 5+ flock(s): 17 sires (1.7%), 454 progeny
+Sires with progeny in 2+ flocks: 184 (18.0%), accounting for 37.0% of their (grand)progeny
+Flocks with >=1 sire shared with another flock: 14 of 14
+Flock pairs directly linked by >=1 common sire: 52 of 91 possible
+Connected flock networks via common sire: 1; largest holds 14 flocks / 100.0% of animals
+Sires per flock: mean 95.4, median 51, range 3-495
+Per-flock breakdown (sire):
+  PED    2729 animals,  495 sire,   40 shared with another flock
+  CPT    1971 animals,  246 sire,   81 shared with another flock
+  INZA    931 animals,  202 sire,   89 shared with another flock
+  AYLN    485 animals,   54 sire,   54 shared with another flock
+  AYMP    429 animals,   73 sire,   46 shared with another flock
+  Demo    392 animals,   64 sire,   51 shared with another flock
+  BETT    352 animals,   48 sire,   19 shared with another flock
+  CT      341 animals,   63 sire,   47 shared with another flock
+  AYAF    118 animals,    8 sire,    7 shared with another flock
+  Belc     91 animals,   29 sire,   12 shared with another flock
+  AYGF     39 animals,   18 sire,   18 shared with another flock
+  Meta     34 animals,   24 sire,   24 shared with another flock
+  WETH     21 animals,    9 sire,    5 shared with another flock
+  HILL      4 animals,    3 sire,    2 shared with another flock
+
+=== Maternal grandsires across flocks (flock = source, 14 flocks) ===
+Unique maternal grandsires with phenotyped (grand)progeny: 1129
+Phenotyped (grand)progeny per mgs: mean 5.4, median 3, range 1-54
+Records per mgs: mean 9.8, median 3, range 1-307
+Flocks per mgs: mean 1.4, median 1, range 1-8
+  in 1 flock(s): 895 maternal grandsires (79.3%), 3542 progeny
+  in 2 flock(s): 130 maternal grandsires (11.5%), 985 progeny
+  in 3-4 flock(s): 73 maternal grandsires (6.5%), 896 progeny
+  in 5+ flock(s): 31 maternal grandsires (2.7%), 664 progeny
+Maternal grandsires with progeny in 2+ flocks: 234 (20.7%), accounting for 41.8% of their (grand)progeny
+Flocks with >=1 mgs shared with another flock: 14 of 14
+Flock pairs directly linked by >=1 common mgs: 68 of 91 possible
+Connected flock networks via common mgs: 1; largest holds 14 flocks / 100.0% of animals
+Maternal grandsires per flock: mean 112.6, median 38, range 1-599
+Per-flock breakdown (mgs):
+  PED    2659 animals,  599 mgs,   71 shared with another flock
+  CPT    1505 animals,  291 mgs,  105 shared with another flock
+  INZA    871 animals,  221 mgs,  120 shared with another flock
+  AYMP    374 animals,  124 mgs,   93 shared with another flock
+  CT      235 animals,   89 mgs,   81 shared with another flock
+  AYLN    232 animals,   63 mgs,   63 shared with another flock
+  BETT    215 animals,   34 mgs,   17 shared with another flock
+  Demo    100 animals,   38 mgs,   35 shared with another flock
+  Belc     91 animals,   39 mgs,   20 shared with another flock
+  AYAF     51 animals,   12 mgs,   12 shared with another flock
+  AYGF     39 animals,   30 mgs,   30 shared with another flock
+  Meta     28 animals,   22 mgs,   22 shared with another flock
+  WETH     21 animals,   14 mgs,   12 shared with another flock
+  HILL      1 animals,    1 mgs,    1 shared with another flock
+
+=== Sires across flocks (flock = breeder, 133 flocks) ===
+Unique sires with phenotyped (grand)progeny: 1025
+Phenotyped (grand)progeny per sire: mean 7.2, median 3, range 1-59
+Records per sire: mean 13.5, median 4, range 1-364
+Flocks per sire: mean 1.3, median 1, range 1-7
+  in 1 flock(s): 831 sires (81.1%), 4753 progeny
+  in 2 flock(s): 108 sires (10.5%), 1334 progeny
+  in 3-4 flock(s): 77 sires (7.5%), 1067 progeny
+  in 5+ flock(s): 9 sires (0.9%), 246 progeny
+Sires with progeny in 2+ flocks: 194 (18.9%), accounting for 35.8% of their (grand)progeny
+Flocks with >=1 sire shared with another flock: 53 of 133
+Flock pairs directly linked by >=1 common sire: 134 of 8778 possible
+Connected flock networks via common sire: 82; largest holds 51 flocks / 92.2% of animals
+Sires per flock: mean 10.2, median 2, range 1-209
+
+=== Maternal grandsires across flocks (flock = breeder, 133 flocks) ===
+Unique maternal grandsires with phenotyped (grand)progeny: 1129
+Phenotyped (grand)progeny per mgs: mean 5.4, median 3, range 1-54
+Records per mgs: mean 9.8, median 3, range 1-307
+Flocks per mgs: mean 1.3, median 1, range 1-8
+  in 1 flock(s): 913 maternal grandsires (80.9%), 3852 progeny
+  in 2 flock(s): 143 maternal grandsires (12.7%), 1079 progeny
+  in 3-4 flock(s): 67 maternal grandsires (5.9%), 965 progeny
+  in 5+ flock(s): 6 maternal grandsires (0.5%), 191 progeny
+Maternal grandsires with progeny in 2+ flocks: 216 (19.1%), accounting for 36.7% of their (grand)progeny
+Flocks with >=1 mgs shared with another flock: 60 of 133
+Flock pairs directly linked by >=1 common mgs: 158 of 8778 possible
+Connected flock networks via common mgs: 76; largest holds 56 flocks / 94.3% of animals
+Maternal grandsires per flock: mean 11.4, median 2, range 1-239

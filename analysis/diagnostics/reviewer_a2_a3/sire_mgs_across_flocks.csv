@@ -1,0 +1,5 @@
+"flock_field","ancestor","n_flocks","n_ancestors","prog_mean","prog_median","prog_max","flocks_per_anc_mean","flocks_per_anc_max","n_anc_multi_flock","pct_anc_multi_flock","pct_prog_from_multi_flock_anc","n_flocks_linked","n_flock_pairs_linked","n_flock_pairs_possible","n_components","largest_component_flocks","anc_per_flock_mean","anc_per_flock_median"
+"source","sire",14,1025,7.21951219512195,3,59,1.30341463414634,7,184,17.9512195121951,36.972972972973,14,52,91,1,14,95.4285714285714,51
+"source","mgs",14,1129,5.39149689991143,3,54,1.39681133746678,8,234,20.726306465899,41.8104156398883,14,68,91,1,14,112.642857142857,38.5
+"breeder","sire",133,1025,7.21951219512195,3,59,1.31317073170732,7,194,18.9268292682927,35.7702702702703,53,134,8778,82,51,10.1969696969697,2
+"breeder","mgs",133,1129,5.39149689991143,3,54,1.28520814880425,8,216,19.1319751992914,36.7175948743223,60,158,8778,76,56,11.4251968503937,2

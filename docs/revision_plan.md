@@ -1775,3 +1775,14 @@ rather than being bolted on at the end.
   in the text (same sources as above); the opening heritability sentence cites [7, 10, 28-30,
   69, 70] instead of Table 7. Response letter 2.3 reworded to match (letter doc rev 44).
   Manuscript doc rev 522.
+- **2026-10-05**: Sire and maternal-grandsire (MGS) statistics across flocks, user request
+  (`analysis/diagnostics/reviewer_a2_a3/05_sire_mgs_across_flocks.R`, outputs
+  `sire_mgs_across_flocks_summary.txt`/`.csv`). Flock = `source`, as confirmed by the user
+  (14 levels). Discrepancy flagged, not resolved: the manuscript says 132 flocks, which
+  matches the `breeder` field (133 levels), not `source`; both are reported. By `source`:
+  1,025 sires (7.2 progeny each on average), 184 (18.0%) with progeny in 2+ flocks,
+  carrying 37.0% of sired animals; 1,129 MGS, 234 (20.7%) in 2+ flocks, carrying 41.8%;
+  all 14 flocks form one network through common sires (52 of 91 flock pairs directly
+  linked) and through common MGS (68 of 91). By `breeder`: 82 separate sire-linked
+  networks; the largest holds 51 flocks and 92.2% of animals. Nothing in the manuscript
+  has been changed yet.
