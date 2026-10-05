@@ -1926,3 +1926,7 @@ rather than being bolted on at the end.
   Robinson 2020 does not report CO2–intake (only methane–intake), so the three CO2-as-intake-proxy
   sentences now cite [47] only (doc rev 716; green in the EndNote export). FAO [1] 30% still to be
   checked.
+- **2026-10-05 (FAO check)**: [1] FAO 2023 (gs://dermot-phd-backup/thesis_material/cc7607en.pdf)
+  confirms the Background figure: enteric fermentation in ruminants "about 30 percent of global
+  anthropogenic CH4 emissions" (executive summary, PDF p. 31), with manure about 4.5% and rice
+  about 8% given separately. No change needed. All four flagged citation checks are now resolved.
