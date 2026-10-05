@@ -1829,3 +1829,15 @@ rather than being bolted on at the end.
   residual-heterogeneity paragraph (CO2 also lowered). Response letter quotes no CO2 h2/t.
   Not changed: CO2's bivariate rg (homogeneous-residual, per the 23 Sep decision) and the
   trivariate S3 values used in the index.
+- **2026-10-05 (export)**: Manuscript draft 6 and response letter draft 4 exported for the author
+  to print and read (`manuscript/revised/Methane_manuscript_draft6.docx/.pdf`,
+  `Response_to_Reviewers_draft4.docx/.pdf`), from live doc revisions 655 (manuscript) and 109
+  (letter). The source markdown exports are kept beside them (`draft6_source_manuscript.md`,
+  `draft4_source_response_letter.md`). New `scripts/export_drafts/build.py` (docx-tools env)
+  builds both on the submitted manuscript's own styles, with continuous line numbering. At
+  the author's request, highlights (yellow) mark only the key passages that directly answer a
+  reviewer comment (`spans.py`), not every change. The letter gets revised-manuscript line
+  numbers for each response, read from the LibreOffice-rendered PDF. The PDFs are the line-number
+  reference; Word's own layout may differ by a line or so. Before export, two errors were
+  fixed in the doc: the Results text still gave CO2 sigma_a 138.44 / CVa 11.64% (now
+  117.18 / 9.85%, matching Table 2), and the "(XX)" placeholder for CH4/ADG in the Discussion.
