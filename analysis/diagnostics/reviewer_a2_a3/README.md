@@ -74,25 +74,28 @@ attempted here.
 
 | term | methane | co2 | mbw | adg | muscle | rumen | weight |
 |---|---|---|---|---|---|---|---|
-| SEX | | *** | *** | | *** | * | *** |
-| TX | * | *** | *** | | *** | | *** |
-| BR | | | | | *** | *** | |
-| SU | * | | *** | | *** | *** | *** |
-| CL | *** | | *** | ** | *** | *** | *** |
-| CV | | ** | | | | | * |
-| LY | | | | | | | |
+| SEX |  |  | *** | *** | *** | * | *** |
+| TX | * | *** | *** |  | *** |  | *** |
+| BR |  |  |  |  | *** | *** |  |
+| SU | * |  | *** |  | *** | *** | *** |
+| CL | *** |  | *** | ** | *** | *** | *** |
+| CV |  |  | ** |  |  |  | * |
+| LY |  |  |  |  |  |  |  |
 | UN | *** | *** | *** | *** | *** | *** | *** |
-| het | * | | | *** | *** | | |
-| rec | | *** | | ** | *** | | *** |
-| REARING_RANK | *** | *** | *** | | *** | | *** |
-| BIRTH_RANK | *** | | *** | * | | | *** |
+| het | * |  |  | *** | *** |  |  |
+| rec |  |  | *** | ** | *** |  | *** |
+| REARING_RANK | *** | *** | *** |  | *** |  | *** |
+| BIRTH_RANK | *** |  | *** | * |  |  | *** |
 | ewe_birth_rank | *** | *** | *** | n/a | n/a | n/a | *** |
-| ewe_rearing_rank | ** | | *** | n/a | n/a | n/a | *** |
+| ewe_rearing_rank | ** |  | *** | n/a | n/a | n/a | *** |
 | age_in_weeks | * | ** | *** | *** | *** | *** | *** |
-| dam_parity_group_num | | | | * | | | ** |
+| dam_parity_group_num |  |  | * |  |  |  | ** |
 
 (`*` p<0.05, `**` p<0.01, `***` p<0.001, blank = not significant,
 n/a = term not in that model's Wald table as reported by ASReml.)
+
+(Regenerated from `wald_fixed_effects.csv` on 2026-10-05: the earlier hand-built
+version of this table had shifted several cells into the wrong trait column.)
 
 **Notable**: the undocumented `UN` breed-proportion term (see model
 specification above) is significant at p<0.001 for **every single
