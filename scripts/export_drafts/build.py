@@ -105,6 +105,17 @@ def apply_highlights(segs, ids):
         for k in range(a, z):
             marks[k] = True
         found.append(sid)
+    # Green: citation/wording fixes made to tighten reference support (spans.GREEN,
+    # (context, words) pairs: highlight `words` inside the first occurrence of `context`).
+    # Overrides yellow where they overlap.
+    for gid, (context, words) in spans.GREEN.items():
+        c = text.find(context)
+        if c < 0:
+            continue
+        a = text.find(words, c)
+        for k in range(a, a + len(words)):
+            marks[k] = "green"
+        GREEN_FOUND.add(gid)
     out, pos = [], 0
     for s in segs:
         t = s["text"]
@@ -148,6 +159,7 @@ def fresh_document():
 # citations ({Author, Year #RecNum}) and the typed reference list is omitted, so that
 # "Update Citations and Bibliography" in Word relinks everything to the EndNote library.
 CITES = None
+GREEN_FOUND = set()
 CITE_RE = re.compile(r"\[(\d+(?:\s*[–-]\s*\d+)?(?:\s*,\s*\d+(?:\s*[–-]\s*\d+)?)*)\]")
 
 
@@ -177,7 +189,9 @@ def add_runs(p, segs, size=None, base_italic=False, highlight=False):
             r.font.superscript = True
         elif s.get("vert") == "sub":
             r.font.subscript = True
-        if s.get("hl") or highlight:
+        if s.get("hl") == "green":
+            r.font.highlight_color = WD_COLOR_INDEX.BRIGHT_GREEN
+        elif s.get("hl") or highlight:
             r.font.highlight_color = WD_COLOR_INDEX.YELLOW
     return p
 
@@ -494,6 +508,9 @@ def main():
         missing = build_manuscript(ms_md, ms_out)
         if missing:
             print("WARNING highlight spans not found:", sorted(missing))
+        gmiss = set(spans.GREEN) - GREEN_FOUND
+        if gmiss:
+            print("WARNING green spans not found:", sorted(gmiss))
         print("written", ms_out)
         return
     ms_md, letter_md, ms_out, letter_out = sys.argv[1:5]

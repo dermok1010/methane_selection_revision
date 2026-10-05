@@ -64,6 +64,27 @@ HIGHLIGHT = {
 # Rows of these tables whose trait cell is CO₂ are highlighted (CO₂ added as a trait).
 HIGHLIGHT_TABLE_ROWS = {"Table 1.": "CO₂", "Table 2.": "CO₂", "Table 3.": "CO₂"}
 
+# Citation-support fixes made 2026-10-05 after docs/citation_review.md (shown in green).
+# (context, words): `words` is highlighted inside the first occurrence of `context`.
+GREEN = {
+    "g_gain": ("long term nature of genetic gain [8, 68]", "[8, 68]"),
+    "g_flocks": ("research and commercial flocks [10, 49]", "[10, 49]"),
+    "g_rc": ("lower repeatability than RCs [10, 46]", "[10, 46]"),
+    "g_rank": ("they have been shown to rank animals on methane output", "shown to rank animals on methane output"),
+    "g_genetic": ("growth, and feed intake [7, 11, 12, 29]", "[7, 11, 12, 29]"),
+    "g_proposed": ("key production traits [14, 57]", "[14, 57]"),
+    "g_taylor": ("Taylor series approximation [53, 54]", "[53, 54]"),
+    "g_scaling": ("under a multiplicative scaling model,", "under a multiplicative scaling model,"),
+    "g_range": ("dairy cattle [30, 68]", "[30, 68]"),
+    "g_proxy": ("missing feed-intake information [12, 13, 47, 48]", "[12, 13, 47, 48]"),
+    "g_dairy": ("from 0.16 to 0.33 in dairy [30, 68]", "0.16 to 0.33 in dairy [30, 68]"),
+    "g_product": ("more heritable in cattle [29, 68]", "[29, 68]"),
+    "g_co2": ("is strongly correlated with feed intake in PAC-measured sheep [47, 61] and in cattle [60, 62]",
+              "is strongly correlated with feed intake in PAC-measured sheep [47, 61] and in cattle [60, 62]"),
+    "g_hetero": ("are biased [52, 64, 65]", "[52, 64, 65]"),
+    "g_weight": ("denominator or adjustment trait [33, 53]", "[33, 53]"),
+}
+
 LOCATE = {
     "loc_breeds": ("Belclare, Charolais, Cheviot, Suffolk, Lleyn, and Texel", None),
     "loc_terms": ("where y was the phenotypic observation", "σ²ₑ was the residual variance."),

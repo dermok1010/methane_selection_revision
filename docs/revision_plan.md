@@ -1897,3 +1897,22 @@ rather than being bolted on at the end.
   renumbered [65]–[69] in the doc (rev 696). EndNote map and draft 7 EndNote file rebuilt (66 refs).
   The R packages [25]–[27] are still in the live doc's typed list (uncited); they are dropped only
   in the EndNote export.
+- **2026-10-05 (citation fixes)**: Applied the docs/citation_review.md fixes in the live doc
+  (rev 713), using only references already in the list:
+  - de Haas 2011 removed: it reports predicted methane, so the dairy range is now 0.16–0.33
+    from measured methane [30, 68].
+  - [7, 29] added for genetic correlations with production traits.
+  - PAC "consistently validated" softened to "shown to rank animals".
+  - The "PAC-measured CO2 … cattle" wording fixed.
+  - [68] Kamalanathan added for cumulative gain; [57] for proposed residual traits; [47, 48]
+    for the intake-proxy point.
+  - [9] replaced by [49] for large-scale recording and dropped from the RC repeatability
+    comparison.
+  - [22] dropped from the Taylor linearisation; [53] added to the fixed-weighting sentence.
+  - The Meuwissen scaling-model caveat added; [52] added to the heterogeneity-bias sentence
+    (in place of Carvalheiro).
+  References now run to [68] (R packages [25]–[27] still in the typed list, dropped in the
+  EndNote export). Draft 7 EndNote export rebuilt with these changes highlighted green
+  (`spans.GREEN`) on top of the yellow reviewer highlights. New references to import: 27
+  (Carvalheiro and de Haas 2011 no longer needed). Still unverified: FAO 30%, the beef ranges
+  from [7]/[29], Levrault >0.99, and CO2–intake in [48].
