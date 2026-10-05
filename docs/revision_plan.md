@@ -1936,3 +1936,14 @@ rather than being bolted on at the end.
   (letter rev 178). `Methane_manuscript_draft7_EndNote.docx` (built from rev 716) sent to the
   author for EndNote linking. The letter's line numbers match the numeric-citation layout; recheck
   them after EndNote has formatted the citations and the bibliography.
+- **2026-10-05 (supervisor versions)**: The author linked the citations in EndNote and returned the
+  file. 102 EN.CITE fields, 62-entry bibliography, citations 1–62 with no gaps. Saved as
+  `manuscript/revised/Methane_manuscript_draft7.docx`, with the green highlights removed (yellow
+  reviewer highlights kept). Still for the author to fix:
+  - Goopy 2016, Van Vleck 1987 and Cardoso 2005 are not linked (4 citation groups still `{…}`).
+  - Authors' contributions is still a placeholder.
+  - "we calculated" remains in the S1 confounding paragraph.
+  `Response_to_Reviewers_draft5.docx` was built with line numbers taken from the linked file (the
+  unlinked groups simulated as two-digit numbers). Only one reference changed (Line 73 →
+  58–59). The letter's Cuyabano citation is now [62], matching the EndNote numbering (live letter
+  rev 180).
