@@ -45,6 +45,7 @@ recs$sire[is.na(recs$sire)] <- 0
 out <- character(0)
 say <- function(...) out <<- c(out, sprintf(...))
 rows <- list()
+per_flock_rows <- list()
 
 animals <- recs %>% distinct(ANI_ID, .keep_all = TRUE)
 say("Analysed records: %d; animals: %d", nrow(recs), nrow(animals))
@@ -137,6 +138,12 @@ summarise_link <- function(ancestor, flock) {
     n_components = comp$n, largest_component_flocks = comp$largest_n,
     anc_per_flock_mean = mean(per_flock$n_anc), anc_per_flock_median = median(per_flock$n_anc))
 
+  per_flock_rows[[length(per_flock_rows) + 1]] <<- data.frame(
+    flock_field = flock, ancestor = ancestor, flock = per_flock$flk,
+    n_animals = per_flock$n_animals, n_ancestors = per_flock$n_anc,
+    n_ancestors_shared = per_flock$n_anc_shared,
+    in_largest_network = per_flock$flk %in% comp$largest)
+
   if (flock == "source") {
     say("Per-flock breakdown (%s):", ancestor)
     pf <- per_flock %>% arrange(desc(n_animals))
@@ -151,4 +158,5 @@ for (flock in c("source", "breeder"))
 
 writeLines(out, "sire_mgs_across_flocks_summary.txt")
 write.csv(do.call(rbind, rows), "sire_mgs_across_flocks.csv", row.names = FALSE)
+write.csv(do.call(rbind, per_flock_rows), "sire_mgs_per_flock.csv", row.names = FALSE)
 cat(out, sep = "\n")
