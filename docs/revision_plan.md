@@ -1858,3 +1858,10 @@ rather than being bolted on at the end.
   both now agree (0.72/0.71). No cause is asserted. The earlier draft 6 / letter draft 4 files were
   replaced by this export. Still open: Authors' contributions; the `UN` (other/unknown breed)
   covariate is in the fitted model and in Table S1 but not in the Methods model equation.
+- **2026-10-05 (UN covariate)**: Author decision: document the "other or unknown breeds"
+  covariate (`UN`), which every fitted model includes (`config/models.yaml`) but the Methods
+  omitted. Manuscript doc rev 662: model equation now `... + TX + UN + het ...`; term defined as
+  "the combined proportion of all other or unknown breeds (UN)"; the breed-composition sentence
+  in Additional data notes it; letter (rev 120) L202 response lists UN among the italicised
+  terms. Draft 6 and letter draft 4 re-exported under the same names. Only Authors'
+  contributions remains open.

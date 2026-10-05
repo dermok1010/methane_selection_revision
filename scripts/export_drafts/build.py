@@ -43,8 +43,8 @@ EQUATIONS = {
     r"rec = 1 - \sum_{i=1}^{n} \frac{sire_i^2 + dam_i^2}{2}":
         [("rec = 1 − Σ", None), ("i=1", "sub"), ("n", "sup"), (" (sire", None), ("i", "sub"), ("2", "sup"),
          (" + dam", None), ("i", "sub"), ("2", "sup"), (") / 2", None)],
-    r"y = \mu + sex + BR + CL + CV + LY + SU + TX + het + rec + age + BT_g + RT_g + BT_e + RT_e + DP + CG + a + pe + e":
-        [("y = μ + sex + BR + CL + CV + LY + SU + TX + het + rec + age + BT", None), ("g", "sub"), (" + RT", None),
+    r"y = \mu + sex + BR + CL + CV + LY + SU + TX + UN + het + rec + age + BT_g + RT_g + BT_e + RT_e + DP + CG + a + pe + e":
+        [("y = μ + sex + BR + CL + CV + LY + SU + TX + UN + het + rec + age + BT", None), ("g", "sub"), (" + RT", None),
          ("g", "sub"), (" + BT", None), ("e", "sub"), (" + RT", None), ("e", "sub"), (" + DP + CG + a + pe + e", None)],
     r"h^2 = \frac{\sigma^2_a}{\sigma^2_a + \sigma^2_{pe} + \sigma^2_e}":
         [("h² = σ²ₐ / (σ²ₐ + σ²ₚₑ + σ²ₑ)", None)],

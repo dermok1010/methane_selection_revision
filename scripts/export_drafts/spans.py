@@ -27,6 +27,7 @@ HIGHLIGHT = {
     "m_ratio": ("CH₄ ratio was calculated on a mass basis as CH₄/(CH₄+CO₂), with both gases expressed in g day⁻¹.", None),
     "m_ped": ("Pedigree records were available for 36,449 animals", "73.1% of sires linked two or more contemporary groups."),
     "m_eq": ("+ e", None),  # the residual term of the model equation
+    "m_un": ("and the combined proportion of all other or unknown breeds (UN)", None),
     "m_het": ("Residual variance heterogeneity was examined by contemporary-group mean.", "a single homogeneous residual variance was used."),
     "m_rg": ("The genetic correlations reported below", "(rg = 0.85 in each case)."),
     "m_h2t": ("Heritability (h²) and repeatability (t) were calculated as:", None),
@@ -73,7 +74,7 @@ LETTER_REFS = [
     ["m_ratio", "m_het", "r_tab2foot", "d_compare"],           # 1 R1 Jonker / CH4 ratio heritability
     [],                                                        # 2 R1 MI -> CH4/MBW (global rename)
     ["m_ratio", "m_co2", "r_co2mean"],                         # 3 R1 units, CO2 descriptive stats
-    ["m_ped", "m_wald", "s1_ped", "s1_conf"],                   # 4 R1 fixed effects, connectedness
+    ["m_ped", "m_un", "m_wald", "s1_ped", "s1_conf"],          # 4 R1 fixed effects, connectedness
     ["m_eq"],                                                  # 5 R1 + e
     ["m_het", "m_rg", "d_het"],                                # 6 R1 contemporary-group scaling
     ["m_wald", "s1_ped", "s1_conf", "d_compare"],              # 7 R1 summary
