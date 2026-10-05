@@ -1817,3 +1817,15 @@ rather than being bolted on at the end.
     homogeneous model's `.asr` is not on the VM, so no LRT against it yet.
   `results/univariate_summary.csv` not regenerated (03_parse_results.R would rebuild it from
   the partial local `run/` mirror).
+- **2026-10-05 (doc)**: Author decision: CO2 reported from the `cg_het` model, like the five
+  methane traits. Live doc rev 583: Table 2 CO2 row sigma_a 138.44 -> 117.18,
+  sigma_pe 130.92 -> 97.26 (sqrt of `a_uni_co2_cg_het.pvc` VA 13,731.5 / PE 9,460.26),
+  h2 0.28 (0.02) -> 0.25, t 0.54 (0.01) -> 0.43 (records-weighted class means, no SE),
+  CVa 11.64% -> 9.85% (sigma_a / mean CO2 1,189.6 g/day, same method as the CH4 row).
+  Text updated to match: Methods (model used for CO2 and the five methane traits), Results
+  heritability paragraph and repeatability range (0.20-0.43), Table 2 footnote (CO2 added to
+  the heterogeneous list; the "CO2 sigma SEs not available" sentence removed as moot),
+  trivariate comparison (0.41 vs 0.25), Discussion CO2 paragraph (h2 = 0.25) and
+  residual-heterogeneity paragraph (CO2 also lowered). Response letter quotes no CO2 h2/t.
+  Not changed: CO2's bivariate rg (homogeneous-residual, per the 23 Sep decision) and the
+  trivariate S3 values used in the index.
