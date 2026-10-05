@@ -317,9 +317,14 @@ component_trial_set:
 # found a real, non-trivial effect for CH4: residual variance differs 2.4x
 # between stages) to every Table 2 trait. ch4lw is excluded -- it isn't a
 # Table 2 trait (see the `traits:` list's `table2` flags above).
+#
+# 2026-10-05: co2 added (user instruction) -- CO2's univariate parameters
+# were otherwise only available from the homogeneous-residual a_uni_co2.
+# Not a Table 2 trait; added because the user wants it reported on the
+# heterogeneous-residual model like the methane definitions.
 stage_het_traits:
   [methane, ch4mbw, ch4ratio, ch4adg, ch4muscle, ch4rumen, ch4rmtmbw,
-   ch4rmtmbwco2, ch4rmtadg]
+   ch4rmtmbwco2, ch4rmtadg, co2]
 
 # --set=young_old: a young(<660d)-vs-mature bivariate genetic correlation
 # for CH4 itself, treating the same measured trait in the two age classes
@@ -350,9 +355,13 @@ young_old_pair:
 # own mean is tractable and targets the concern (scale differences
 # between contemporary groups) directly rather than via an age surrogate.
 # Same trait set as stage_het_traits for consistency.
+#
+# 2026-10-05: co2 added (user instruction, see stage_het_traits). It uses
+# the same cg_mean_cl classes as every other trait, which are binned on
+# each CG's mean CH4, not mean CO2.
 cg_het_traits:
   [methane, ch4mbw, ch4ratio, ch4adg, ch4muscle, ch4rumen, ch4rmtmbw,
-   ch4rmtmbwco2, ch4rmtadg]
+   ch4rmtmbwco2, ch4rmtadg, co2]
 
 # ---- Curated bivariate matrix (2026-09-20, user scope decision) --------
 #

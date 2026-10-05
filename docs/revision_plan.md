@@ -1786,3 +1786,16 @@ rather than being bolted on at the end.
   linked) and through common MGS (68 of 91). By `breeder`: 82 separate sire-linked
   networks; the largest holds 51 flocks and 92.2% of animals. Nothing in the manuscript
   has been changed yet.
+- **2026-10-05 (later)**: User instruction: the CO2 univariate should be on the heterogeneous-
+  residual model. Before this, CO2 had only the homogeneous `a_uni_co2` (h2 0.284, SE 0.023);
+  `co2` was never in `cg_het_traits`/`stage_het_traits`. Added `co2` to both lists in
+  `config/models.yaml` and generated `a_uni_co2_cg_het` (`residual sat(cg_mean_cl).idv(units)`)
+  and `a_uni_co2_stage_het` (`residual sat(stage_660).idv(units)`), otherwise identical to
+  `a_uni_co2`. Discovery-only VPREDICT, as for the methane traits. `cg_mean_cl` is binned on
+  each CG's mean CH4, not CO2 -- kept for consistency with the other traits; a CO2-binned
+  class would be a separate choice. Regenerating the sets also added later phenotype columns
+  (`cg_mean_cl`, `ch4_ratio_mol`) to the field lists of the 18 existing methane het models;
+  those edits were reverted so the committed files match what was run on HPC. Not yet run.
+  HPC: pull main, `Rscript scripts/02_stage_run_dir.R --platform=hpc`, then
+  `slurm/submit_batch.sh a_uni_co2_cg_het a_uni_co2_stage_het` (do not re-run
+  `01_generate_models.R` there).
