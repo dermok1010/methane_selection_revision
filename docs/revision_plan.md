@@ -1870,3 +1870,8 @@ rather than being bolted on at the end.
   in the rebuilt pipeline and are not needed for the paper's conclusions, and they were removed
   rather than mix re-estimated and original values (reasoning as recorded in the 2026-09-28
   Table 3 decision above). Letter doc rev 121; letter draft 4 re-exported.
+- **2026-10-05 (pending, author)**: References [42]–[70] (added since submission) are to be imported
+  into EndNote by the author once the draft is settled. Full details and DOIs were checked on Crossref.
+  Year fixes to expect on import: [55] Belanche 2023 (not 2022), [58] Richardson 2021 (not 2020).
+  Also outstanding: [25]–[27] (R packages Matrix, dplyr, tidyr) are no longer cited in the text,
+  and the abstract is at 349 words against the 350-word limit.
