@@ -1883,3 +1883,12 @@ rather than being bolted on at the end.
   29 responses (26 with locations; letter rev 156). Note: these line numbers match the current
   manuscript text, so after further manuscript edits they need recomputing (re-export, rebuild,
   re-apply). `spans.py` s1_conf now starts at the reworded S1 confounding text.
+- **2026-10-05 (EndNote draft)**: `manuscript/revised/Methane_manuscript_draft7_EndNote.docx` built
+  from manuscript doc rev 685 for supervisor review, with citations as EndNote temporary
+  citations so the author can relink them to the EndNote library (`Update Citations and
+  Bibliography`) and no typed reference list. Map in `scripts/export_drafts/endnote_cites.json`:
+  originals use the record numbers stored in the submitted .docx's EN.CITE fields (library
+  db-id waxwzprpds5f9des5zdxa55jzsppx55fpw20); [16] Lassen 2020 and [37] Sutherland 1965 had no
+  stored record and [42]–[70] are new, so these are cited by author and year only. Author decision: the R packages
+  [25]–[27] are dropped. Same yellow reviewer highlights as draft 6; no line numbers (they
+  only settle after EndNote formats the citations).

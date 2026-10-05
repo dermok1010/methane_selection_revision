@@ -16,6 +16,7 @@ layout can differ by a line or so.
 
 Usage (docx-tools env):
   python build.py MANUSCRIPT.md LETTER.md OUT_MANUSCRIPT.docx OUT_LETTER.docx
+  python build.py --endnote endnote_cites.json MANUSCRIPT.md OUT_MANUSCRIPT.docx
 """
 import copy, re, subprocess, sys, tempfile, unicodedata
 from pathlib import Path
@@ -143,11 +144,31 @@ def fresh_document():
     return d
 
 
+# EndNote mode (--endnote CITES.json): numeric citations become EndNote temporary
+# citations ({Author, Year #RecNum}) and the typed reference list is omitted, so that
+# "Update Citations and Bibliography" in Word relinks everything to the EndNote library.
+CITES = None
+CITE_RE = re.compile(r"\[(\d+(?:\s*[–-]\s*\d+)?(?:\s*,\s*\d+(?:\s*[–-]\s*\d+)?)*)\]")
+
+
+def endnote_citations(text):
+    def repl(m):
+        nums = []
+        for part in m.group(1).split(","):
+            a, _, b = part.strip().replace("–", "-").partition("-")
+            nums += list(range(int(a), int(b) + 1)) if b else [int(a)]
+        missing = [n for n in nums if str(n) not in CITES]
+        if missing:
+            raise KeyError(f"no EndNote citation for reference(s) {missing} in {m.group(0)}")
+        return "{" + "; ".join(CITES[str(n)] for n in nums) + "}"
+    return CITE_RE.sub(repl, text)
+
+
 def add_runs(p, segs, size=None, base_italic=False, highlight=False):
     for s in segs:
         if not s["text"]:
             continue
-        r = p.add_run(s["text"])
+        r = p.add_run(endnote_citations(s["text"]) if CITES else s["text"])
         r.bold = bool(s.get("b"))
         r.italic = bool(s.get("i")) or base_italic
         if size:
@@ -291,6 +312,8 @@ def build_manuscript(md_path, out_path):
         segs = inline(val)
         m = re.match(r"^\*\*((Table|Figure) \d+\.|S\d\.)\*\*", val)
         if section == "References":
+            if CITES:
+                continue  # EndNote builds the bibliography here
             mm = re.match(r"^\[(\d+)\]\s*(.*)$", unescape(val))
             p = d.add_paragraph(style="EndNote Bibliography"); p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
             r = p.add_run("[%s]" % mm.group(1)); r.add_tab()
@@ -462,6 +485,17 @@ def build_letter(md_path, out_path, refs):
 
 
 def main():
+    global CITES
+    if sys.argv[1] == "--endnote":
+        # Manuscript only, with EndNote temporary citations; no line numbers or letter.
+        import json
+        CITES = json.loads(Path(sys.argv[2]).read_text())
+        ms_md, ms_out = sys.argv[3:5]
+        missing = build_manuscript(ms_md, ms_out)
+        if missing:
+            print("WARNING highlight spans not found:", sorted(missing))
+        print("written", ms_out)
+        return
     ms_md, letter_md, ms_out, letter_out = sys.argv[1:5]
     missing = build_manuscript(ms_md, ms_out)
     if missing:
