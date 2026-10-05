@@ -1892,3 +1892,8 @@ rather than being bolted on at the end.
   stored record and [42]–[70] are new, so these are cited by author and year only. Author decision: the R packages
   [25]–[27] are dropped. Same yellow reviewer highlights as draft 6; no line numbers (they
   only settle after EndNote formats the citations).
+- **2026-10-05 (refs)**: Author decision: drop [65] Carvalheiro et al. 2002 (in Portuguese). The
+  Discussion heterogeneity sentence now cites [64, 65] (Van Vleck; Cardoso). Former [66]–[70] are
+  renumbered [65]–[69] in the doc (rev 696). EndNote map and draft 7 EndNote file rebuilt (66 refs).
+  The R packages [25]–[27] are still in the live doc's typed list (uncited); they are dropped only
+  in the EndNote export.

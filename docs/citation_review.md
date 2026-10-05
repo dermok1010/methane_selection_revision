@@ -5,6 +5,8 @@ source supports the claim. Numbers are the current reference numbers (before End
 R packages [25]–[27] dropped). Checks against the literature used Consensus where the claim
 depends on a specific number; everything else is judged from the paper's own content.
 
+**Update 2026-10-05:** [65] Carvalheiro 2002 (Portuguese) removed at the author's request; former [66]–[70] are now [65]–[69] in the doc. Numbers in the tables below are the pre-removal numbers.
+
 Verdicts: **OK** = supports the claim as written · **Weak** = related, but not the best or not a
 direct support · **Fix** = the source does not support the sentence as written.
 
