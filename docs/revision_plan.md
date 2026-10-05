@@ -1875,3 +1875,11 @@ rather than being bolted on at the end.
   Year fixes to expect on import: [55] Belanche 2023 (not 2022), [58] Richardson 2021 (not 2020).
   Also outstanding: [25]–[27] (R packages Matrix, dplyr, tidyr) are no longer cited in the text,
   and the abstract is at 349 words against the 350-word limit.
+- **2026-10-05 (live letter line numbers)**: The author asked for both live docs to be brought up
+  to date. All text edits were already in them (manuscript rev 685, letter rev 130, including the
+  author's and comment-session edits since the export). The one thing missing was the line
+  references the letter's Overview now promises. These were recomputed against the current
+  manuscript (rev 685) with `scripts/export_drafts/build.py` and written into the live letter's
+  29 responses (26 with locations; letter rev 156). Note: these line numbers match the current
+  manuscript text, so after further manuscript edits they need recomputing (re-export, rebuild,
+  re-apply). `spans.py` s1_conf now starts at the reworded S1 confounding text.

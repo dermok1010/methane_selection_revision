@@ -58,7 +58,7 @@ HIGHLIGHT = {
     "d_repeat": ("In addition, only 25.4% of animals had more than one methane record", "for the computed-tomography traits and RMTADG."),
     # Supplementary Material S1 (new)
     "s1_ped": ("All 8,185 phenotyped animals were represented in the pedigree", "linked 205 contemporary groups."),
-    "s1_conf": ("Confounding between breed proportion and contemporary group was assessed", "contained a single sex."),
+    "s1_conf": ("To check whether breed effects could be separated from contemporary group effects", "contained a single sex."),
 }
 
 # Rows of these tables whose trait cell is CO₂ are highlighted (CO₂ added as a trait).
