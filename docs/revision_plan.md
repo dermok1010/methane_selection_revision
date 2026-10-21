@@ -1970,3 +1970,10 @@ rather than being bolted on at the end.
   {Jonker…} group. Letter: Cuyabano [62] became [61] (letter rev 8). Still in EndNote records: the
   Cuyabano pages field prints as "2025.2003.2013.643026"; Goopy year shows 2015 (volume 56 is 2016);
   Crowley 2026 and Kelly 2026 have no volume.
+- **2026-10-21 (draft 8 relinked)**: The author updated the EndNote records from Crossref:
+  - Crowley 2024 [18]: 102 skae346
+  - Crowley 2026 [19]: 104 skag046 (doi 10.1093/jas/skag046)
+  - Kelly 2026 [23]: 104 skag145 (doi 10.1093/jas/skag145), with McHugh/McCarron/McGovern capitalised
+  - Goopy [12]: year changed to 2016
+  `Methane_manuscript_draft8.docx` was replaced with the relinked file. The citations are unchanged and the
+  live doc reference list was updated to match (doc rev 83). Still open: the Cuyabano [61] pages field.
