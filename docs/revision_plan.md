@@ -1951,3 +1951,12 @@ rather than being bolted on at the end.
   `analysis/diagnostics/reviewer_a2_a3/06_breed_variance_explained.R` (below 1% for the full-record
   methane traits, 0.2–10% for the ADG/CT-subset ratios, MBW 3%). Author decision: report it in the
   response letter only, not in the manuscript. Added to the letter's item 2 response (letter rev 7).
+- **2026-10-21 (EndNote draft 8)**: `manuscript/revised/Methane_manuscript_draft8_EndNote.docx` built from
+  manuscript doc rev 67 with `build.py --endnote scripts/export_drafts/endnote_cites_draft8.json`. The
+  map takes record numbers from the EN.CITE fields of the author-linked draft 7 (62 records, matched to
+  the live list by title). Before building, the doc intro note and the "[Paragraph removed …]"
+  placeholder were taken out of the export, the typed reference list was cut, and the three unlinked
+  groups were given record numbers where they exist. Changes: Levrault 2023 [15] cited again in the
+  Background ("rank animals accurately [15]", doc rev 67); O'Connor 2024 [16] left uncited, so EndNote
+  drops it. Still not in the library: Goopy 2016, Van Vleck 1987 and Cardoso 2005 (cited by author and
+  year). Only 17 of 42 yellow reviewer-highlight spans still match the current text.
