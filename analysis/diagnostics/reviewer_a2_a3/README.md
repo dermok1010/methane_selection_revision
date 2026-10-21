@@ -279,3 +279,24 @@ network still holds over 92% of the phenotyped animals. Note that 544 animals
 were measured in more than one `source` but no animal has more than one
 `breeder`, which is consistent with `breeder` being flock of birth and `source`
 being the measurement flock or project.
+
+## Reviewer 1 item 2: variance explained by breed
+
+`06_breed_variance_explained.R` multiplies each record's seven breed
+proportions by the breed solutions in that trait's univariate `.sln`
+(pulled from HPC 2026-10-20 to
+`~/hpc_incoming/methane_selection_revision_sln_2026-10-20/`). It then
+expresses the variance of that breed-composition value as a share of the
+observed phenotypic variance, and of breed variance plus the model's random
+variance. Output: `breed_variance_explained.csv`.
+
+- Methane definitions: 0.1–0.8% of phenotypic variance on the full
+  15,869-record traits, 3.0% for CH4 residual on ADG and 2.7–10% for the two
+  780-record CT ratios.
+- Components: MBW 3.2%, weight 3.0%, ADG 2.2%, rumen 26%, muscle 44%.
+- The homogeneous, `cg_het` and `stage_het` models give nearly the same
+  shares (within 0.3 percentage points on the full-record traits).
+- The breed solutions are estimated conditional on contemporary group, so
+  for Cheviot and Lleyn (largely nested within CG) part of any breed
+  difference sits in the CG effects instead. Read the shares as breed
+  variance net of contemporary group, not total breed variance.
