@@ -1977,3 +1977,16 @@ rather than being bolted on at the end.
   - Goopy [12]: year changed to 2016
   `Methane_manuscript_draft8.docx` was replaced with the relinked file. The citations are unchanged and the
   live doc reference list was updated to match (doc rev 83). Still open: the Cuyabano [61] pages field.
+- **2026-10-21 (supervisor versions: manuscript draft 9, letter draft 7)**: Built from manuscript doc rev 88 and
+  letter rev 10 with `build.py`, then `add_comments.py` (new) re-attached every comment thread as Word comments:
+  76 in the manuscript (Nóirín's comments, Claude's replies and change notes; 4 resolved threads marked "[Resolved]";
+  15 whose anchor text was later deleted placed where it stood and marked "[Moved…]") and all 23 in the letter.
+  Highlights were re-anchored to the current text in `spans.py` (bg_alt, m_rg and d_transfer dropped as that text
+  is gone; s1_wald added). The letter's typed line references were replaced with fresh ones and both "(LXX)"
+  placeholders filled (lines 170–171; 280–282, 547–553). Author decisions applied in the live doc before the build:
+  the "[Paragraph removed …]" placeholder deleted; the Background PAC passage trimmed from five sentences to four
+  (Nóirín's "overkill" comment; all citations kept in order, so EndNote numbering is unchanged); Authors'
+  contributions left as a blank heading; letter Line 72 response now says "the dominant gas" to match the
+  manuscript. Citations are typed numbers matching the draft 8 EndNote numbering, not live EndNote fields. Line
+  numbers come from the LibreOffice-rendered PDFs saved alongside; Word can differ by a line or so. Still open:
+  the Cuyabano [61] pages field (author fixing in EndNote).
