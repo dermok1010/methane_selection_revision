@@ -1960,3 +1960,13 @@ rather than being bolted on at the end.
   Background ("rank animals accurately [15]", doc rev 67); O'Connor 2024 [16] left uncited, so EndNote
   drops it. Still not in the library: Goopy 2016, Van Vleck 1987 and Cardoso 2005 (cited by author and
   year). Only 17 of 42 yellow reviewer-highlight spans still match the current text.
+- **2026-10-21 (draft 8 linked)**: The author linked draft 8 in EndNote, giving 100 EN.CITE fields, a
+  64-entry bibliography and no unlinked groups. It is saved as `manuscript/revised/Methane_manuscript_draft8.docx`.
+  The author imported Goopy 2016 [12], Van Vleck 1987 [52] and Cardoso 2005 [53], and fixed the
+  Shalloo, Bird-Gardiner, Rowe (13: 911355) and Manzanilla-Pech 2022 (13: 885932) records. Author: Matthews &
+  O'Neill stays 2023. The live manuscript was renumbered to match EndNote (doc rev 78): 18 citation groups were
+  changed and the typed list replaced with the 64 EndNote entries. Its 110 citations were checked against the
+  Word file and match one for one. The edit detached one comment thread (7aa80cc3-9740) on the old
+  {Jonker…} group. Letter: Cuyabano [62] became [61] (letter rev 8). Still in EndNote records: the
+  Cuyabano pages field prints as "2025.2003.2013.643026"; Goopy year shows 2015 (volume 56 is 2016);
+  Crowley 2026 and Kelly 2026 have no volume.
