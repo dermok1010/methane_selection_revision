@@ -346,7 +346,9 @@ def build_manuscript(md_path, out_path):
             para(d, segs, size=10, base_italic=True)
             after_table = False
             continue
-        segs, f = apply_highlights(segs, hl_ids); found_all.update(f)
+        # from draft 8 the model equation is a plain paragraph, not a latex block
+        ids = hl_ids + (["m_eq"] if plain(segs).startswith("y = ") else [])
+        segs, f = apply_highlights(segs, ids); found_all.update(f)
         for k in f: found_count[k] = found_count.get(k, 0) + 1
         para(d, segs)
     d.save(out_path)
@@ -433,11 +435,26 @@ def fmt_ranges(rngs):
     return ", ".join(f"{a}" if a == b else f"{a}–{b}" for a, b in merged)
 
 
+def lines_word(s):
+    return "lines" if ("–" in s or "," in s) else "line"
+
+
 # ---------------------------------------------------------------- letter
 def build_letter(md_path, out_path, refs):
     note_old = "Manuscript locations refer to draft 5 of the manuscript;"
     note_new = "Line numbers given with each response refer to the line-numbered draft 6 of the manuscript;"
     text = Path(md_path).read_text()
+    # Line references typed into the live letter go stale with every manuscript edit: drop
+    # them and let response_suffix() add fresh ones; "(LXX)" placeholders are filled in order.
+    text = re.sub(r" \\?\[Revised manuscript, lines [^\]]*\\?\]", "", text)
+    text = re.sub(r" \(revised manuscript, lines [^)]*\)", "", text)
+    text = re.sub(r"\((\w+), lines [\d–\-, ]+\)", r"(\1)", text)
+    lxx = iter(spans.LXX)
+
+    def fill_lxx(m):
+        s = fmt_ranges([refs.get(i) for i in next(lxx) if refs.get(i)])
+        return f"({lines_word(s)} {s})"
+    text = re.sub(r"\(LXX\)", fill_lxx, text)
     lines = text.replace(note_old, note_new).splitlines()  # no-op once the doc's note is updated
     d = fresh_document()
     sect = d.element.body.find(qn("w:sectPr"))
@@ -479,14 +496,14 @@ def build_letter(md_path, out_path, refs):
             else:
                 body = inline(reply)
                 if sfx:
-                    body.append(dict(text=f" (revised manuscript, lines {sfx})", b=False, i=False))
+                    body.append(dict(text=f" (revised manuscript, {lines_word(sfx)} {sfx})", b=False, i=False))
             para(d, [dict(text="Response: ", b=True, i=False)] + body)
             continue
         if ln.startswith("**Response:**"):
             sfx = response_suffix()
             segs = inline(ln)
             if sfx:
-                segs.append(dict(text=f" [Revised manuscript, lines {sfx}.]", b=False, i=False))
+                segs.append(dict(text=f" [Revised manuscript, {lines_word(sfx)} {sfx}.]", b=False, i=False))
             para(d, segs)
             continue
         if re.match(r"^\d+\. ", ln):
