@@ -1990,3 +1990,11 @@ rather than being bolted on at the end.
   manuscript. Citations are typed numbers matching the draft 8 EndNote numbering, not live EndNote fields. Line
   numbers come from the LibreOffice-rendered PDFs saved alongside; Word can differ by a line or so. Still open:
   the Cuyabano [61] pages field (author fixing in EndNote).
+- **2026-10-21 (EndNote draft 9)**: At the author's request, `manuscript/revised/Methane_manuscript_draft9_EndNote.docx`
+  was built from the same doc rev 88 with `build.py --endnote scripts/export_drafts/endnote_cites_draft9.json`. It
+  includes all 76 comment threads and the yellow highlights, and is for relinking in EndNote. The new map takes
+  record numbers from the EN.CITE fields of the linked draft 8 (64 records, matched to its bibliography by title).
+  [39] van Breukelen 2023 #171 was set by hand, as its title prefix also matched Ryan 2025. The draft 8 map used
+  the pre-relink numbering and no longer applies. Fixed in `build.py`: References is now a level-3 heading in the
+  doc. The build had therefore kept the typed list in draft 9 as plain paragraphs, and in EndNote mode it would
+  have turned the list into temporary citations.

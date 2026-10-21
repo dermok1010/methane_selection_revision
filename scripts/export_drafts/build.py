@@ -278,6 +278,12 @@ def build_manuscript(md_path, out_path):
                 heading_top(d, val)
             after_table = False
             continue
+        if kind == "h3" and val == "References":  # a level-3 heading in the doc from draft 8
+            section = val
+            p = d.add_paragraph(style="Subheadings")
+            r = p.add_run(val); r.bold = False; r.font.size = Pt(18)
+            after_table = False
+            continue
         if kind == "h3":
             if section == "Abstract":
                 p = d.add_paragraph(style="Subheadings"); p.add_run(val)
