@@ -1947,3 +1947,7 @@ rather than being bolted on at the end.
   unlinked groups simulated as two-digit numbers). Only one reference changed (Line 73 →
   58–59). The letter's Cuyabano citation is now [62], matching the EndNote numbering (live letter
   rev 180).
+- **2026-10-21 (breed variance, Reviewer 1 item 2)**: Breed share of phenotypic variance computed by
+  `analysis/diagnostics/reviewer_a2_a3/06_breed_variance_explained.R` (below 1% for the full-record
+  methane traits, 0.2–10% for the ADG/CT-subset ratios, MBW 3%). Author decision: report it in the
+  response letter only, not in the manuscript. Added to the letter's item 2 response (letter rev 7).
