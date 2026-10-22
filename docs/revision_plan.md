@@ -2014,3 +2014,13 @@ rather than being bolted on at the end.
   Methods); R1 item 4, no longer claims the manuscript states the national-index scope (DK_3 removed it);
   response 12, "averaged over a full test period" removed as in DK_3. Not changed: `spans.py` (the live
   docs are behind the Word files now).
+- **2026-10-22 (letter DK_5: line numbers from Word's own layout)**: The LibreOffice-derived numbers in
+  DK_4 drifted 1–3 lines from Word's. The author re-saved the manuscript (DK_3, now with "(alternative
+  meaning not absolute or daily methane production)" added in the Methods) and exported a PDF from Word
+  (`methane_manuscript_after_review_DK_3_Word.pdf`), and hand-corrected some references in the letter
+  (`Response_to_Reviewers_DK_4.docx`, saved over the earlier DK_4, plus small wording edits).
+  `Response_to_Reviewers_DK_5.docx` changes only line references: the `spans.py` passages were located on
+  the Word PDF's own line numbers (text cropped at x = 415 pt to drop the comment balloons). Ranges the
+  author had widened by hand and that still cover the cited passage were kept (R4 185–191, R6 511–528,
+  R7 280–286 and 606–608, R8 502–510); R13 and R22 were given the same ranges as R6 and R4. Rule for later:
+  take line numbers from a Word-exported PDF, not a LibreOffice render.
