@@ -1998,3 +1998,19 @@ rather than being bolted on at the end.
   the pre-relink numbering and no longer applies. Fixed in `build.py`: References is now a level-3 heading in the
   doc. The build had therefore kept the typed list in draft 9 as plain paragraphs, and in EndNote mode it would
   have turned the list into temporary citations.
+- **2026-10-22 (letter DK_4: line numbers and wording against manuscript DK_3)**: The author edited the
+  manuscript in Word after draft 9 (`manuscript/revised/methane_manuscript_after_review_DK_3.docx`) and
+  supplied the matching letter (`Response_to_Reviewers_DK_3.docx`). `Response_to_Reviewers_DK_4.docx`
+  changes only what no longer matched. Line references: the DK_3 letter's numbers were exactly the
+  `spans.py` locations in draft 9 (all 29 responses), so the same passages were located in DK_3 rendered
+  with LibreOffice (`build.numbered_lines`/`locate`); 18 responses plus the item-2 inline reference changed
+  (mostly 1–8 lines earlier). Two passages were reworded in DK_3: `bg_pac` (still lines 66–73) and
+  `m_si_aim` (the index-aim sentences were cut; its Methods location was dropped from response 8).
+  Wording, to match DK_3: response 1, the four homogeneous-residual traits are "restricted to a single
+  physiological stage"; response 4, the breed/CG confounding passage now mirrors the Results (the
+  within/total variance shares 0.64/0.68/0.40/0.04/0.15 and Belclare were cut from the manuscript at
+  draft 8 and are no longer reported; the breed share of phenotypic variance stays, letter-only by
+  author decision); response 8, the aim is stated in the Abstract, Background and Discussion (no longer
+  Methods); R1 item 4, no longer claims the manuscript states the national-index scope (DK_3 removed it);
+  response 12, "averaged over a full test period" removed as in DK_3. Not changed: `spans.py` (the live
+  docs are behind the Word files now).
