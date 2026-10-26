@@ -2024,3 +2024,17 @@ rather than being bolted on at the end.
   author had widened by hand and that still cover the cited passage were kept (R4 185–191, R6 511–528,
   R7 280–286 and 606–608, R8 502–510); R13 and R22 were given the same ranges as R6 and R4. Rule for later:
   take line numbers from a Word-exported PDF, not a LibreOffice render.
+- **2026-10-26 (manuscript DK_4, letter DK_6: supervisor comments addressed)**: Built from the supervisors' Word
+  rounds (`methane_manuscript_after_review_DK_3_NMcH_FMCG.docx`, `Response_to_Reviewers_DK_3_NMcH.docx`) with
+  the new `scripts/export_drafts/word_edit.py`. It edits the author's own .docx, so styles, yellow highlights,
+  line numbering and the 98 EndNote EN.CITE fields plus EN.REFLIST stay intact, and citations still update from
+  EndNote. The supervisors' tracked changes are accepted. Today's edits are Word tracked changes by "Claude",
+  with replies in the supervisors' comment threads; the edit lists are in `manuscript/revised/edits_DK_4/`.
+  Manuscript wording only, no numbers changed: sentence-initial "PACs"/"CH4 ratio" reworded (Fiona); "eructation
+  and flatulence" (Fiona); grammar after Nóirín's rewordings; "(Cuyabano et al. [61])" -> "[61]"; the repeated
+  feed-intake sentence removed from the final Discussion paragraph (Nóirín). Cuyabano 2025 is still only on
+  bioRxiv (checked 26 Oct): the EndNote record needs DOI 10.1101/2025.03.13.643026. Letter: "XXx" replaced, and
+  every line reference shifted by the line offsets between LibreOffice renders of DK_3 and DK_4 (mostly +1/+2;
+  -1 after the deleted sentence; S1 references -1/-2 after Nóirín cut the S1a note), applied to the Word-PDF
+  numbers. **To verify against a Word PDF of DK_4 before submission.** The same edits were made in the live docs
+  "Methane manuscript – DK_3 NMcH FMCG" and "Response to Reviewers – DK_3 NMcH".

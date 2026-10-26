@@ -1,0 +1,25 @@
+{"author": "Claude",
+ "edits": [
+  {"para": "PACs allow groups of animals to be measured", "old": "PACs allow groups", "new": "These chambers allow groups"},
+  {"para": "two ratio traits were calculated", "old": "CH₄ ratio was calculated on a mass basis", "new": "The CH₄ ratio was calculated on a mass basis"},
+  {"para": "represented the total mass of enteric methane", "old": "released via eructation during rumen fermentation,", "new": "released via eructation and flatulence,"},
+  {"para": "This model described above was used for both univariate", "old": "repeatability (t) was calculated", "new": "repeatability (t) were calculated",
+   "note": "Grammar: “were” (two subjects), following Nóirín’s rewording."},
+  {"para": "Heritability estimates ranged from 0.12 ± 0.03 for CH₄/ADG", "old": "The heritability for carbon dioxide", "new": "The heritability of carbon dioxide"},
+  {"para": "Heritability estimates ranged from 0.12 ± 0.03 for CH₄/ADG", "old": "was somewhat more heritable than most methane traits", "new": "was somewhat higher than that of most methane traits",
+   "note": "After Nóirín’s change the sentence read “The heritability … was somewhat more heritable”, so reworded to “higher than that of”."},
+  {"para": "Figure 1 shows every response attainable", "old": "and CO₂ methane reduced by", "new": "and CO₂, methane was reduced by",
+   "note": "Comma and “was” added so Nóirín’s new clause reads as a sentence."},
+  {"para": "This agrees with the observation that direct multi-trait", "old": "selection (Cuyabano et al. ", "new": "selection "},
+  {"para": "This agrees with the observation that direct multi-trait", "old": "). In the present study responses were per generation", "new": ". In the present study, responses were calculated per generation"},
+  {"para": "The weights on MBW and CO₂ in the present index are not economic values", "old": "Feed intake is rarely recorded at scale in grazing sheep, so data sufficient to include it directly in a selection index are unlikely to become available, and proxies such as CO₂ are likely to remain necessary. ", "new": ""},
+  {"para": "The weights on MBW and CO₂ in the present index are not economic values", "old": "are therefore subject to the same constraints", "new": "are subject to the same constraints"}
+ ],
+ "replies": [
+  {"parent_body": "Can you start a sentence with an abbreviation?", "text": "Changed to “These chambers allow…”. The only other sentence starting with an abbreviation (Methods, “CH₄ ratio was calculated…”) now starts “The CH₄ ratio…”."},
+  {"parent_body": "In the PAC you", "text": "Now “released via eructation and flatulence”. I dropped “during rumen fermentation” here, because flatulence methane comes from hindgut fermentation. The Abstract’s “released mainly by eructation” still holds."},
+  {"parent_body": "I think we have to use the term “mass basis”", "text": "Agreed: “mass basis” is kept, together with Nóirín’s “(i.e. both expressed in grams)”."},
+  {"parent_body": "I’m not sure should I have a full section", "text": "Kept, as both Nóirín and Fiona suggested."},
+  {"parent_body": "Needs to be updated?", "text": "Still a bioRxiv preprint (checked 26 Oct 2026), so the reference stays. Its EndNote record has no DOI and prints “bioRxiv. (2025).”: add DOI 10.1101/2025.03.13.643026 to the record before updating citations. In the text, “(Cuyabano et al. [61])” is now “[61]”, to match the other citations."},
+  {"parent_body": "Not sure you need this sentence", "text": "Deleted, as it repeats the Genetic parameters section (“In grazing sheep, however, feed intake is rarely measured at scale…”). I also took “therefore” out of the next sentence."}
+ ]}

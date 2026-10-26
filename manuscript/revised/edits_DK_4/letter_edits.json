@@ -1,0 +1,142 @@
+{
+ "author": "Claude",
+ "edits": [
+  {
+   "para": "Response: We thank the reviewer for raising this. On checking Jonker et al. (2018), we fou",
+   "old": "171–172",
+   "new": "172–173",
+   "nth": 1,
+   "note": "Line references updated for the supervisors’ edits and today’s manuscript changes (methane_manuscript_after_review_DK_4.docx). The shifts were measured by comparing LibreOffice renders of DK_3 and DK_4 and applied to your Word-PDF numbers, so most move by 1–2 lines. Check them against a Word PDF of DK_4 before submitting."
+  },
+  {
+   "para": "Response: We thank the reviewer for raising this. On checking Jonker et al. (2018), we fou",
+   "old": "171–172, 214–224, 336–338, 478–487.",
+   "new": "172–173, 216–226, 338–340, 480–489."
+  },
+  {
+   "para": "Response: As noted above, the units used to calculate CH4 ratio are now stated explicitly ",
+   "old": "166–167, 171–172, 290–291.",
+   "new": "167–168, 172–173, 292–293."
+  },
+  {
+   "para": "Response: We accept the reviewer's point that this should be included. A Wald F-statistic ",
+   "old": "185–191, 198, 281–286, 606–607, 613.",
+   "new": "187–193, 200, 283–288, 605–606, 611."
+  },
+  {
+   "para": "Response: Corrected; the model equation now explicitly includes the residual term (+ e). [",
+   "old": "194.",
+   "new": "196."
+  },
+  {
+   "para": "Response: This is correct, and we thank the reviewer for raising it. We have now tested di",
+   "old": "214–224, 511–528.",
+   "new": "216–226, 513–530."
+  },
+  {
+   "para": "Response: This is now addressed throughout: the discrepancy with Jonker et al. is discusse",
+   "old": "280–286, 478–487, 606–608, 613.",
+   "new": "282–288, 480–489, 605–607, 611."
+  },
+  {
+   "para": "Response: We accept the reviewer’s point. The ratio and residual definitions are, in effec",
+   "old": "431–436, 463–477, 502–510, 535–538, 543–560.",
+   "new": "433–438, 465–479, 504–512, 537–540, 545–559."
+  },
+  {
+   "para": "Response: We thank the reviewer for these points, which we have addressed in the revised s",
+   "old": "250–252, 270–279, 415–418, 543–549.",
+   "new": "251–253, 272–281, 417–420, 545–551."
+  },
+  {
+   "para": "2. Partial recording, sex, progeny and genomics: the analysis assumes selection on the can",
+   "old": "277–279, 543–549",
+   "new": "279–281, 545–551"
+  },
+  {
+   "para": "Response: We thank the reviewer for this point and agree the original submission did not e",
+   "old": "166–167, 320–322, 351–352, 463–477, 505–510.",
+   "new": "167–168, 322–324, 353–354, 465–479, 507–512."
+  },
+  {
+   "para": "Response: The pros and cons of the PAC method for this study are now discussed in the Back",
+   "old": "66–73, 525–528.",
+   "new": "66–73, 527–530."
+  },
+  {
+   "para": "Response: We agree. The Discussion now compares our heritability estimates with published ",
+   "old": "478–487.",
+   "new": "480–489."
+  },
+  {
+   "para": "Response: We thank the reviewer for this point. As described in our response to Reviewer 1",
+   "old": "214–224, 511–528.",
+   "new": "216–226, 513–530."
+  },
+  {
+   "para": "Response: Enteric methane is now specified at first use in the Background (“Enteric methan",
+   "old": "47–48, 164–165.",
+   "new": "47–48, 165–166."
+  },
+  {
+   "para": "Response: Corrected to “Charolais” throughout; the misspelling “Llyen” in the same sentenc",
+   "old": "144–145.",
+   "new": "145–146."
+  },
+  {
+   "para": "Response: We have kept the term “alternative”, as it is widely used for these traits in th",
+   "old": "159–162.",
+   "new": "160–163."
+  },
+  {
+   "para": "Response: The Methods (Genetic analysis) now state the pedigree size (36,449 animals), the",
+   "old": "185–191, 613.",
+   "new": "187–193, 611."
+  },
+  {
+   "para": "Response: All model terms (sex, BR to TX, UN, het, rec, age, BTg, RTg, BTe, RTe, DP, CG, a",
+   "old": "195–211.",
+   "new": "197–213."
+  },
+  {
+   "para": "Response: As stated in our response above on repeated records XXx. Given the substantial o",
+   "old": "525–528.",
+   "new": "527–530."
+  },
+  {
+   "para": "Response: The trait at line 297 is CH4 ratio, which is CH4/(CH4 + CO2) rather than CH4/CO2",
+   "old": "171–172.",
+   "new": "172–173."
+  },
+  {
+   "para": "Response: In the submitted Table 2, the standard errors of σa and σpe for CH4 ratio (1.23×",
+   "old": "336–338.",
+   "new": "338–340."
+  },
+  {
+   "para": "Response: The formulas are now given as displayed equations in the Methods (Genetic analys",
+   "old": "228–230.",
+   "new": "229–231."
+  },
+  {
+   "para": "Response: The Discussion now notes that the residual traits remain strongly genetically co",
+   "old": "502–504, 535–538.",
+   "new": "504–506, 537–540."
+  },
+  {
+   "para": "As stated in our response above on repeated records",
+   "old": "As stated in our response above on repeated records XXx.",
+   "new": "As stated in our response above on repeated records, we considered a model without the permanent environmental effect but retained the effect."
+  }
+ ],
+ "replies": [
+  {
+   "parent_body": "Maybe just add a brief sentence on the main finding.",
+   "text": "Replaced “XXx” with one sentence giving the outcome: a model without the permanent environmental effect was considered, but the effect was retained. The reasons follow in the rest of the response."
+  },
+  {
+   "parent_body": "By different population I just meant",
+   "text": "Kept as it is, per Nóirín."
+  }
+ ]
+}
